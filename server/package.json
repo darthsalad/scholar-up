@@ -1,0 +1,19 @@
+{
+  "name": "scholar-up-server",
+  "version": "1.0.0",
+  "description": "server for scholar-up",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DarthSalad/scholar-up.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DarthSalad/scholar-up/issues"
+  },
+  "homepage": "https://github.com/DarthSalad/scholar-up#readme"
+}
