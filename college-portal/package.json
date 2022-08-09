@@ -3,10 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.10.0",
+    "@mantine/core": "^5.1.0",
+    "@mantine/dates": "^5.1.0",
+    "@mantine/form": "^5.1.0",
+    "@mantine/hooks": "^5.1.0",
+    "@mantine/modals": "^5.1.0",
+    "@mantine/notifications": "^5.1.0",
+    "@mantine/nprogress": "^5.1.0",
+    "@tabler/icons": "^1.79.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
     "firebase": "^9.9.2",
+    "dayjs": "^1.11.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0",
@@ -36,5 +46,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.1.8"
   }
 }
