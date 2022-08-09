@@ -1,23 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
-import { NotificationsProvider } from "@mantine/notifications";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <MantineProvider
-      theme={{ colorScheme: "dark", primaryColor: "red" }}
-      withGlobalStyles
-      withNormalizeCSS
-    >
-      <NotificationsProvider>
-        <ColorSchemeProvider>
-          <App />
-        </ColorSchemeProvider>
-      </NotificationsProvider>
-    </MantineProvider>
+    <App />
   </React.StrictMode>
 );
 

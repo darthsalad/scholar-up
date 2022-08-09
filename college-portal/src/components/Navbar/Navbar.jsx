@@ -1,67 +1,71 @@
-import { Header, Menu, Group, Center, Burger, Container } from "@mantine/core";
+import {
+  Header,
+  Menu,
+  Group,
+  Center,
+  Burger,
+  Container,
+  ActionIcon,
+  useMantineColorScheme,
+  Button,
+} from "@mantine/core";
 import Sidebar from "../Sidebar/Sidebar";
 import { useDisclosure } from "@mantine/hooks";
-import { IconBrandTwitter, IconChevronDown } from "@tabler/icons";
+import {
+  IconBrandTwitter,
+  IconChevronDown,
+  IconSun,
+  IconMoonStars,
+  IconCircle,
+} from "@tabler/icons";
 import { useStyles } from "./Navbar.styles";
 
 const links = [
   {
-    link: "/about",
-    label: "Features",
+    link: "/stats",
+    label: "Stats",
   },
   {
     link: "#1",
-    label: "Learn",
+    label: "My students",
     links: [
       {
-        link: "/docs",
-        label: "Documentation",
+        link: "/verified",
+        label: "Verified students",
       },
       {
-        link: "/resources",
-        label: "Resources",
-      },
-      {
-        link: "/community",
-        label: "Community",
-      },
-      {
-        link: "/blog",
-        label: "Blog",
+        link: "/unverified",
+        label: "Unverified students",
       },
     ],
   },
   {
-    link: "/about",
-    label: "About",
+    link: "/edit",
+    label: "Edit profile",
   },
   {
-    link: "/pricing",
-    label: "Pricing",
+    link: "/contact",
+    label: "Contact Us",
   },
-  {
-    link: "#2",
-    label: "Support",
-    links: [
-      {
-        link: "/faq",
-        label: "FAQ",
-      },
-      {
-        link: "/demo",
-        label: "Book a demo",
-      },
-      {
-        link: "/forums",
-        label: "Forums",
-      },
-    ],
-  },
+];
+
+const colors = [
+  { label: "Red", value: "red" },
+  { label: "Pink", value: "pink" },
+  { label: "Violet", value: "violet" },
+  { label: "Cyan", value: "cyan" },
+  { label: "Teal", value: "teal" },
+  { label: "Green", value: "green" },
+  { label: "Lime", value: "lime" },
+  { label: "Orange", value: "orange" },
 ];
 
 export default function Navbar() {
   const [opened, { toggle }] = useDisclosure(false);
   const { classes } = useStyles();
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
+  const dark = colorScheme === "dark";
 
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
@@ -100,13 +104,47 @@ export default function Navbar() {
     );
   });
 
+  items.push(
+    <Menu key="Select" trigger="hover" exitTransitionDuration={0}>
+      <Menu.Target>
+        <Button>Toggle Color</Button>
+      </Menu.Target>
+
+      <Menu.Dropdown>
+        {colors.map((color) => (
+          <Menu.Item
+            icon={<IconCircle fill={color.value} size={14}></IconCircle>}
+            onClick={() => toggleColorScheme(color.value)}
+          >
+            {color.label}
+          </Menu.Item>
+        ))}
+      </Menu.Dropdown>
+    </Menu>
+  );
+
+  items.push(
+    <Menu key="button" trigger="hover" exitTransitionDuration={0}>
+      <Menu.Target>
+        <ActionIcon
+          variant="default"
+          color="white"
+          onClick={() => toggleColorScheme()}
+          title="Toggle color scheme"
+        >
+          {dark ? <IconSun size={18} /> : <IconMoonStars size={18} />}
+        </ActionIcon>
+      </Menu.Target>
+    </Menu>
+  );
+
   return (
     <>
       <Sidebar showModal={opened} setShowModal={toggle}></Sidebar>
       <Header height={56} className={classes.header} mb={120}>
         <Container>
           <div className={classes.inner}>
-            <IconBrandTwitter size={28} inverted />
+            <IconBrandTwitter size={28} inverted="true" />
             <Group spacing={5} className={classes.links}>
               {items}
             </Group>
