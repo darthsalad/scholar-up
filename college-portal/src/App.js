@@ -3,6 +3,7 @@ import Home from "./pages/Home/Home";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Profile from "./pages/Profile/Profile";
+import Student from "./pages/Student/Student";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
@@ -33,6 +34,7 @@ function App() {
               <Route exact path="/login" element={<Login />} />
               <Route exact path="/Register" element={<Register />} />
               <Route exact path="/profile" element={<Profile />} />
+              <Route exact path="/student/:id" element={<Student />} />
             </Routes>
           </BrowserRouter>
         </ColorSchemeProvider>
