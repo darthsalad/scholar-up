@@ -6,14 +6,27 @@ import Profile from "./pages/Profile/Profile";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
+import Protected from "./components/Protected/Protected";
 
 function App() {
-  const [colorScheme, setColorScheme] = React.useState("light");
-  const [primaryColor, setPrimaryColor] = React.useState("red");
+  const [colorScheme, setColorScheme] = React.useState(
+    localStorage.getItem("colorScheme") || "dark"
+  );
+  const [primaryColor, setPrimaryColor] = React.useState(
+    localStorage.getItem("primaryColor") || "red"
+  );
 
   const toggleColorScheme = (value) => {
-    if (!value) setColorScheme(colorScheme === "dark" ? "light" : "dark");
-    else setPrimaryColor(value);
+    if (!value) {
+      localStorage.setItem(
+        "colorScheme",
+        colorScheme === "dark" ? "light" : "dark"
+      );
+      setColorScheme(colorScheme === "dark" ? "light" : "dark");
+    } else {
+      localStorage.setItem("primaryColor", value);
+      setPrimaryColor(value);
+    }
   };
 
   return (
@@ -22,14 +35,22 @@ function App() {
       withGlobalStyles
       withNormalizeCSS
     >
-      <NotificationsProvider>
+      <NotificationsProvider position="top-center" zIndex={2077}>
         <ColorSchemeProvider
           colorScheme={colorScheme}
           toggleColorScheme={toggleColorScheme}
         >
           <BrowserRouter>
             <Routes>
-              <Route exact path="/" element={<Home />} />
+              <Route
+                exact
+                path="/"
+                element={
+                  <Protected>
+                    <Home />
+                  </Protected>
+                }
+              />
               <Route exact path="/login" element={<Login />} />
               <Route exact path="/Register" element={<Register />} />
               <Route exact path="/profile" element={<Profile />} />
