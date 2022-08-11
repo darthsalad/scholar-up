@@ -11,13 +11,10 @@ import { useStyles } from "./Register.styles";
 import React from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import { app, auth, db } from "../../firebase.config"
-import { Link, useNavigate } from "react-router-dom"
-import { collection, addDoc } from "firebase/firestore"
-import Cookies from "universal-cookie";
+import { auth, db } from "../../firebase.config";
+import { Link, useNavigate } from "react-router-dom";
+import { collection, addDoc } from "firebase/firestore";
 import Notifications from "../../components/Notifications/Notifications";
-
-const cookies = new Cookies();
 
 const Register = () => {
   const { classes } = useStyles();
@@ -25,18 +22,15 @@ const Register = () => {
   const navigate = useNavigate();
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
-  const [cname, setCname] = useState("")
-  const [domain, setDomain] = useState("")
+  const [cname, setCname] = useState("");
+  const [domain, setDomain] = useState("");
   const [loading, setLoading] = useState(false);
 
   function handleSubmit() {
     setLoading(true);
     createUserWithEmailAndPassword(auth, mail, password)
       .then((userCredential) => {
-        const user = userCredential.user;
-        cookies.set("uid", user.uid, { path: "/" });
-        cookies.set("user-email", user.email, { path: "/" });
-        createacc()
+        createacc();
       })
       .catch((error) => {
         const errorMessage = error.message;
@@ -46,22 +40,22 @@ const Register = () => {
   }
 
   async function createacc() {
-    const user = auth.currentUser
-    const date = new Date()
+    const user = auth.currentUser;
+    const date = new Date();
     try {
       const docRef = await addDoc(collection(db, "colleges"), {
         cname: cname,
         domain: domain,
         email: user.email,
         createdOn: date,
-      })
-      console.log("Document written with ID: ", docRef.id)
+      });
+      console.log("Document written with ID: ", docRef.id);
       setLoading(false);
       navigate("/");
     } catch (e) {
-      console.error("Error adding document: ", e)
+      Notifications("There was an error", e.message);
     }
-    navigate("/")
+    navigate("/");
   }
 
   return (
@@ -93,7 +87,7 @@ const Register = () => {
             value={password}
             onChange={(e) => setPassword(e.currentTarget.value)}
           />
-          <br/>
+          <br />
           <TextInput
             label="College name"
             placeholder="Full name of the college"
@@ -101,7 +95,7 @@ const Register = () => {
             value={cname}
             onChange={(e) => setCname(e.currentTarget.value)}
           />
-          <br/>
+          <br />
           <TextInput
             label="College domain"
             placeholder="domain of the college"

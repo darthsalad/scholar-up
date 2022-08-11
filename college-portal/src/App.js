@@ -32,7 +32,7 @@ function App() {
 
   return (
     <MantineProvider
-      theme={{ colorScheme, primaryColor }}
+      theme={{ colorScheme, primaryColor, loader: "bars" }}
       withGlobalStyles
       withNormalizeCSS
     >

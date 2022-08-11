@@ -1,71 +1,86 @@
-import React from "react"
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
-import { useState, useEffect } from "react"
-import { app, auth, db } from "../../firebase.config"
-import { Link, useNavigate } from "react-router-dom"
-import { useAuthState } from "react-firebase-hooks/auth"
+import React from "react";
+import {
+  TextInput,
+  PasswordInput,
+  Anchor,
+  Paper,
+  Title,
+  Text,
+  Container,
+  Button,
+} from "@mantine/core";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useState } from "react";
+import { auth } from "../../firebase.config";
+import { useNavigate } from "react-router-dom";
+import Notifications from "../../components/Notifications/Notifications";
 
 const Login = () => {
-  const [user, loading] = useAuthState(auth)
-  const navigate = useNavigate()
-  const [mail, setMail] = useState("")
-  const [password, setPassword] = useState("")
+  const navigate = useNavigate();
+  const [mail, setMail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    setLoading(true);
     signInWithEmailAndPassword(auth, mail, password)
       .then((userCredential) => {
-        // const user = userCredential.user
-        navigate("/")
+        setLoading(false);
+        navigate("/");
       })
       .catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        console.log({ errorCode, errorMessage })
-      })
-  }
+        const errorMessage = error.message;
+        setLoading(false);
+        Notifications("There was an error", errorMessage);
+      });
+  };
 
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <h1>Log in</h1>
-        <p>Please fill in this form to log in to your college portal.</p>
+        <Container size={420} my={40}>
+          <Title
+            align="center"
+            sx={(theme) => ({
+              fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+              fontWeight: 900,
+            })}
+          >
+            Welcome back!
+          </Title>
+          <Text color="dimmed" size="sm" align="center" mt={5}>
+            Do not have an account yet?{" "}
+            <Anchor href="/register" size="sm">
+              Create account
+            </Anchor>
+          </Text>
 
-        <label for="email">
-          <b>Email</b>
-        </label>
-        <input
-          type="email"
-          placeholder="Enter Email"
-          name="email"
-          id="email"
-          onChange={(e) => setMail(e.target.value)}
-          required
-        />
-        <br />
+          <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+            <TextInput
+              label="Email"
+              placeholder="you@mantine.dev"
+              value={mail}
+              onChange={(e) => setMail(e.currentTarget.value)}
+              required
+            />
+            <PasswordInput
+              label="Password"
+              placeholder="Your password"
+              value={password}
+              onChange={(e) => setPassword(e.currentTarget.value)}
+              required
+              mt="md"
+            />
 
-        <label for="psw">
-          <b>Password</b>
-        </label>
-        <input
-          type="password"
-          placeholder="Enter Password"
-          name="psw"
-          id="psw"
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <br />
-
-        <button type="submit">Log in</button>
-        <div>
-          <p>
-            Make new account? <Link to="/register">Register</Link>
-          </p>
-        </div>
+            <Button fullWidth mt="xl" type="submit" loading={loading}>
+              Sign in
+            </Button>
+          </Paper>
+        </Container>
       </form>
     </>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
