@@ -7,6 +7,7 @@ export const useStyles = createStyles((theme) => ({
       theme.colorScheme === "dark"
         ? theme.colors.dark[7]
         : theme.colors.gray[3],
+    marginTop: "-1rem",
   },
   left: {
     backgroundColor: theme.colorScheme === "dark" ? "black" : "white",
