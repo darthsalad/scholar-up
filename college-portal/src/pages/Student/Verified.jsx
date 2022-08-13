@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { useParams } from "react-router-dom"
 import { auth, db } from "../../firebase.config"
 import { useAuthState } from "react-firebase-hooks/auth"
-import { collection, getDocs } from "firebase/firestore"
-import { createStyles, Avatar, Text, Group } from '@mantine/core';
+import { collection, getDocs, query, where } from "firebase/firestore"
+import {
+  UnstyledButton,
+  Group,
+  Avatar,
+  Text,
+  createStyles,
+} from '@mantine/core';
+import { IconChevronRight } from '@tabler/icons';
 import { IconPhoneCall, IconAt } from '@tabler/icons';
 
 const useStyle = createStyles((theme) => ({
@@ -14,18 +20,28 @@ const useStyle = createStyles((theme) => ({
   name: {
     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
   },
+
+  user: {
+    display: 'block',
+    width: '100%',
+    padding: theme.spacing.md,
+    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+
+    '&:hover': {
+      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
+    },
+  },
 }));
 
 const Students = () => {
   const [students, setStudents] = useState([]);
-  let { verified } = useParams();
   const { classes } = useStyle();
-//   const [user, loading] = useAuthState(auth);
-  console.log(verified);
+  const [user, loading] = useAuthState(auth);
   
   useEffect(() => {
-    async function getStudents(status) {
-        const querySnapshot = await getDocs(collection(db, "students"));
+    async function getStudents() {
+        const q = query(collection(db, "students"), where("verified", "==", true));
+        const querySnapshot = await getDocs(q);
         // console.log(querySnapshot)
         setStudents(
             querySnapshot.docs.map((doc) => ({
@@ -34,12 +50,12 @@ const Students = () => {
             }))
         )
     };
-    getStudents();
-  }, []);
+    user && getStudents();
+  }, [user]);
 
   return (
     <div>
-        {verified} Students
+        Students
         <div>
             {students.map((student) => {
               return(
@@ -53,6 +69,10 @@ const Students = () => {
                 // </div>
 
                 <div style={{padding: '20px'}}>
+                <UnstyledButton className={classes.user} onClick={()=>{
+                  window.location=`/student/${student.id}`
+                }}>
+
                 <Group noWrap>
                     <Avatar src={student.student.imgURL} size={94} radius="md" />
                     <div>
@@ -78,13 +98,16 @@ const Students = () => {
                         </Text>
                     </Group>
                     </div>
+
+                    {<IconChevronRight size={14} stroke={1.5} />}
                 </Group>
+                </UnstyledButton>
                 </div>
               )  
             })}
         </div>
     </div>
-  )
-}
+    )
+  }
 
 export default Students
