@@ -4,6 +4,7 @@ import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Profile from "./pages/Profile/Profile";
 import Student from "./pages/Student/Student";
+import Unverified from "./pages/verify/unverified";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
@@ -56,6 +57,7 @@ function App() {
               <Route exact path="/Register" element={<Register />} />
               <Route exact path="/profile" element={<Profile />} />
               <Route exact path="/student/:id" element={<Student />} />
+              <Route exact path ="/unverified" element={<Unverified/>} />
             </Routes>
           </BrowserRouter>
         </ColorSchemeProvider>
