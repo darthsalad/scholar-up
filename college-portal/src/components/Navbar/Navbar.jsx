@@ -18,6 +18,7 @@ import {
   IconMoonStars,
   IconCircle,
 } from "@tabler/icons";
+import { useNavigate } from "react-router-dom";
 import { useStyles } from "./Navbar.styles";
 
 const links = [
@@ -40,7 +41,7 @@ const links = [
     ],
   },
   {
-    link: "/edit",
+    link: "/profile",
     label: "Edit profile",
   },
   {
@@ -65,22 +66,22 @@ export default function Navbar() {
   const { classes } = useStyles();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
+  const navigate = useNavigate();
+
   const dark = colorScheme === "dark";
 
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
-      <Menu.Item key={item.link}>{item.label}</Menu.Item>
+      <Menu.Item key={item.link} onClick={() => navigate(item.link)}>
+        {item.label}
+      </Menu.Item>
     ));
 
     if (menuItems) {
       return (
         <Menu key={link.label} trigger="hover" exitTransitionDuration={0}>
           <Menu.Target>
-            <a
-              href={link.link}
-              className={classes.link}
-              onClick={(event) => event.preventDefault()}
-            >
+            <a href={link.link} className={classes.link}>
               <Center>
                 <span className={classes.linkLabel}>{link.label}</span>
                 <IconChevronDown size={12} stroke={1.5} />
@@ -93,12 +94,7 @@ export default function Navbar() {
     }
 
     return (
-      <a
-        key={link.label}
-        href={link.link}
-        className={classes.link}
-        onClick={(event) => event.preventDefault()}
-      >
+      <a key={link.label} href={link.link} className={classes.link}>
         {link.label}
       </a>
     );

@@ -47,6 +47,7 @@ export const useStyles = createStyles((theme) => ({
     fontWeight: 500,
 
     "&:hover": {
+      color: "inherit",
       backgroundColor: theme.fn.lighten(
         theme.fn.variant({ variant: "filled", color: theme.primaryColor })
           .background,

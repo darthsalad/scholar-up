@@ -112,7 +112,7 @@ const useStyles = createStyles((theme) => ({
 const NoticeBoard = () => {
   const { classes } = useStyles();
 
-  const [notices, setNotices] = useState([data[0], data[1]]);
+  const [notices, setNotices] = useState(data);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -151,7 +151,8 @@ const NoticeBoard = () => {
                 <CSSTransition
                   key={notice.ind}
                   timeout={1000}
-                  classNames="item"
+                  classNames="item-transition"
+                  unmountOnExit
                 >
                   <ArticleCardVertical {...notice}></ArticleCardVertical>
                 </CSSTransition>
