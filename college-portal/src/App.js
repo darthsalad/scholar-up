@@ -8,6 +8,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 import Protected from "./components/Protected/Protected";
+import Verfied from "./pages/Verified/Verfied";
 
 function App() {
   const [colorScheme, setColorScheme] = React.useState(
@@ -56,6 +57,7 @@ function App() {
               <Route exact path="/Register" element={<Register />} />
               <Route exact path="/profile" element={<Profile />} />
               <Route exact path="/student/:id" element={<Student />} />
+              <Route exact path="/verified" element={<Verfied />}></Route>
             </Routes>
           </BrowserRouter>
         </ColorSchemeProvider>
