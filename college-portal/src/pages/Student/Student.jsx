@@ -17,6 +17,14 @@ const Student = () => {
   const [college, setCollege] = useState("")
 
   useEffect(() => {
+    async function getCollege(){
+      const q = query(collection(db, "colleges"), where("domain", "==", data.student.cdomain));
+      const querySnap = await getDocs(q);
+      querySnap.docs.forEach((doc)=>{
+        setCollege(doc.data().cname);
+      })
+    }
+
     async function getStudents() {
         const docRef = doc(db, "students", id);
         const docSnap = await getDoc(docRef);
@@ -26,20 +34,8 @@ const Student = () => {
           student: docSnap.data(),
         });
     };
-
-    async function getCollege(){
-      const q = query(collection(db, "colleges"), where("domain", "==", data.student.cdomain));
-      const querySnap = await getDocs(q);
-      querySnap.docs.forEach((doc)=>{
-        setCollege(doc.data().cname);
-      })
-    }
-
-    user && getStudents();
-    user && getCollege();
-    // console.log(data);
-    // console.log(college);
-  }, [user, id, data, college]);
+    user && getStudents() && getCollege();
+  }, [user, data, id]);
 
   return (
     loading? <>Loading</>
