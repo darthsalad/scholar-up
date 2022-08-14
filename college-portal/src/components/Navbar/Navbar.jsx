@@ -31,11 +31,11 @@ const links = [
     label: "My students",
     links: [
       {
-        link: "/verified",
+        link: "/students/verified",
         label: "Verified students",
       },
       {
-        link: "/unverified",
+        link: "/students/unverified",
         label: "Unverified students",
       },
     ],
