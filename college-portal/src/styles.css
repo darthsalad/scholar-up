@@ -1,9 +1,17 @@
-.item-exit-active {
+.item-transition-enter {
   opacity: 0;
-  transition: opacity 300ms ease-out;
 }
-
-.item-enter-active {
+/* This is where we can add the transition*/
+.item-transition-enter-active {
   opacity: 100;
-  transition: opacity 300ms ease-out;
+  transition: all 400ms;
+}
+/* This fires as soon as the this.state.showitem is false */
+.item-transition-exit {
+  opacity: 100;
+}
+/* fires as element leaves the DOM*/
+.item-transition-exit-active {
+  opacity: 0;
+  transition: all 800ms;
 }
