@@ -23,6 +23,7 @@ const Video = () => {
   const [latestDate, setLatestDate] = useState();
   const [attendence, setAttendence] = useState(false);
   const [dbAttendence, setdbAttendence] = useState(false);
+  const [thisMonth,setthisMonth]=useState();
   const [response, setResponse] = useState("");
   const [userImg, setUserImg] = useState("");
 
@@ -51,11 +52,14 @@ const Video = () => {
           setAccid(snap.data().accid);
           setPrivatekey(snap.data().privatekey);
           setUserImg(snap.data().imgURL[0]);
-          const latestAttendence =
-            snap.data()[month][snap.data()[month].length - 1];
+          // const latestAttendence =
+          //   snap.data()[month][snap.data()[month].length - 1];
+          const latestAttendence = snap.data().attendence[month][snap.data().attendence[month].length-1]
           setLatestDate(latestAttendence);
+          console.log(latestAttendence)
           let dat = date.getDate();
           dat === latestAttendence && setdbAttendence(true);
+          setthisMonth(snap.data().attendence)
         });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -111,16 +115,22 @@ const Video = () => {
   async function addAttendence(attended) {
     let hours = date.getHours();
     let dat = date.getDate();
+   
     if (attended && hours <= 23 && hours >= 11) {
       const variable = db.collection("accounts").doc(id);
       const month = getMonth(date.getMonth());
-      await variable
-        .update({
-          [month]: firebase.firestore.FieldValue.arrayUnion(dat),
-        })
-        .then(() => {
-          setdbAttendence(true);
-        });
+      const currentPostRef = firebase.firestore.DocumentReference(variable)
+     
+
+
+      if(!thisMonth[month].includes(dat)){
+        thisMonth[month].push(dat)
+      }
+
+      await variable.update({attendence:thisMonth})
+      .then((data)=>console.log(data))
+      .catch(err=>console.log(err))
+      
     }
   }
 
