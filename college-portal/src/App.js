@@ -6,11 +6,11 @@ import Profile from "./pages/Profile/Profile";
 import Student from "./pages/Student/Student";
 import Unverified from "./pages/verify/unverified";
 import Verified from "./pages/Student/Verified";
+import PageNotFound from "./pages/pageNotFound/PageNotFound";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 import Protected from "./components/Protected/Protected";
-import PageNotFound from "./pages/pageNotFound/PageNotFound";
 
 function App() {
   const [colorScheme, setColorScheme] = React.useState(
@@ -59,7 +59,6 @@ function App() {
               <Route exact path="/Register" element={<Register />} />
               <Route exact path="/profile" element={<Profile />} />
               <Route exact path="/student/:id" element={<Student />} />
-
               <Route
                 exact
                 path="/students/unverified"
