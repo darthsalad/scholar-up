@@ -13,6 +13,7 @@ import { IconChevronRight } from "@tabler/icons";
 import { IconPhoneCall, IconAt } from "@tabler/icons";
 import Load from "../../components/Load/Load";
 import Navbar from "../../components/Navbar/Navbar";
+import Error from "../../components/Error/Error";
 
 const useStyle = createStyles((theme) => ({
   icon: {
@@ -31,17 +32,14 @@ const useStyle = createStyles((theme) => ({
     width: "100%",
     padding: theme.spacing.md,
     color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-    border: `solid 2px transparent`,
-    transistion: "all 0.5s",
     borderRadius: theme.radius.md,
+    border: `solid 2px ${theme.colors[theme.primaryColor][4]}`,
 
     "&:hover": {
       backgroundColor:
         theme.colorScheme === "dark"
           ? theme.colors.dark[8]
           : theme.colors.gray[0],
-      border: `solid 2px ${theme.colors[theme.primaryColor][4]}`,
-      transform: "scale(1.01)",
     },
   },
   text: {
@@ -63,26 +61,39 @@ const Verified = () => {
   const [students, setStudents] = useState([]);
   const { classes } = useStyle();
   const [user, loading] = useAuthState(auth);
+  const [loadingStudents, setLoadingStudents] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function getStudents() {
-      const q = query(
-        collection(db, "students"),
-        where("verified", "==", true)
-      );
-      const querySnapshot = await getDocs(q);
-      // console.log(querySnapshot)
-      setStudents(
-        querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          student: doc.data(),
-        }))
-      );
+      try {
+        const q = query(
+          collection(db, "students"),
+          where("verified", "==", true)
+        );
+        const querySnapshot = await getDocs(q);
+        setStudents(
+          querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            student: doc.data(),
+          }))
+        );
+        setLoadingStudents(false);
+        // throw new Error("Ok testing");
+      } catch (err) {
+        setError(err);
+      }
     }
     user && getStudents();
   }, [user]);
 
-  if (loading) return <Load></Load>;
+  if (error)
+    return (
+      <>
+        <Error></Error>
+      </>
+    );
+  if (loading || loadingStudents) return <Load></Load>;
 
   return (
     <>

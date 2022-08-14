@@ -24,4 +24,16 @@ export const useStyles = createStyles((theme) => ({
     backgroundColor: theme.colors[theme.primaryColor][7],
     color: theme.colors[theme.primaryColor][0],
   },
+
+  image: {
+    border: `solid 5px ${theme.colors[theme.primaryColor][4]}`,
+    height: "10rem",
+    width: "10rem",
+    borderRadius: "50%",
+    minWidth: "2rem",
+    minHeight: "2rem",
+  },
+  borders: {
+    border: `solid 5px ${theme.colors[theme.primaryColor][4]}`,
+  },
 }));
