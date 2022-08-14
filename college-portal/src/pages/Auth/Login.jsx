@@ -12,7 +12,7 @@ import {
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../../firebase.config";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Notifications from "../../components/Notifications/Notifications";
 
 const Login = () => {
@@ -51,9 +51,12 @@ const Login = () => {
           </Title>
           <Text color="dimmed" size="sm" align="center" mt={5}>
             Do not have an account yet?{" "}
-            <Anchor href="/register" size="sm">
+            <Link to="/register" style={{
+                fontWeight: 700,
+                color: "inherit",
+              }}>
               Create account
-            </Anchor>
+            </Link>
           </Text>
 
           <Paper withBorder shadow="md" p={30} mt={30} radius="md">
