@@ -10,7 +10,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 import Protected from "./components/Protected/Protected";
-
+import PageNotFound from "./pages/pageNotFound/PageNotFound";
 function App() {
   const [colorScheme, setColorScheme] = React.useState(
     localStorage.getItem("colorScheme") || "dark"
@@ -58,8 +58,13 @@ function App() {
               <Route exact path="/Register" element={<Register />} />
               <Route exact path="/profile" element={<Profile />} />
               <Route exact path="/student/:id" element={<Student />} />
-              <Route exact path ="/students/unverified" element={<Unverified/>} />
+              <Route
+                exact
+                path="/students/unverified"
+                element={<Unverified />}
+              />
               <Route exact path="/students/verified" element={<Verified />} />
+              <Route path="*" element={<PageNotFound />} />
             </Routes>
           </BrowserRouter>
         </ColorSchemeProvider>
