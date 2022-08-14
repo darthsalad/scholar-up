@@ -59,7 +59,7 @@ const useStyle = createStyles((theme) => ({
   },
 }));
 
-const Students = () => {
+const Verified = () => {
   const [students, setStudents] = useState([]);
   const { classes } = useStyle();
   const [user, loading] = useAuthState(auth);
@@ -154,4 +154,4 @@ const Students = () => {
   );
 };
 
-export default Students;
+export default Verified
