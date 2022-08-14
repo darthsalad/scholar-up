@@ -25,6 +25,14 @@ const Student = () => {
   const [college, setCollege] = useState(null);
 
   useEffect(() => {
+    async function getCollege(){
+      const q = query(collection(db, "colleges"), where("domain", "==", data.student.cdomain));
+      const querySnap = await getDocs(q);
+      querySnap.docs.forEach((doc)=>{
+        setCollege(doc.data().cname);
+      })
+    }
+
     async function getStudents() {
       const docRef = doc(db, "students", id);
       const docSnap = await getDoc(docRef);
@@ -51,6 +59,7 @@ const Student = () => {
     // console.log(data);
     // console.log(college);
   }, [user, id, data, college]);
+
 
   if (loading || !data || !college) return <Load></Load>;
 
