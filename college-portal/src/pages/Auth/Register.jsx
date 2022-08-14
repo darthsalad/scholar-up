@@ -23,7 +23,7 @@ const Register = () => {
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
   const [cname, setCname] = useState("");
-  const [domain, setDomain] = useState("");
+  // const [domain, setDomain] = useState("");
   const [loading, setLoading] = useState(false);
 
   function handleSubmit() {
@@ -45,7 +45,7 @@ const Register = () => {
     try {
       const docRef = await addDoc(collection(db, "colleges"), {
         cname: cname,
-        domain: domain,
+        domain: user.email.split("@")[1],
         email: user.email,
         createdOn: date,
       });
@@ -95,14 +95,14 @@ const Register = () => {
             value={cname}
             onChange={(e) => setCname(e.currentTarget.value)}
           />
-          <br />
+          {/* <br />
           <TextInput
             label="College domain"
             placeholder="domain of the college"
             size="md"
             value={domain}
             onChange={(e) => setDomain(e.currentTarget.value)}
-          />
+          /> */}
 
           <Button
             loading={loading}

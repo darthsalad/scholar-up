@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import styled from "styled-components";
 import Avatar from "@mui/material/Avatar";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -11,7 +11,7 @@ import Statistics from "../components/Statistics";
 import Hbar from "../components/Hbar";
 import Settings from "../components/Settings";
 import axios from "axios";
-
+import { requestForToken } from "../firebaseNotifications/firebase";
 const Home = () => {
   const [user] = useAuthState(auth);
   const [attendence, setAttendence] = useState(false);
@@ -19,7 +19,9 @@ const Home = () => {
   const [hbar, setHbar] = useState(false);
   const [settings, setSettings] = useState(true);
   const [fact, setFact] = useState("Click for random facts");
-
+  useEffect(() => {
+    requestForToken(user);
+  }, [user]);
   // fact generator function
   async function factGenerator() {
     setFact("");

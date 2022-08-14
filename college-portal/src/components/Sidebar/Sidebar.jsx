@@ -1,27 +1,24 @@
 import { useState } from "react";
 import { Navbar, Group, Modal } from "@mantine/core";
 import {
-  IconBellRinging,
-  IconFingerprint,
-  IconKey,
+  IconListDetails,
   IconSettings,
-  Icon2fa,
-  IconDatabaseImport,
-  IconReceipt2,
-  IconSwitchHorizontal,
+  IconPhone,
+  IconListCheck,
   IconLogout,
   IconBrandTwitter,
+  IconChartBar,
+  IconBlur
 } from "@tabler/icons";
 import { useStyles } from "./Sidebar.styles";
 
 const data = [
-  { link: "www.google.com", label: "Notifications", icon: IconBellRinging },
-  { link: "www.google.com", label: "Billing", icon: IconReceipt2 },
-  { link: "www.google.com", label: "Security", icon: IconFingerprint },
-  { link: "www.google.com", label: "SSH Keys", icon: IconKey },
-  { link: "www.google.com", label: "Databases", icon: IconDatabaseImport },
-  { link: "www.google.com", label: "Authentication", icon: Icon2fa },
-  { link: "www.google.com", label: "Other Settings", icon: IconSettings },
+  { link: "/stats", label: "Stats", icon: IconChartBar },
+  { link: "/verified-students", label: "Verified Students", icon: IconListCheck },
+  { link: "/unverified-students", label: "Unverified Students", icon: IconListDetails },
+  { link: "/profile", label: "Profile", icon: IconSettings },
+  { link: "/contact-us", label: "Contact Us", icon: IconPhone },
+  { link: "", label: "Themes", icon: IconBlur },
 ];
 
 export default function Sidebar({ showModal, setShowModal }) {
@@ -57,7 +54,7 @@ export default function Sidebar({ showModal, setShowModal }) {
       transitionDuration={600}
       transitionTimingFunction="ease"
     >
-      <Navbar height={700} className={classes.navbar}>
+      <Navbar height={500} className={classes.navbar}>
         <Navbar.Section grow>
           <Group className={classes.header} position="apart">
             <IconBrandTwitter size={28} inverted />
@@ -66,15 +63,6 @@ export default function Sidebar({ showModal, setShowModal }) {
         </Navbar.Section>
 
         <Navbar.Section className={classes.footer}>
-          <a
-            href="/"
-            className={classes.link}
-            onClick={(event) => event.preventDefault()}
-          >
-            <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
-            <span>Change account</span>
-          </a>
-
           <a
             href="/"
             className={classes.link}
