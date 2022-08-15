@@ -7,7 +7,6 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import styled from "styled-components";
 import { mobile } from "./Utilities/responsive";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useEffect } from "react";
 import Notification from "./firebaseNotifications/Notification";
 
 function App() {
