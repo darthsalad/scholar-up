@@ -12,7 +12,7 @@ import {
 import Sidebar from "../Sidebar/Sidebar";
 import { useDisclosure } from "@mantine/hooks";
 import {
-  IconBrandTwitter,
+  IconSchool,
   IconChevronDown,
   IconSun,
   IconMoonStars,
@@ -142,7 +142,7 @@ export default function Navbar() {
       <Header height={56} className={classes.header} mb={120}>
         <Container>
           <div className={classes.inner}>
-            <IconBrandTwitter size={28} />
+            <IconSchool size={28} />
             <Group spacing={5} className={classes.links}>
               {items}
             </Group>
