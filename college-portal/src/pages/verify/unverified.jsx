@@ -23,8 +23,9 @@ const Unverified = () => {
 
   const [user, wait] = useAuthState(auth);
   const [loading, setLoading] = useState(true);
-  const [students, setStudents] = useState([]);
+  const [student, setStudent] = useState([]);
   const [error, setError] = useState(null);
+  const list = []
 
   // auth state takes some time
   useEffect(() => {
@@ -37,15 +38,14 @@ const Unverified = () => {
         );
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
-          setStudents(
-            querySnapshot.docs.map((doc) => ({
-              id: doc.id,
-              student: doc.data(),
-            }))
-          );
+          list.push({
+            id: doc.id,
+            data: doc.data()
+          })
         });
+        setStudent(list)
         setLoading(false);
-        console.log(students);
+        console.log(student);
         // throw new Error("Eww");
       } catch (err) {
         setError(err);
@@ -76,7 +76,7 @@ const Unverified = () => {
       <Text className={classes.text}>Un-verified students</Text>
       <div>
         <div>
-          {students.length === 0 && (
+          {student.length === 0 && (
             <Alert
               title="Great!"
               color="green"
@@ -85,8 +85,8 @@ const Unverified = () => {
               All students are verified
             </Alert>
           )}
-          {students.length !== 0 &&
-            students.map((student) => {
+          {student.length !== 0 &&
+            student.map((student) => {
               return (
                 <div key={student.id} style={{ padding: "20px" }}>
                   <UnstyledButton
