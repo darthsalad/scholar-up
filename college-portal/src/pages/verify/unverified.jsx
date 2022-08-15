@@ -93,7 +93,7 @@ const Unverified = () => {
                   >
                     <Group noWrap>
                       <Avatar
-                        src={student.student.imgURL}
+                        src={student.data.imgURL}
                         size={94}
                         radius="md"
                       />
@@ -104,11 +104,11 @@ const Unverified = () => {
                           weight={700}
                           color="dimmed"
                         >
-                          College Domain: {student.student.cdomain}
+                          College Domain: {student.data.cdomain}
                         </Text>
 
                         <Text size="lg" weight={500} className={classes.name}>
-                          {student.student.sname}
+                          {student.data.sname}
                         </Text>
 
                         <Group noWrap spacing={10} mt={3}>
@@ -118,7 +118,7 @@ const Unverified = () => {
                             className={classes.icon}
                           />
                           <Text size="xs" color="dimmed">
-                            {student.student.email}
+                            {student.data.email}
                           </Text>
                         </Group>
 
@@ -129,7 +129,7 @@ const Unverified = () => {
                             className={classes.icon}
                           />
                           <Text size="xs" color="dimmed">
-                            {student.student.mobile}
+                            {student.data.mobile}
                           </Text>
                         </Group>
                       </div>
