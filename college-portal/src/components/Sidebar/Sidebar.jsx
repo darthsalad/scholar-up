@@ -10,39 +10,36 @@ import {
   IconChartBar,
   IconBlur,
 } from "@tabler/icons";
+import { useNavigate } from "react-router-dom";
 import { useStyles } from "./Sidebar.styles";
 
 const data = [
   { link: "/stats", label: "Stats", icon: IconChartBar },
   {
-    link: "/verified-students",
+    link: "/students/verified",
     label: "Verified Students",
     icon: IconListCheck,
   },
   {
-    link: "/unverified-students",
+    link: "/students/unverified",
     label: "Unverified Students",
     icon: IconListDetails,
   },
   { link: "/profile", label: "Profile", icon: IconSettings },
-  { link: "/contact-us", label: "Contact Us", icon: IconPhone },
-  { link: "", label: "Themes", icon: IconBlur },
+  { link: "/contact", label: "Contact Us", icon: IconPhone },
 ];
 
 export default function Sidebar({ showModal, setShowModal }) {
   const { classes, cx } = useStyles();
-  const [active, setActive] = useState("Billing");
+  const navigate = useNavigate();
 
   const links = data.map((item) => (
     <a
-      className={cx(classes.link, {
-        [classes.linkActive]: item.label === active,
-      })}
+      className={cx(classes.link)}
       href={item.link}
       key={item.label}
       onClick={(event) => {
-        event.preventDefault();
-        setActive(item.label);
+        navigate(item.link);
       }}
     >
       <item.icon className={classes.linkIcon} stroke={1.5} />
@@ -63,12 +60,7 @@ export default function Sidebar({ showModal, setShowModal }) {
       transitionTimingFunction="ease"
     >
       <Navbar height={500} className={classes.navbar}>
-        <Navbar.Section grow>
-          <Group className={classes.header} position="apart">
-            <IconBrandTwitter size={28} />
-          </Group>
-          {links}
-        </Navbar.Section>
+        <Navbar.Section grow>{links}</Navbar.Section>
 
         <Navbar.Section className={classes.footer}>
           <a

@@ -53,14 +53,15 @@ export const useStyles = createStyles((theme) => ({
     minHeight: "30rem",
   },
 
-  gradient: {
+  text: {
     background: `linear-gradient(-22deg, ${
       theme.colors[theme.primaryColor][4]
-    } 11%, ${theme.colors[theme.primaryColor][7]} 125% )`,
-
+    } 11%, ${theme.colors[theme.primaryColor][7]} 125%)`,
+    textAlign: "center",
+    fontWeight: "1000",
     backgroundClip: "text",
     WebkitTextFillColor: "transparent",
-    fontSize: "2rem",
+    fontSize: "3rem",
     marginTop: "4rem",
   },
 
@@ -69,5 +70,9 @@ export const useStyles = createStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     width: "100%",
+  },
+  select: {
+    width: "80%",
+    margin: "2rem auto",
   },
 }));

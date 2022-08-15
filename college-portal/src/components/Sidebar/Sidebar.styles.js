@@ -3,13 +3,6 @@ import { createStyles } from "@mantine/core";
 export const useStyles = createStyles((theme, _params, getRef) => {
   const icon = getRef("icon");
   return {
-    // navbar: {
-    //   backgroundColor: theme.fn.variant({
-    //     variant: "filled",
-    //     color: theme.primaryColor,
-    //   }).background,
-    // },
-
     version: {
       backgroundColor: theme.fn.lighten(
         theme.fn.variant({ variant: "filled", color: theme.primaryColor })
@@ -45,6 +38,7 @@ export const useStyles = createStyles((theme, _params, getRef) => {
       display: "flex",
       alignItems: "center",
       textDecoration: "none",
+
       fontSize: theme.fontSizes.sm,
       color: theme.white,
       padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
@@ -57,6 +51,7 @@ export const useStyles = createStyles((theme, _params, getRef) => {
             .background,
           0.1
         ),
+        color: "inherit",
       },
     },
 
