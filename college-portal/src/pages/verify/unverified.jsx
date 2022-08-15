@@ -136,7 +136,7 @@ const Unverified = () => {
                         </Group>
                       </div>
                       <Group
-                        spacing="xl" 
+                        spacing="md" 
                         position="right"
                       >
                       <ActionIcon 
@@ -147,8 +147,8 @@ const Unverified = () => {
                         }}>
                         <IconCheckbox size={16} stroke={1.5} />
                       </ActionIcon>
+                      <IconChevronRight size={14} stroke={1.5} />
                       </Group>
-                      <IconChevronRight sx={{paddingRight: 0}} size={14} stroke={1.5} />
                     </Group>
                   </UnstyledButton>
                 </div>
