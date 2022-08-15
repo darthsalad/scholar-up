@@ -38,6 +38,21 @@ const Home = () => {
       });
   };
 
+  const attendence ={
+    january:[],
+    february:[],
+    march:[],
+    april:[],
+    may:[],
+    june:[],
+    july:[],
+    august:[],
+    september:[],
+    october:[],
+    november:[],
+    december:[],
+  }
+
   // first login adds data to database and creates new account
   async function createAccount() {
     const user = auth.currentUser;
@@ -53,20 +68,9 @@ const Home = () => {
             privatekey: props.data.privatekey,
             publickey: props.data.publickey,
             imgURL: [],
-            january: [],
-            february: [],
-            march: [],
-            april: [],
-            may: [],
-            june: [],
-            july: [],
-            august: [],
-            september: [],
-            october: [],
-            november: [],
-            december: [],
             dateOfJoining: [],
             streakTransaction: [],
+            attendence: attendence,
             accountCreationDate: createAcc.toLocaleDateString(),
           })
           .catch((err) => {

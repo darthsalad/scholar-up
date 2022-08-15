@@ -86,7 +86,6 @@ const Statistics = () => {
       (start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000;
     var oneDay = 1000 * 60 * 60 * 24;
     var day = Math.floor(diff / oneDay);
-
     return day;
   }
 
@@ -99,7 +98,7 @@ const Statistics = () => {
           const month = [];
           let sum = 0;
           for (let i = 0; i <= 11; i++) {
-            let lengthEach = snap.data()[monthNames[i]].length;
+            let lengthEach = snap.data().attendence[monthNames[i]].length;
             month.push(lengthEach);
             sum += lengthEach;
           }
