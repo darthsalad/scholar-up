@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/DarthSalad/scholar-up/issues"
   },
-  "homepage": "https://github.com/DarthSalad/scholar-up#readme"
+  "homepage": "https://github.com/DarthSalad/scholar-up#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "firebase-admin": "^11.0.1",
+    "node-cron": "^3.0.2"
+  }
 }
