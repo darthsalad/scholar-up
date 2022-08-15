@@ -76,7 +76,7 @@ const Student = () => {
                 />
               </div>
               <div className="bottom">
-                {console.log(data)}
+                {/* {console.log(data)} */}
                 <p className={`${classes.textLeft} name`}>
                   {data.student.sname}
                 </p>
@@ -114,19 +114,21 @@ const Student = () => {
               <div className="row mb-2 px-2">
                 <div className="col-4 col-md-3 leftt">College</div>
                 <div className={`${classes.rightt} col-8 col-md-9 rightt`}>
-                  {/* Internation Institute of Information and technology ,
-                  Bhubneshwar
-                  <br /> */}
                   {college}
                 </div>
               </div>
               <hr />
               <div className="row mb-2 px-2">
-                <div className="col-4 col-md-3 leftt">Scholarship</div>
-                <div className={`${classes.rightt} col-8 col-md-9 rightt`}>
-                  Scholarship program for student under minsity of Education and
-                  research.
-                </div>
+                <div className="col-4 col-md-3 leftt">Scholarships</div>
+                {data.student.scholarships.map((scholarship) => {
+                  return (
+                    <div className={`${classes.rightt} col-8 col-md-9 rightt`}>
+                      {scholarship}
+                    </div>
+                  )})}
+                {/* <div className={`${classes.rightt} col-8 col-md-9 rightt`}>
+                  scholarship 1
+                </div> */}
               </div>
               <hr />
               <div className="row mb-2 px-2">
