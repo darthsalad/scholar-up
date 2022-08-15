@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "./Student.css";
-import ReactRoundedImage from "react-rounded-image";
 import student2 from "./student2.png";
 import { useParams } from "react-router-dom";
 import { auth, db } from "../../firebase.config";
@@ -25,12 +24,15 @@ const Student = () => {
   const [college, setCollege] = useState(null);
 
   useEffect(() => {
-    async function getCollege(){
-      const q = query(collection(db, "colleges"), where("domain", "==", data.student.cdomain));
+    async function getCollege() {
+      const q = query(
+        collection(db, "colleges"),
+        where("domain", "==", data.student.cdomain)
+      );
       const querySnap = await getDocs(q);
-      querySnap.docs.forEach((doc)=>{
+      querySnap.docs.forEach((doc) => {
         setCollege(doc.data().cname);
-      })
+      });
     }
 
     async function getStudents() {
@@ -60,7 +62,6 @@ const Student = () => {
     // console.log(college);
   }, [user, id, data, college]);
 
-
   if (loading || !data || !college) return <Load></Load>;
 
   return (
@@ -71,7 +72,10 @@ const Student = () => {
           <div className="col-12 col-lg-4">
             <div className={`${classes.left} left ${classes.borders}`}>
               <div className="top">
-                <img src={data.student.imgURL} className={classes.image} />
+                <img
+                  src={data.student.imgURL || student2}
+                  className={classes.image}
+                />
               </div>
               <div className="bottom">
                 {console.log(data)}
