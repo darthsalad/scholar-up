@@ -109,6 +109,7 @@ export default function Navbar() {
       <Menu.Dropdown>
         {colors.map((color) => (
           <Menu.Item
+            key={color.value}
             icon={<IconCircle fill={color.value} size={14}></IconCircle>}
             onClick={() => toggleColorScheme(color.value)}
           >
@@ -140,7 +141,7 @@ export default function Navbar() {
       <Header height={56} className={classes.header} mb={120}>
         <Container>
           <div className={classes.inner}>
-            <IconBrandTwitter size={28} inverted="true" />
+            <IconBrandTwitter size={28} />
             <Group spacing={5} className={classes.links}>
               {items}
             </Group>

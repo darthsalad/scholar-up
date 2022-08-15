@@ -8,14 +8,22 @@ import {
   IconLogout,
   IconBrandTwitter,
   IconChartBar,
-  IconBlur
+  IconBlur,
 } from "@tabler/icons";
 import { useStyles } from "./Sidebar.styles";
 
 const data = [
   { link: "/stats", label: "Stats", icon: IconChartBar },
-  { link: "/verified-students", label: "Verified Students", icon: IconListCheck },
-  { link: "/unverified-students", label: "Unverified Students", icon: IconListDetails },
+  {
+    link: "/verified-students",
+    label: "Verified Students",
+    icon: IconListCheck,
+  },
+  {
+    link: "/unverified-students",
+    label: "Unverified Students",
+    icon: IconListDetails,
+  },
   { link: "/profile", label: "Profile", icon: IconSettings },
   { link: "/contact-us", label: "Contact Us", icon: IconPhone },
   { link: "", label: "Themes", icon: IconBlur },
@@ -57,7 +65,7 @@ export default function Sidebar({ showModal, setShowModal }) {
       <Navbar height={500} className={classes.navbar}>
         <Navbar.Section grow>
           <Group className={classes.header} position="apart">
-            <IconBrandTwitter size={28} inverted />
+            <IconBrandTwitter size={28} />
           </Group>
           {links}
         </Navbar.Section>
