@@ -13,6 +13,7 @@ import {
   getDoc,
   collection,
   getDocs,
+  Timestamp
 } from "firebase/firestore";
 import Load from "../../components/Load/Load";
 
@@ -47,9 +48,16 @@ const Student = () => {
 
     user && !data && getStudents();
     user && !college && getCollege();
-    // console.log(data);
+    console.log(data);
     // console.log(college);
   }, [user, id, data, college]);
+
+  const dob = (dataDOB) => {
+    var timeObj = new Timestamp(dataDOB.seconds, dataDOB.nanoseconds);
+    var dateObj = new Date(timeObj.toDate());
+    // console.log(dateObj.toLocaleDateString())
+    return dateObj.toLocaleDateString();
+  }
 
   if (loading || !data || !college) return <Load></Load>;
 
@@ -73,7 +81,7 @@ const Student = () => {
                   {data.student.sname}
                 </p>
                 <p className={`${classes.textLeft} other`}>Gender : Male</p>
-                <p className={`${classes.textLeft} other`}>DOB : 19-04-2002</p>
+                <p className={`${classes.textLeft} other`}>DOB : {dob(data.student.DOB)}</p>
                 <p className={`${classes.textLeft} other`}>
                   {data.student.mobile}
                 </p>
