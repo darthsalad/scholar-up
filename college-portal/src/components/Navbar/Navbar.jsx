@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { useStyles } from "./Navbar.styles";
 
 const links = [
+  { link: "/", label: "Home" },
   {
     link: "/stats",
     label: "Stats",

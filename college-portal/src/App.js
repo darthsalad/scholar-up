@@ -12,6 +12,7 @@ import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 import Protected from "./components/Protected/Protected";
 import Stats from "./pages/Stats/Stats";
+import Contact from "./pages/Contact/Contact";
 
 function App() {
   const [colorScheme, setColorScheme] = React.useState(
@@ -67,6 +68,11 @@ function App() {
               />
               <Route exact path="/students/verified" element={<Verified />} />
               <Route exact path="/stats" element={<Stats></Stats>}></Route>
+              <Route
+                exact
+                path="/contact"
+                element={<Contact></Contact>}
+              ></Route>
               <Route path="*" element={<PageNotFound />} />
             </Routes>
           </BrowserRouter>

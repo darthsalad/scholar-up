@@ -9,8 +9,7 @@ import {
   Text,
   createStyles,
 } from "@mantine/core";
-import { IconChevronRight } from "@tabler/icons";
-import { IconPhoneCall, IconAt } from "@tabler/icons";
+import { IconPhoneCall, IconAt, IconChevronRight } from "@tabler/icons";
 import Load from "../../components/Load/Load";
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/Error/Error";
@@ -165,4 +164,4 @@ const Verified = () => {
   );
 };
 
-export default Verified
+export default Verified;

@@ -96,8 +96,9 @@ const useStyles = createStyles((theme) => ({
     } 11%, ${theme.colors[theme.primaryColor][7]} 125% )`,
 
     backgroundClip: "text",
+    fontWeight: "1000",
     WebkitTextFillColor: "transparent",
-    fontSize: "2rem",
+    fontSize: "3rem",
     marginTop: "4rem",
   },
 
