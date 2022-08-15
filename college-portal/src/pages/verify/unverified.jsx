@@ -22,7 +22,6 @@ const Unverified = () => {
   const navigate = useNavigate();
 
   const [user, wait] = useAuthState(auth);
-  const [docId, setDocId] = useState("");
   const [loading, setLoading] = useState(true);
   const [students, setStudents] = useState([]);
   const [error, setError] = useState(null);
@@ -60,11 +59,11 @@ const Unverified = () => {
   // get details of all unverified students in the specific in the institute
 
   // verify desired student on click, setDocId when clicked
-  async function verifyOnClick() {
+  async function verifyOnClick(docId) {
     await updateDoc(doc(db, "students", docId), {
       verified: true,
     }).then(() => {
-      console.log("Verified");
+      console.log("Verified", docId);
     });
   }
 
@@ -136,16 +135,20 @@ const Unverified = () => {
                           </Text>
                         </Group>
                       </div>
-                      <Group spacing={0} position="right">
+                      <Group
+                        spacing="xl" 
+                        position="right"
+                      >
                       <ActionIcon 
-                        onClick={() => {
-                          setDocId(student.id);
-                          verifyOnClick();
+                        onClick={(e) => {
+                          e.stopPropagation(); 
+                          // setDocId(student.id);
+                          verifyOnClick(student.id);
                         }}>
                         <IconCheckbox size={16} stroke={1.5} />
                       </ActionIcon>
                       </Group>
-                      {<IconChevronRight size={14} stroke={1.5} />}
+                      <IconChevronRight sx={{paddingRight: 0}} size={14} stroke={1.5} />
                     </Group>
                   </UnstyledButton>
                 </div>

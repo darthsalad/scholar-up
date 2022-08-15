@@ -5,7 +5,7 @@ import Register from "./pages/Auth/Register";
 import Profile from "./pages/Profile/Profile";
 import Student from "./pages/Student/Student";
 import Unverified from "./pages/verify/unverified";
-import Verified from "./pages/Student/Verified";
+import Verified from "./pages/verify/Verified";
 import PageNotFound from "./pages/pageNotFound/PageNotFound";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { MantineProvider, ColorSchemeProvider } from "@mantine/core";

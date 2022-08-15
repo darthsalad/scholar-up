@@ -1,19 +1,18 @@
-import { useState } from "react";
-import { Navbar, Group, Modal } from "@mantine/core";
+import { Navbar,Modal } from "@mantine/core";
 import {
+  IconHome,
   IconListDetails,
   IconSettings,
   IconPhone,
   IconListCheck,
   IconLogout,
-  IconBrandTwitter,
   IconChartBar,
-  IconBlur,
 } from "@tabler/icons";
 import { useNavigate } from "react-router-dom";
 import { useStyles } from "./Sidebar.styles";
 
 const data = [
+  { link: "/", label: "Home", icon: IconHome},
   { link: "/stats", label: "Stats", icon: IconChartBar },
   {
     link: "/students/verified",
