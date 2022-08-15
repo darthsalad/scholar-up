@@ -23,11 +23,9 @@ const Unverified = () => {
 
   const [user, wait] = useAuthState(auth);
   const [loading, setLoading] = useState(true);
-  const [student, setStudent] = useState([]);
+  const [student, setStudent] = useState(null);
   const [error, setError] = useState(null);
-  const list = []
 
-  // auth state takes some time
   useEffect(() => {
     async function getList() {
       try {
@@ -37,28 +35,23 @@ const Unverified = () => {
           where("verified", "==", false)
         );
         const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-          list.push({
+        setStudent(
+          querySnapshot.docs.map((doc) => ({
             id: doc.id,
-            data: doc.data()
-          })
-        });
-        setStudent(list)
+            data: doc.data(),
+          }))
+          );
         setLoading(false);
-        console.log(student);
-        // throw new Error("Eww");
       } catch (err) {
         setError(err);
       }
     }
-
+    
     console.log({ user, wait });
+    console.log(student);
     user && getList();
   }, [user]);
 
-  // get details of all unverified students in the specific in the institute
-
-  // verify desired student on click, setDocId when clicked
   async function verifyOnClick(docId) {
     await updateDoc(doc(db, "students", docId), {
       verified: true,
@@ -67,7 +60,7 @@ const Unverified = () => {
     });
   }
 
-  if (loading) return <Load></Load>;
+  if (loading || !student ) return <Load></Load>;
   if (!loading && error) return <Error></Error>;
 
   return (
@@ -136,7 +129,7 @@ const Unverified = () => {
                         </Group>
                       </div>
                       <Group
-                        spacing="xl" 
+                        spacing="md" 
                         position="right"
                       >
                       <ActionIcon 
@@ -147,8 +140,8 @@ const Unverified = () => {
                         }}>
                         <IconCheckbox size={16} stroke={1.5} />
                       </ActionIcon>
+                      <IconChevronRight size={14} stroke={1.5} />
                       </Group>
-                      <IconChevronRight sx={{paddingRight: 0}} size={14} stroke={1.5} />
                     </Group>
                   </UnstyledButton>
                 </div>

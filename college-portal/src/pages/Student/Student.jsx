@@ -13,6 +13,7 @@ import {
   getDoc,
   collection,
   getDocs,
+  Timestamp
 } from "firebase/firestore";
 import Load from "../../components/Load/Load";
 
@@ -47,9 +48,16 @@ const Student = () => {
 
     user && !data && getStudents();
     user && !college && getCollege();
-    // console.log(data);
+    console.log(data);
     // console.log(college);
   }, [user, id, data, college]);
+
+  const dob = (dataDOB) => {
+    var timeObj = new Timestamp(dataDOB.seconds, dataDOB.nanoseconds);
+    var dateObj = new Date(timeObj.toDate());
+    // console.log(dateObj.toLocaleDateString())
+    return dateObj.toLocaleDateString();
+  }
 
   if (loading || !data || !college) return <Load></Load>;
 
@@ -68,12 +76,12 @@ const Student = () => {
                 />
               </div>
               <div className="bottom">
-                {console.log(data)}
+                {/* {console.log(data)} */}
                 <p className={`${classes.textLeft} name`}>
                   {data.student.sname}
                 </p>
                 <p className={`${classes.textLeft} other`}>Gender : Male</p>
-                <p className={`${classes.textLeft} other`}>DOB : 19-04-2002</p>
+                <p className={`${classes.textLeft} other`}>DOB : {dob(data.student.DOB)}</p>
                 <p className={`${classes.textLeft} other`}>
                   {data.student.mobile}
                 </p>
@@ -106,19 +114,21 @@ const Student = () => {
               <div className="row mb-2 px-2">
                 <div className="col-4 col-md-3 leftt">College</div>
                 <div className={`${classes.rightt} col-8 col-md-9 rightt`}>
-                  {/* Internation Institute of Information and technology ,
-                  Bhubneshwar
-                  <br /> */}
                   {college}
                 </div>
               </div>
               <hr />
               <div className="row mb-2 px-2">
-                <div className="col-4 col-md-3 leftt">Scholarship</div>
-                <div className={`${classes.rightt} col-8 col-md-9 rightt`}>
-                  Scholarship program for student under minsity of Education and
-                  research.
-                </div>
+                <div className="col-4 col-md-3 leftt">Scholarships</div>
+                {data.student.scholarships.map((scholarship) => {
+                  return (
+                    <div className={`${classes.rightt} col-8 col-md-9 rightt`}>
+                      {scholarship}
+                    </div>
+                  )})}
+                {/* <div className={`${classes.rightt} col-8 col-md-9 rightt`}>
+                  scholarship 1
+                </div> */}
               </div>
               <hr />
               <div className="row mb-2 px-2">
