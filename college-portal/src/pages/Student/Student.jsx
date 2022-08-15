@@ -45,17 +45,6 @@ const Student = () => {
       });
     }
 
-    async function getCollege() {
-      const q = query(
-        collection(db, "colleges"),
-        where("domain", "==", data.student.cdomain)
-      );
-      const querySnap = await getDocs(q);
-      querySnap.docs.forEach((doc) => {
-        setCollege(doc.data().cname);
-      });
-    }
-
     user && !data && getStudents();
     user && !college && getCollege();
     // console.log(data);
@@ -73,6 +62,7 @@ const Student = () => {
             <div className={`${classes.left} left ${classes.borders}`}>
               <div className="top">
                 <img
+                  alt="profile-pic"
                   src={data.student.imgURL || student2}
                   className={classes.image}
                 />
@@ -116,9 +106,9 @@ const Student = () => {
               <div className="row mb-2 px-2">
                 <div className="col-4 col-md-3 leftt">College</div>
                 <div className={`${classes.rightt} col-8 col-md-9 rightt`}>
-                  Internation Institute of Information and technology ,
+                  {/* Internation Institute of Information and technology ,
                   Bhubneshwar
-                  <br />
+                  <br /> */}
                   {college}
                 </div>
               </div>

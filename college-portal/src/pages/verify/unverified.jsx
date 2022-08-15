@@ -3,8 +3,8 @@ import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/Error/Error";
 import Load from "../../components/Load/Load";
 import { auth, db } from "../../firebase.config";
-import { IconPhoneCall, IconAt, IconChevronRight } from "@tabler/icons";
-import { UnstyledButton, Group, Avatar, Text, Alert } from "@mantine/core";
+import { IconPhoneCall, IconCheckbox, IconAt, IconChevronRight } from "@tabler/icons";
+import { UnstyledButton, Group, Avatar, Text, Alert, ActionIcon } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import {
   collection,
@@ -22,50 +22,52 @@ const Unverified = () => {
   const navigate = useNavigate();
 
   const [user, wait] = useAuthState(auth);
-  const [docId, setDocId] = useState("");
   const [loading, setLoading] = useState(true);
   const [students, setStudents] = useState([]);
   const [error, setError] = useState(null);
-  const list = [];
 
   // auth state takes some time
   useEffect(() => {
+    async function getList() {
+      try {
+        const q = query(
+          collection(db, "students"),
+          where("cdomain", "==", user.email.split("@")[1]),
+          where("verified", "==", false)
+        );
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          setStudents(
+            querySnapshot.docs.map((doc) => ({
+              id: doc.id,
+              student: doc.data(),
+            }))
+          );
+        });
+        setLoading(false);
+        console.log(students);
+        // throw new Error("Eww");
+      } catch (err) {
+        setError(err);
+      }
+    }
+
     console.log({ user, wait });
-    user && getlist();
+    user && getList();
   }, [user]);
 
   // get details of all unverified students in the specific in the institute
-  async function getlist() {
-    try {
-      const q = query(
-        collection(db, "students"),
-        where("cdomain", "==", user.email.split("@")[1]),
-        where("verified", "==", false)
-      );
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        list.push({ id: doc.id, data: doc.data() });
-      });
-      setLoading(false);
-      setStudents(list);
-      console.log(list);
-      // throw new Error("Eww");
-    } catch (err) {
-      setError(err);
-    }
-  }
 
   // verify desired student on click, setDocId when clicked
-  async function verifyOnClick() {
+  async function verifyOnClick(docId) {
     await updateDoc(doc(db, "students", docId), {
       verified: true,
     }).then(() => {
-      console.log("Verified");
+      console.log("Verified", docId);
     });
   }
 
   if (loading) return <Load></Load>;
-
   if (!loading && error) return <Error></Error>;
 
   return (
@@ -86,7 +88,7 @@ const Unverified = () => {
           {students.length !== 0 &&
             students.map((student) => {
               return (
-                <div style={{ padding: "20px" }}>
+                <div key={student.id} style={{ padding: "20px" }}>
                   <UnstyledButton
                     className={classes.user}
                     onClick={() => navigate(`/student/${student.id}`)}
@@ -133,8 +135,20 @@ const Unverified = () => {
                           </Text>
                         </Group>
                       </div>
-
-                      {<IconChevronRight size={14} stroke={1.5} />}
+                      <Group
+                        spacing="xl" 
+                        position="right"
+                      >
+                      <ActionIcon 
+                        onClick={(e) => {
+                          e.stopPropagation(); 
+                          // setDocId(student.id);
+                          verifyOnClick(student.id);
+                        }}>
+                        <IconCheckbox size={16} stroke={1.5} />
+                      </ActionIcon>
+                      </Group>
+                      <IconChevronRight sx={{paddingRight: 0}} size={14} stroke={1.5} />
                     </Group>
                   </UnstyledButton>
                 </div>

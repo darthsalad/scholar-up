@@ -68,6 +68,7 @@ const Verified = () => {
       try {
         const q = query(
           collection(db, "students"),
+          where("cdomain", "==", user.email.split("@")[1]),
           where("verified", "==", true)
         );
         const querySnapshot = await getDocs(q);
