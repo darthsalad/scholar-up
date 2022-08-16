@@ -72,6 +72,7 @@ const Home = () => {
             streakTransaction: [],
             attendence: attendence,
             accountCreationDate: createAcc.toLocaleDateString(),
+           verified:false
           })
           .catch((err) => {
             console.log(err);

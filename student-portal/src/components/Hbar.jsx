@@ -72,7 +72,7 @@ const Hbar = () => {
           setPrivatekey(snap.data().privatekey);
           setAccid(snap.data().accid);
           setDocId(snap.id);
-          setPresents(snap.data()[monthNames[month]]);
+          setPresents(snap.data().attendence[monthNames[month]]);
           setStreakTransaction(snap.data().streakTransaction);
           setTransactionDone(streakTransaction.includes(monthNames[month]));
         });
