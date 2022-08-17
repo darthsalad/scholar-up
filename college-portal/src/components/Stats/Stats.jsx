@@ -1,25 +1,70 @@
 import { useStyles } from "./Stats.styles";
 import { Text } from "@mantine/core";
+import { auth, db } from "../../firebase.config"
+import { useAuthState } from "react-firebase-hooks/auth";
+import Load from "../Load/Load";
+import { useEffect, useState } from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
-const data = [
-  {
-    title: "Number of students registered",
-    stats: "456,133",
-    description: "",
-  },
-  {
-    title: "Number of students having more than 75% attendance",
-    stats: "2,175",
-    description: "",
-  },
-  {
-    title: "Number of unverified users",
-    stats: "1,994",
-    description: "",
-  },
-];
 
 export function StatsGroup() {
+  const [user, loading] = useAuthState(auth);
+  const [loadingStats, setLoadingStats] = useState(true);
+  const [list, setList] =  useState();
+  const [unVerified, setUnverified] =  useState();
+  
+  useEffect(() => {
+    async function getRegistered() {
+      try {
+        const q = query(
+          collection(db, "students"),
+          where("cdomain", "==", user.email.split("@")[1])
+        );
+        const querySnapshot = await getDocs(q);
+        setList(querySnapshot.size);
+        setLoadingStats(false);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    async function getUnverified() {
+      try {
+        const q = query(
+          collection(db, "students"),
+          where("cdomain", "==", user.email.split("@")[1]),
+          where("verified", "==", false)
+        );
+        const querySnapshot = await getDocs(q);
+        setUnverified(querySnapshot.size);
+        setLoadingStats(false);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    
+    user && getRegistered();
+    user && getUnverified();
+    }, [user])
+    
+    const data = [
+      {
+        title: "Number of students registered",
+        stats: list,
+        description: "",
+      },
+      {
+        title: "Number of students having more than 75% attendance",
+        stats: "2,175",
+        description: "",
+      },
+      {
+        title: "Number of unverified users",
+        stats: unVerified,
+        description: "",
+      },
+    ];
+  
   const { classes } = useStyles();
   const stats = data.map((stat) => (
     <div key={stat.title} className={classes.stat}>
@@ -28,5 +73,5 @@ export function StatsGroup() {
       <Text className={classes.description}>{stat.description}</Text>
     </div>
   ));
-  return <div className={classes.root}>{stats}</div>;
+  return !user || loadingStats ? <Load></Load> : <div className={classes.root}>{stats}</div>;
 }

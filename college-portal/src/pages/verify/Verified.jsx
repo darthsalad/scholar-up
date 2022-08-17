@@ -8,6 +8,7 @@ import {
   Avatar,
   Text,
   createStyles,
+  Autocomplete
 } from "@mantine/core";
 import { IconPhoneCall, IconAt, IconChevronRight } from "@tabler/icons";
 import Load from "../../components/Load/Load";
@@ -41,6 +42,19 @@ const useStyle = createStyles((theme) => ({
           : theme.colors.gray[0],
     },
   },
+  userDropdown: {
+    display: "block",
+    width: "100%",
+    padding: theme.spacing.md,
+    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
+    borderRadius: theme.radius.md,
+    "&:hover": {
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[8]
+          : theme.colors.gray[0],
+    },
+  },
   text: {
     background: `linear-gradient(-22deg, ${
       theme.colors[theme.primaryColor][4]
@@ -58,6 +72,7 @@ const useStyle = createStyles((theme) => ({
 
 const Verified = () => {
   const [students, setStudents] = useState([]);
+  const [auto, setAuto] = useState([]);
   const { classes } = useStyle();
   const [user, loading] = useAuthState(auth);
   const [loadingStudents, setLoadingStudents] = useState(true);
@@ -78,6 +93,14 @@ const Verified = () => {
             student: doc.data(),
           }))
         );
+        setAuto(
+          querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            value: doc.data().sname, 
+            image: doc.data().imgURL, 
+            email: doc.data().email
+          }))
+        );
         setLoadingStudents(false);
         // throw new Error("Ok testing");
       } catch (err) {
@@ -95,11 +118,41 @@ const Verified = () => {
     );
   if (loading || loadingStudents) return <Load></Load>;
 
+  const AutoCompleteItem = ({value, id, image, email}) => (
+      <UnstyledButton
+        className={classes.userDropdown}
+        onClick={() => {
+          window.location = `/student/${id}`;
+        }}
+      >
+        <Group noWrap>
+          <Avatar radius="xl" src={image} />
+          <div>
+            <Text>{value}</Text>
+            <Text size="xs" color="dimmed">
+              {email}
+            </Text>
+          </div>
+        </Group>
+      </UnstyledButton>
+    );
+  
+
   return (
     <>
       <Navbar></Navbar>
       <Text className={classes.text}>Verified students</Text>
       <div>
+        <div
+          style={{display: "flex", justifyContent: "center"}}
+        >
+        <Autocomplete
+          sx={{maxWidth: "600px", minWidth: "300px"}}
+          placeholder="Search students"
+          itemComponent={AutoCompleteItem}
+          data={auto}
+        />
+        </div>
         <div>
           {students.map((student) => {
             return (

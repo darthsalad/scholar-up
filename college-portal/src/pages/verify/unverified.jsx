@@ -48,7 +48,7 @@ const Unverified = () => {
     }
     
     console.log({ user, wait });
-    console.log(student);
+    // console.log(student);
     user && getList();
   }, [user]);
 
