@@ -44,7 +44,7 @@ const Settings = () => {
 
   // Gets accid , docid,privatekey,imgURl and creation date from database
   useEffect(() => {
-    db.collection("accounts")
+    db.collection("students")
       .where("email", "==", user.email)
       .onSnapshot((snapshot) => {
         snapshot.forEach((snap) => {
@@ -85,7 +85,7 @@ const Settings = () => {
     );
     setDisableBtn(true);
 
-    user && (await db.collection("accounts").doc(dbId).delete());
+    user && (await db.collection("students").doc(dbId).delete());
 
     setTimeout(() => {
       auth.signOut();
@@ -95,7 +95,7 @@ const Settings = () => {
 
   // Upload latest photo function
   async function uploadPhoto() {
-    const variable = db.collection("accounts").doc(dbId);
+    const variable = db.collection("students").doc(dbId);
 
     await variable.update({
       imgURL: firebase.firestore.FieldValue.arrayRemove(imgURL),

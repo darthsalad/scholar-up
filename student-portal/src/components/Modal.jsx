@@ -40,7 +40,7 @@ export default function BasicModal() {
 
   // Gets docid and checks for imgURL
   useEffect(() => {
-    db.collection("accounts")
+    db.collection("students")
       .where("email", "==", user.email)
       .onSnapshot((snapshot) => {
         snapshot.forEach(async (snap) => {
@@ -119,7 +119,7 @@ export default function BasicModal() {
                           .child(user.displayName)
                           .getDownloadURL()
                           .then(async (url) => {
-                            const variable = db.collection("accounts").doc(id);
+                            const variable = db.collection("students").doc(id);
                             await variable.update({
                               imgURL:
                                 firebase.firestore.FieldValue.arrayUnion(url),
