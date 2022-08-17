@@ -13,6 +13,7 @@ import {
   getDocs,
   doc,
   updateDoc,
+  onSnapshot
 } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useStyle } from "./unverified.styles";
@@ -27,34 +28,40 @@ const Unverified = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function getList() {
-      try {
-        const q = query(
-          collection(db, "students"),
-          where("cdomain", "==", user.email.split("@")[1]),
-          where("verified", "==", false)
-        );
-        const querySnapshot = await getDocs(q);
-        setStudent(
-          querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            data: doc.data(),
-          }))
-          );
-        setLoading(false);
-      } catch (err) {
-        setError(err);
-      }
-    }
-    
     console.log({ user, wait });
     // console.log(student);
     user && getList();
   }, [user]);
 
+  async function getList() {
+    try {
+      const q = query(
+        collection(db, "students"),
+        where("cdomain", "==", user.email.split("@")[1]),
+        where("verified", "==", false)
+      );
+      const getall = onSnapshot(q, (querySnapshot) => {
+        const list = []
+        // setStudent(
+        querySnapshot.forEach((doc) => {
+          list.push({
+            id: doc.id,
+            data: doc.data(),
+          })
+          })
+          // );
+          setStudent(list)
+          setLoading(false);
+      });
+    } catch (err) {
+      setError(err);
+    }
+  }
+
   async function verifyOnClick(docId) {
     await updateDoc(doc(db, "students", docId), {
       verified: true,
+      verifiedOn: Date.now()
     }).then(() => {
       console.log("Verified", docId);
     });

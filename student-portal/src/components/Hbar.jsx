@@ -64,7 +64,7 @@ const Hbar = () => {
 
   // Gets privatekey,accid,docid,per month present, month in which streaks transaction happen
   useEffect(() => {
-    db.collection("accounts")
+    db.collection("students")
       .where("email", "==", user.email)
       .onSnapshot((snapshot) => {
         snapshot.forEach((snap) => {
@@ -142,7 +142,7 @@ const Hbar = () => {
         }
       );
 
-      const variable = db.collection("accounts").doc(docid);
+      const variable = db.collection("students").doc(docid);
 
       await variable.update({
         streakTransaction: firebase.firestore.FieldValue.arrayUnion(

@@ -1,69 +1,71 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import Header from "../components/Header";
-import styled from "styled-components";
-import { mobile } from "../Utilities/responsive";
-import { db, auth, provider } from "../firebaseConfig";
-import { useAuthState } from "react-firebase-hooks/auth";
+import React, { useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import axios from "axios"
+import Header from "../components/Header"
+import styled from "styled-components"
+import { mobile } from "../Utilities/responsive"
+import { db, auth, provider } from "../firebaseConfig"
+import { useAuthState } from "react-firebase-hooks/auth"
 
 const Home = () => {
-  const navigate = useNavigate();
-  const [user] = useAuthState(auth);
+  const navigate = useNavigate()
+  const [user] = useAuthState(auth)
 
   useEffect(() => {
-    if (user) navigate("/home");
-  }, [navigate, user]);
+    if (user) navigate("/home")
+  }, [navigate, user])
 
   // Google authentication sign in
   const signin = async (e) => {
-    e.preventDefault();
-    provider.setCustomParameters({ prompt: "select_account" });
+    e.preventDefault()
+    provider.setCustomParameters({ prompt: "select_account" })
     await auth
       .signInWithPopup(provider)
       .catch(alert)
       .then(() => {
-        const user = auth.currentUser;
-        let acc = false;
-        db.collection("accounts")
+        const user = auth.currentUser
+        let acc = false
+        db.collection("students")
           .get()
           .then((querySnapshot) => {
             querySnapshot.forEach(async (doc) => {
               if (doc.data().email === user.email) {
-                acc = true;
+                acc = true
               }
-            });
-            if (acc === false) createAccount();
-          });
-      });
-  };
+            })
+            if (acc === false) createAccount()
+          })
+      })
+  }
 
-  const attendence ={
-    january:[],
-    february:[],
-    march:[],
-    april:[],
-    may:[],
-    june:[],
-    july:[],
-    august:[],
-    september:[],
-    october:[],
-    november:[],
-    december:[],
+  const attendence = {
+    january: [],
+    february: [],
+    march: [],
+    april: [],
+    may: [],
+    june: [],
+    july: [],
+    august: [],
+    september: [],
+    october: [],
+    november: [],
+    december: [],
   }
 
   // first login adds data to database and creates new account
   async function createAccount() {
-    const user = auth.currentUser;
-    const createAcc = new Date();
+    const user = auth.currentUser
+    const createAcc = new Date()
     await axios
       .get("https://gatekeepers-backend.herokuapp.com/createAccount")
       .then((props) => {
-        db.collection("accounts")
+        db.collection("students")
           .add({
-            name: user.displayName,
+            sname: user.displayName,
             email: user.email,
+            mobile: user.phoneNumber,
+            cdomain: user.email.split("@")[1],
             accid: props.data.id,
             privatekey: props.data.privatekey,
             publickey: props.data.publickey,
@@ -71,12 +73,14 @@ const Home = () => {
             dateOfJoining: [],
             streakTransaction: [],
             attendence: attendence,
-            accountCreationDate: createAcc.toLocaleDateString(),
-           verified:false
+            accountCreatedOn: createAcc.toLocaleDateString(),
+            scholarships: [],
+            DOB: null,
+            verified: false,
           })
           .catch((err) => {
-            console.log(err);
-          });
+            console.log(err)
+          })
       });
   }
 
@@ -90,8 +94,8 @@ const Home = () => {
           </h1>
           <h2>One of a kind attendence management system</h2>
           <p>
-            A real time attendence management system using facial recognition
-            integrated with a decentralised payment/credit system
+            A real time attendence management system using facial recognition integrated with a decentralised
+            payment/credit system
           </p>
           <Button onClick={signin}>Login Now</Button>
         </MainText>
@@ -106,10 +110,10 @@ const Home = () => {
         </MainImage>
       </MainContent>
     </>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
 
 const MainContent = styled.div`
   display: flex;
@@ -117,7 +121,7 @@ const MainContent = styled.div`
   justify-content: center;
   padding: 50px;
   ${mobile({ flexDirection: "column-reverse" })}
-`;
+`
 
 const MainText = styled.div`
   flex: 1;
@@ -148,7 +152,7 @@ const MainText = styled.div`
   }
 
   ${mobile({ marginTop: "10px" })}
-`;
+`
 
 const Button = styled.button`
   padding: 15px;
@@ -165,11 +169,11 @@ const Button = styled.button`
     background: linear-gradient(to right bottom, #26a890, #3fe3fb);
     transition: all 1s ease-in-out;
   }
-`;
+`
 
 const MainImage = styled.div`
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-`;
+`

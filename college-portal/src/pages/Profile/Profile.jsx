@@ -48,8 +48,10 @@ const Profile = () => {
     try {
       await updateDoc(doc(db, "colleges", docid), {
         cname: cname,
+        class_begin: begin,
+        class_end: end
       })
-      console.log(begin)
+      console.log("Details updated")
       // throw new Error("Eww");
     } catch (err) {
       setError(err)
@@ -87,11 +89,11 @@ const Profile = () => {
                 disabled={true}
               ></TextInput>
               <div className={classes.timeInputs}>
-                <TimeInput label="Begin classes" clearable required className={classes.timeInput}
-                onChange={(e)=>{setBegin(e)}}
+                <TimeInput label="Begin classes (24 hr format)" clearable required className={classes.timeInput}
+                onChange={(e)=>{setBegin(e.toLocaleTimeString())}}
                 ></TimeInput>
-                <TimeInput label="End classes" clearable required className={classes.timeInput}
-                onChange={(e)=>{setEnd(e)}}
+                <TimeInput label="End classes (24 hr format)" clearable required className={classes.timeInput}
+                onChange={(e)=>{setEnd(e.toLocaleTimeString())}}
                 ></TimeInput>
               </div>
 

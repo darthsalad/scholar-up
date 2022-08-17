@@ -91,7 +91,7 @@ const Statistics = () => {
 
   // Structures data for statistics by segregating it and adds different color to it
   useEffect(() => {
-    db.collection("accounts")
+    db.collection("students")
       .where("email", "==", user.email)
       .onSnapshot((snapshot) => {
         snapshot.forEach((snap) => {
