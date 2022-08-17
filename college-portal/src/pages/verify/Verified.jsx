@@ -7,76 +7,29 @@ import {
   Group,
   Avatar,
   Text,
-  createStyles,
-  Autocomplete
+  Autocomplete,
+  Menu
 } from "@mantine/core";
-import { IconPhoneCall, IconAt, IconChevronRight } from "@tabler/icons";
+import { IconChevronDown } from "@tabler/icons";
 import Load from "../../components/Load/Load";
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/Error/Error";
+import { useStyle } from "./verified.styles";
+import StudentList from "./StudentList";
 
-const useStyle = createStyles((theme) => ({
-  icon: {
-    color:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[3]
-        : theme.colors.gray[5],
-  },
-
-  name: {
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-  },
-
-  user: {
-    display: "block",
-    width: "100%",
-    padding: theme.spacing.md,
-    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-    borderRadius: theme.radius.md,
-    border: `solid 2px ${theme.colors[theme.primaryColor][4]}`,
-
-    "&:hover": {
-      backgroundColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[8]
-          : theme.colors.gray[0],
-    },
-  },
-  userDropdown: {
-    display: "block",
-    width: "100%",
-    padding: theme.spacing.md,
-    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-    borderRadius: theme.radius.md,
-    "&:hover": {
-      backgroundColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[8]
-          : theme.colors.gray[0],
-    },
-  },
-  text: {
-    background: `linear-gradient(-22deg, ${
-      theme.colors[theme.primaryColor][4]
-    } 11%, ${theme.colors[theme.primaryColor][7]} 125% )`,
-
-    backgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    fontSize: "3rem",
-    fontWeight: "1000",
-    textAlign: "center",
-    marginTop: "-2rem",
-    marginBottom: "4rem",
-  },
-}));
+const sortOptions = [{label: "Alphabetically"}, {label: "Scholarship"}]
 
 const Verified = () => {
   const [students, setStudents] = useState([]);
   const [auto, setAuto] = useState([]);
-  const { classes } = useStyle();
+  const [opened, setOpened] = useState(false);
+  const [selected, setSelected] = useState(sortOptions[0]);
+  const { classes } = useStyle({ opened });
   const [user, loading] = useAuthState(auth);
   const [loadingStudents, setLoadingStudents] = useState(true);
   const [error, setError] = useState(null);
+  const [sort, setSort] = useState(false);
+  const [scholarships, setScholarships] = useState([])
 
   useEffect(() => {
     async function getStudents() {
@@ -102,13 +55,30 @@ const Verified = () => {
           }))
         );
         setLoadingStudents(false);
-        // throw new Error("Ok testing");
       } catch (err) {
         setError(err);
       }
     }
+
+    async function getScholarships() {
+      try{
+        const q = query(
+          collection(db, "colleges"),
+          where("domain", "==", user.email.split("@")[1])
+        );
+        const querySnapshot = await getDocs(q);
+        setScholarships(
+          querySnapshot.docs[0].data().scholarships  
+        );
+      }catch(err){
+        console.log(err)
+      }
+    }
+
     user && getStudents();
-  }, [user]);
+    user && getScholarships();
+    // console.log(scholarships);
+  }, [user, scholarships]);
 
   if (error)
     return (
@@ -119,24 +89,38 @@ const Verified = () => {
   if (loading || loadingStudents) return <Load></Load>;
 
   const AutoCompleteItem = ({value, id, image, email}) => (
-      <UnstyledButton
-        className={classes.userDropdown}
-        onClick={() => {
-          window.location = `/student/${id}`;
-        }}
-      >
-        <Group noWrap>
-          <Avatar radius="xl" src={image} />
-          <div>
-            <Text>{value}</Text>
-            <Text size="xs" color="dimmed">
-              {email}
-            </Text>
-          </div>
-        </Group>
-      </UnstyledButton>
-    );
-  
+    <UnstyledButton
+      className={classes.userDropdown}
+      onClick={() => {
+        window.location = `/student/${id}`;
+      }}
+    >
+      <Group noWrap>
+        <Avatar radius="xl" src={image} />
+        <div>
+          <Text>{value}</Text>
+          <Text size="xs" color="dimmed">
+            {email}
+          </Text>
+        </div>
+      </Group>
+    </UnstyledButton>
+  );
+
+
+  const items = sortOptions.map((item) => (
+    <Menu.Item
+      onClick={() => {
+        setSelected(item); 
+        item.label === "Scholarship" 
+        ? setSort(true)
+        : setSort(false);
+      }}
+      key={item.label}
+    >
+      {item.label}
+    </Menu.Item>
+  ));
 
   return (
     <>
@@ -144,7 +128,12 @@ const Verified = () => {
       <Text className={classes.text}>Verified students</Text>
       <div>
         <div
-          style={{display: "flex", justifyContent: "center"}}
+          style={{
+            display: "flex",
+            flexWrap: "wrap", 
+            justifyContent: "center",
+            // alignItems: "center"
+          }}
         >
         <Autocomplete
           sx={{maxWidth: "600px", minWidth: "300px"}}
@@ -152,64 +141,67 @@ const Verified = () => {
           itemComponent={AutoCompleteItem}
           data={auto}
         />
+        <Menu
+          className={classes.sortMenu}
+          onOpen={() => setOpened(true)}
+          onClose={() => setOpened(false)}
+          radius="md"
+          width="target"
+        >
+          <Menu.Target>
+            <UnstyledButton className={classes.control}>
+              <Group spacing="xs">
+                <span className={classes.label}>{selected.label}</span>
+              </Group>
+              <IconChevronDown size={16} className={classes.iconDropdown} stroke={1.5} />
+            </UnstyledButton>
+          </Menu.Target>
+          <Menu.Dropdown>{items}</Menu.Dropdown>
+        </Menu>
         </div>
         <div>
-          {students.map((student) => {
+          {sort 
+          ? scholarships.map((scholarship) => {
             return (
-              <div style={{ padding: "20px" }}>
-                <UnstyledButton
-                  className={classes.user}
-                  onClick={() => {
-                    window.location = `/student/${student.id}`;
-                  }}
-                >
-                  <Group noWrap>
-                    <Avatar
-                      src={student.student.imgURL}
-                      size={94}
-                      radius="md"
-                    />
-                    <div>
-                      <Text
-                        size="xs"
-                        sx={{ textTransform: "uppercase" }}
-                        weight={700}
-                        color="dimmed"
-                      >
-                        College Domain: {student.student.cdomain}
-                      </Text>
-
-                      <Text size="lg" weight={500} className={classes.name}>
-                        {student.student.sname}
-                      </Text>
-
-                      <Group noWrap spacing={10} mt={3}>
-                        <IconAt
-                          stroke={1.5}
-                          size={16}
-                          className={classes.icon}
-                        />
-                        <Text size="xs" color="dimmed">
-                          {student.student.email}
-                        </Text>
-                      </Group>
-
-                      <Group noWrap spacing={10} mt={5}>
-                        <IconPhoneCall
-                          stroke={1.5}
-                          size={16}
-                          className={classes.icon}
-                        />
-                        <Text size="xs" color="dimmed">
-                          {student.student.mobile}
-                        </Text>
-                      </Group>
-                    </div>
-
-                    {<IconChevronRight size={14} stroke={1.5} />}
-                  </Group>
-                </UnstyledButton>
-              </div>
+            <div className={classes.group}>
+              <Text 
+                className={classes.text}
+                style={{
+                  fontSize: "2rem",
+                  textAlign: "left",
+                  margin: "auto 30px",
+                }}
+              >
+                {scholarship}
+              </Text>
+              {students.map((student) => {
+                return(
+                  student.student.scholarships.includes(scholarship)?
+                  <StudentList 
+                    id={student.id}
+                    image={student.student.imgURL} 
+                    cdomain={student.student.cdomain}
+                    sname={student.student.sname}
+                    email={student.student.email}
+                    mobile={student.student.mobile}
+                  />
+                  :<></>
+                )
+              })}
+            </div>
+            )
+            // if(student.scholarships.includes )
+          })
+          : students.map((student) => {
+            return (
+              <StudentList 
+                id={student.id}
+                image={student.student.imgURL} 
+                cdomain={student.student.cdomain}
+                sname={student.student.sname}
+                email={student.student.email}
+                mobile={student.student.mobile}
+              />
             );
           })}
         </div>
