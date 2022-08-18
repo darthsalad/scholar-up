@@ -100,7 +100,7 @@ const Student = () => {
               <div className="row mb-2 px-2">
                 <div className="col-4 col-md-3 leftt">College ID</div>
                 <div className={`${classes.rightt} col-8 col-md-9 rightt`}>
-                  B193004
+                  {data.student.email.split("@")[0]}
                 </div>
               </div>
               <hr />
