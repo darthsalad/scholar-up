@@ -13,6 +13,7 @@ import { NotificationsProvider } from "@mantine/notifications";
 import Protected from "./components/Protected/Protected";
 import Stats from "./pages/Stats/Stats";
 import Contact from "./pages/Contact/Contact";
+import Logout from "./pages/Auth/logout"
 
 function App() {
   const [colorScheme, setColorScheme] = React.useState(
@@ -59,6 +60,7 @@ function App() {
               />
               <Route exact path="/login" element={<Login />} />
               <Route exact path="/Register" element={<Register />} />
+              <Route exact path="/logout" element={<Logout />} />
               <Route exact path="/profile" element={<Profile />} />
               <Route exact path="/student/:id" element={<Student />} />
               <Route

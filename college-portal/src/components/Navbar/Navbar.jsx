@@ -18,8 +18,11 @@ import {
   IconMoonStars,
   IconCircle,
 } from "@tabler/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { useStyles } from "./Navbar.styles";
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { auth } from '../../firebase.config'
+import { useEffect } from "react";
 
 const links = [
   { link: "/", label: "Home" },
@@ -63,6 +66,7 @@ const colors = [
 ];
 
 export default function Navbar() {
+  const [user,wait] = useAuthState(auth)
   const [opened, { toggle }] = useDisclosure(false);
   const { classes } = useStyles();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -70,6 +74,10 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const dark = colorScheme === "dark";
+
+  useEffect(() => {
+    console.log({ user, wait })
+  },[user])
 
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
@@ -95,13 +103,17 @@ export default function Navbar() {
     }
 
     return (
-      <a key={link.label} href={link.link} className={classes.link}>
+      <Link key={link.label} to={link.link} className={classes.link}>
         {link.label}
-      </a>
+      </Link>
     );
   });
 
   items.push(
+    <>
+    <Link key="Logout" to={!wait && (user ? "/logout" : "/register")} className={classes.link}>
+    {!wait && (user ? "Logout" : "Register")}
+      </Link>
     <Menu key="Select" trigger="hover" exitTransitionDuration={0}>
       <Menu.Target>
         <Button>Toggle Color</Button>
@@ -118,7 +130,8 @@ export default function Navbar() {
           </Menu.Item>
         ))}
       </Menu.Dropdown>
-    </Menu>
+      </Menu>
+      </>
   );
 
   items.push(
