@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Alert from "@mui/material/Alert";
@@ -9,6 +9,9 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { db, auth, storage } from "../firebaseConfig";
 import firebase from "firebase";
 import Webcam from "react-webcam";
+import { TextInput, Button, Select, Group, UnstyledButton, Text } from "@mantine/core"
+import { DatePicker } from '@mantine/dates'
+import { IconAt, IconBuilding } from "@tabler/icons"
 
 const style = {
   position: "absolute",
@@ -37,6 +40,12 @@ export default function BasicModal() {
   const [progress, setProgress] = useState(0);
   const [disable, setDisable] = useState(false);
   const [text, setText] = useState("Take a Selfie");
+  const [imgTaken, setImgTaken] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [dob, setDob] = useState(false);
+  const [mobileNo, setMobile] = useState("");
+  const [colleges, setColleges] = useState([]);
+  const [domain, setDomain] = useState("");
 
   // Gets docid and checks for imgURL
   useEffect(() => {
@@ -49,9 +58,55 @@ export default function BasicModal() {
           else setOpen(false);
         });
       });
+    
+    db.collection("colleges")
+      .onSnapshot((snapshot) => {
+        // console.log(snapshot.docs[0].data());
+        setColleges(
+          snapshot.docs.map((doc) => ({
+            value: doc.id,
+            cname: doc.data().cname,
+            label: doc.data().cname,
+          }))
+        )
+      })
+    // console.log(colleges);
+
   }, [user]);
 
-  const [open, setOpen] = React.useState(false);
+  async function handleSubmit(e) {
+    e.preventDefault()
+    try {
+      const variable = db.collection("students").doc(id)
+      await variable.update({
+        DOB: dob,
+        mobile: mobileNo,
+      })
+      setImgTaken(false)
+    } catch (err) {
+      console.log(err);
+      alert("Invalid data")
+    }
+  }
+
+  const SelectItem = forwardRef(({ value, cname, ...others }, ref) => (
+    <UnstyledButton>
+      <div ref={ref} {...others}>
+        <Group noWrap>
+          <div>
+            <Text size="sm">{cname}</Text>
+          </div>
+        </Group>
+      </div>
+      </UnstyledButton>
+    ));
+  
+  async function setCollegeDomain(cId){
+    const variable = db.collection("colleges").doc(cId)
+    const c = await variable.get();
+    console.log(c.data().domain);
+    setDomain(c.data().domain);
+  }
 
   return (
     <>
@@ -75,8 +130,62 @@ export default function BasicModal() {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <Box sx={style} style={{}}>
-            <Webcam
+          <Box sx={style}>
+            {imgTaken
+            ? <form>
+                <div 
+                  style={{
+                    width: "auto",
+                    height: "30rem",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <TextInput
+                    icon={<IconBuilding size={14}></IconBuilding>}
+                    label="Mobile"
+                    value={mobileNo}
+                    placeholder="Enter mobile number"
+                    style={{marginBottom: "2rem",}}
+                    onChange={(e) => {setMobile(e.target.value)}}
+                    required
+                  ></TextInput>
+                  <Select
+                    label="Choose college"
+                    placeholder="Pick one"
+                    itemComponent={SelectItem}
+                    data={colleges}
+                    searchable
+                    required
+                    maxDropdownHeight={400}
+                    nothingFound="No Results"
+                    filter={(value, item) =>
+                      item.cname.toLowerCase().includes(value.toLowerCase().trim())
+                    }
+                    onChange={(e)=>{
+                      setCollegeDomain(e);
+                    }}
+                  />
+                  <TextInput
+                    value={domain}
+                    icon={<IconAt size={14}></IconAt>}
+                    label="Institute domain"
+                    placeholder="Update your institute's domain"
+                    style={{marginBottom: "2rem",}}
+                    data={colleges}
+                    disabled
+                  ></TextInput>
+                  <div style={{ minWidth: "40%"}}>
+                    <DatePicker label="Date of Birth" required
+                      onChange={(e)=>{setDob(e.toLocaleDateString())}}
+                    />
+                  </div>
+
+                  <Button type="submit" onClick={(e)=>handleSubmit(e)} fullWidth>
+                    Submit
+                  </Button>
+                </div>
+              </form>
+            : <Webcam
               audio={false}
               height={1080}
               videoConstraints={videoConstraints}
@@ -90,7 +199,7 @@ export default function BasicModal() {
               }}
             >
               {({ getScreenshot }) => (
-                <Button
+                <CustomButton
                   disabled={disable}
                   onClick={() => {
                     // gets screens shot
@@ -126,7 +235,8 @@ export default function BasicModal() {
                             });
                             setProgress(0);
                             setDisable(true);
-                            setOpen(false);
+                            // setOpen(false);
+                            setImgTaken(true);
                           })
                           .catch((err) => console.error(err));
                       }
@@ -134,9 +244,9 @@ export default function BasicModal() {
                   }}
                 >
                   {text}
-                </Button>
+                </CustomButton>
               )}
-            </Webcam>
+            </Webcam>}
           </Box>
         </Modal>
       </div>
@@ -144,7 +254,7 @@ export default function BasicModal() {
   );
 }
 
-const Button = styled.button`
+const CustomButton = styled.button`
   background: linear-gradient(to right top, #65dfc9, #6cdbeb);
   border-radius: 2rem;
   color: white;
