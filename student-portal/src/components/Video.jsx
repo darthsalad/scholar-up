@@ -23,16 +23,16 @@ const Video = () => {
   const [latestDate, setLatestDate] = useState();
   const [attendence, setAttendence] = useState(false);
   const [dbAttendence, setdbAttendence] = useState(false);
-  const [thisMonth,setthisMonth]=useState();
+  const [thisMonth, setthisMonth] = useState();
   const [response, setResponse] = useState("");
   const [userImg, setUserImg] = useState("");
 
   // assign name to respective image URL of all accounts
   useEffect(() => {
-    db.collection("accounts").onSnapshot((snapshot) => {
+    db.collection("students").onSnapshot((snapshot) => {
       setData(
         snapshot.docs.map((doc) => ({
-          name: doc.data().name,
+          name: doc.data().sname,
           imgURL:
             doc.data().imgURL[0] ||
             "https://i.insider.com/59ea578149e1cf5f038b47af?width=1000&format=jpeg&auto=webp",
@@ -43,7 +43,7 @@ const Video = () => {
 
   // gets id, hedera account id,private key, user image url, latest date of attendence
   useEffect(() => {
-    db.collection("accounts")
+    db.collection("students")
       .where("email", "==", user.email)
       .onSnapshot((snapshot) => {
         snapshot.forEach((snap) => {
@@ -54,12 +54,15 @@ const Video = () => {
           setUserImg(snap.data().imgURL[0]);
           // const latestAttendence =
           //   snap.data()[month][snap.data()[month].length - 1];
-          const latestAttendence = snap.data().attendence[month][snap.data().attendence[month].length-1]
+          const latestAttendence =
+            snap.data().attendence[month][
+              snap.data().attendence[month].length - 1
+            ];
           setLatestDate(latestAttendence);
-          console.log(latestAttendence)
+          console.log(latestAttendence);
           let dat = date.getDate();
           dat === latestAttendence && setdbAttendence(true);
-          setthisMonth(snap.data().attendence)
+          setthisMonth(snap.data().attendence);
         });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -115,28 +118,40 @@ const Video = () => {
   async function addAttendence(attended) {
     let hours = date.getHours();
     let dat = date.getDate();
-   
+
     if (attended && hours <= 23 && hours >= 11) {
-      const variable = db.collection("accounts").doc(id);
+      const variable = db.collection("students").doc(id);
       const month = getMonth(date.getMonth());
-      const currentPostRef = firebase.firestore.DocumentReference(variable)
-     
+      const currentPostRef = firebase.firestore.DocumentReference(variable);
 
-
-      if(!thisMonth[month].includes(dat)){
-        thisMonth[month].push(dat)
+      if (!thisMonth[month].includes(dat)) {
+        thisMonth[month].push(dat);
       }
 
-      await variable.update({attendence:thisMonth})
-      .then((data)=>console.log(data))
-      .catch(err=>console.log(err))
-      
+      await variable.update({ attendence: thisMonth });
     }
   }
 
   // recognition and emotion detection
   const detect = async () => {
-    const labeledFaceDescriptors = await loadImage();
+    let labeledFaceDescriptors;
+    data.map(async ({ name, imgURL }) => {
+      const descriptions = [];
+      const img = await faceapi.fetchImage(`${imgURL || userImg}`);
+      const detections = await faceapi
+        .detectAllFaces(img)
+        .withFaceLandmarks()
+        .withFaceDescriptors();
+
+      detections.length !== 0 &&
+        descriptions.push(new Float32Array(detections[0].descriptor));
+
+      labeledFaceDescriptors = new faceapi.LabeledFaceDescriptors(
+        name || user.displayName,
+        descriptions
+      );
+    });
+    // const labeledFaceDescriptors = await loadImage();
 
     setInterval(async () => {
       if (initialise) {
@@ -187,27 +202,6 @@ const Video = () => {
       });
     }, 1000);
   };
-
-  // gets image from database and adds descriptors to it
-  async function loadImage() {
-    return Promise.all(
-      data.map(async ({ name, imgURL }) => {
-        const descriptions = [];
-        for (let i = 0; i <= 1; i++) {
-          const img = await faceapi.fetchImage(`${imgURL || userImg}`);
-          const detections = await faceapi
-            .detectAllFaces(img)
-            .withFaceLandmarks()
-            .withFaceDescriptors();
-          descriptions.push(new Float32Array(detections[0].descriptor));
-        }
-        return new faceapi.LabeledFaceDescriptors(
-          name || user.displayName,
-          descriptions
-        );
-      })
-    );
-  }
 
   return (
     <>

@@ -61,7 +61,8 @@ const Unverified = () => {
   async function verifyOnClick(docId) {
     await updateDoc(doc(db, "students", docId), {
       verified: true,
-      verifiedOn: Date.now()
+      verifiedOn: Date.now(),
+      totalAtt: 0
     }).then(() => {
       console.log("Verified", docId);
     });
