@@ -29,10 +29,10 @@ const Video = () => {
 
   // assign name to respective image URL of all accounts
   useEffect(() => {
-    db.collection("accounts").onSnapshot((snapshot) => {
+    db.collection("students").onSnapshot((snapshot) => {
       setData(
         snapshot.docs.map((doc) => ({
-          name: doc.data().name,
+          name: doc.data().sname,
           imgURL:
             doc.data().imgURL[0] ||
             "https://i.insider.com/59ea578149e1cf5f038b47af?width=1000&format=jpeg&auto=webp",
@@ -43,7 +43,7 @@ const Video = () => {
 
   // gets id, hedera account id,private key, user image url, latest date of attendence
   useEffect(() => {
-    db.collection("accounts")
+    db.collection("students")
       .where("email", "==", user.email)
       .onSnapshot((snapshot) => {
         snapshot.forEach((snap) => {
@@ -117,7 +117,7 @@ const Video = () => {
     let dat = date.getDate();
    
     if (attended && hours <= 23 && hours >= 11) {
-      const variable = db.collection("accounts").doc(id);
+      const variable = db.collection("students").doc(id);
       const month = getMonth(date.getMonth());
       const currentPostRef = firebase.firestore.DocumentReference(variable)
      
@@ -136,7 +136,23 @@ const Video = () => {
 
   // recognition and emotion detection
   const detect = async () => {
-    const labeledFaceDescriptors = await loadImage();
+    let labeledFaceDescriptors
+      data.map(async ({ name, imgURL }) => {
+        const descriptions = [];
+          const img = await faceapi.fetchImage(`${imgURL || userImg}`);
+          const detections = await faceapi
+            .detectAllFaces(img)
+            .withFaceLandmarks()
+            .withFaceDescriptors();
+          console.log(detections)
+        detections.length !== 0 && descriptions.push(new Float32Array(detections[0].descriptor));
+        
+          labeledFaceDescriptors = new faceapi.LabeledFaceDescriptors(
+          name || user.displayName,
+          descriptions
+        );
+      })
+    // const labeledFaceDescriptors = await loadImage();
 
     setInterval(async () => {
       if (initialise) {
