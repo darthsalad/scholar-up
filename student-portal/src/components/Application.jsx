@@ -1,21 +1,102 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
+import { useAuthState } from "react-firebase-hooks/auth";
+
+import firebase from "firebase";
+import LinearProgress from "@mui/material/LinearProgress";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+
+import { db, auth, storage } from "../firebaseConfig";
+
 import { checkImage } from "../Utilities/checker";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 const Application = () => {
+  const [user] = useAuthState(auth);
   const upload = useRef();
-  const [alert, setAlert] = useState("");
-  const [pdf, setPdf] = useState([]);
+  const [id, setID] = useState();
+  const [progress, setProgress] = useState(0);
   const [err, setError] = useState("");
+  const [applications, setApplications] = useState([]);
+
+  function LinearProgressWithLabel(props) {
+    return (
+      <Box
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        <Box sx={{ width: "80%", mr: 1 }}>
+          <LinearProgress variant="determinate" {...props} />
+        </Box>
+        <Box sx={{ minWidth: 35 }}>
+          <Typography variant="body2" color="text.secondary">{`${Math.round(
+            props.value
+          )}%`}</Typography>
+        </Box>
+      </Box>
+    );
+  }
+
+  useEffect(() => {
+    db.collection("students")
+      .where("email", "==", user.email)
+      .onSnapshot((snapshot) => {
+        snapshot.forEach(async (snap) => {
+          setID(snap.id);
+          setApplications(snap.data().applications);
+        });
+      });
+  }, [user]);
 
   const imageUpload = (e) => {
     const file = e.target.files[0];
-    console.log(file);
+
     setError(checkImage(file));
-    console.log(err);
+    if (!err) {
+      console.log(file);
+      uploadPDF(file);
+    }
+  };
+
+  const uploadPDF = (file) => {
+    const uploadTask = storage.ref(`applications/${file.name}`).put(file);
+    console.log(uploadTask);
+
+    uploadTask.on(
+      "state_changes",
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setProgress(progress);
+      },
+      (err) => {
+        console.log(err);
+        setError(err);
+      },
+      () => {
+        storage
+          .ref("applications")
+          .child(file.name)
+          .getDownloadURL()
+          .then(async (url) => {
+            const variable = db.collection("students").doc(id);
+            const date = new Date();
+            const fileObj = {
+              fileName: file.name,
+              fileDate: date.toLocaleDateString(),
+              filePDF: url,
+            };
+            await variable
+              .update({
+                applications: firebase.firestore.FieldValue.arrayUnion(fileObj),
+              })
+              .then(() => setProgress(0));
+          });
+      }
+    );
   };
 
   return (
@@ -37,43 +118,35 @@ const Application = () => {
           style={{ display: "none" }}
           onChange={imageUpload}
         />
+
         <Wrapper onClick={() => upload.current.click()}>
           <UploadFileIcon style={{ color: "#658ec6", fontSize: "3rem" }} />
           <p style={{ color: "#658ec6", fontSize: "1.5rem" }}>
             Browse File to Upload
           </p>
+
+          <Box sx={{ width: "100%" }}>
+            <LinearProgressWithLabel value={progress} />
+          </Box>
         </Wrapper>
         <ApplicationList>
           <h3 style={{ color: "#658ec6" }}> Application</h3>
           <Files>
-            <File>
-              <Name>application.pdf</Name>
-              <UploadDate>{new Date().toLocaleDateString()}</UploadDate>
-            </File>
-            <File>
-              <Name>application.pdf</Name>
-              <UploadDate>{new Date().toLocaleDateString()}</UploadDate>
-            </File>
-            <File>
-              <Name>application.pdf</Name>
-              <UploadDate>{new Date().toLocaleDateString()}</UploadDate>
-            </File>
-            <File>
-              <Name>application.pdf</Name>
-              <UploadDate>{new Date().toLocaleDateString()}</UploadDate>
-            </File>
-            <File>
-              <Name>application.pdf</Name>
-              <UploadDate>{new Date().toLocaleDateString()}</UploadDate>
-            </File>
-            <File>
-              <Name>application.pdf</Name>
-              <UploadDate>{new Date().toLocaleDateString()}</UploadDate>
-            </File>
-            <File>
-              <Name>application.pdf</Name>
-              <UploadDate>{new Date().toLocaleDateString()}</UploadDate>
-            </File>
+            {applications &&
+              applications.map((file, key) => (
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={file.filePDF}
+                  style={{ textDecoration: "none" }}
+                  key={key}
+                >
+                  <File>
+                    <Name>{file.fileName}</Name>
+                    <UploadDate>{file.fileDate}</UploadDate>
+                  </File>
+                </a>
+              ))}
           </Files>
         </ApplicationList>
       </Container>
