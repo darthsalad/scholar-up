@@ -4,7 +4,7 @@
 
 ### Student Portal
 
-- application submit (styling and checking done, only database part is left)
+- application submit all done
 - scholarship details
 
 ---
