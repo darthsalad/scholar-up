@@ -1,139 +1,61 @@
 import { useEffect, useState } from "react";
-import { createStyles, Text } from "@mantine/core";
+import { Text } from "@mantine/core";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import "../../styles.css";
+import { useStyles } from "./NoticeBoard.styles";
+import { auth, db } from "../../firebase.config";
+import { useAuthState } from "react-firebase-hooks/auth";
+
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
 import ArticleCardVertical from "../Article/Article";
 
-const data = [
-  {
-    title: "The best laptop for Frontend engineers in 2022",
-    date: "Feb 6th",
-    author: {
-      name: "Elsa Brown",
-      avatar:
-        "https://images.unsplash.com/photo-1628890923662-2cb23c2e0cfe?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
-    },
-    ind: 0,
-  },
-  {
-    title: "Testing is the new design",
-    date: "Feb 8th",
-    author: {
-      name: "Ravi kumar",
-      avatar:
-        "https://images.unsplash.com/photo-1628890923662-2cb23c2e0cfe?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
-    },
-    ind: 1,
-  },
-  {
-    title: "This is epoc",
-    date: "Feb 19th",
-    author: {
-      name: "Testing bot",
-      avatar:
-        "https://images.unsplash.com/photo-1628890923662-2cb23c2e0cfe?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=200&q=80",
-    },
-    ind: 2,
-  },
-];
-
-const useStyles = createStyles((theme) => ({
-  main: {
-    position: "absolute",
-    maxWidth: "80vw",
-    minWidth: "80vw",
-    margin: " 5rem 50%",
-    minHeight: "60rem",
-    transform: "translateX(-50%)",
-  },
-
-  wrapper: {
-    padding: "0.3rem",
-    borderRadius: theme.radius.md,
-    maxWidth: "80vw",
-    minHeight: "60rem",
-
-    "&:before": {
-      content: '""',
-      zIndex: -1,
-      position: "absolute",
-      top: "0",
-      right: "0",
-      bottom: "0",
-      left: "0",
-      background: `linear-gradient(-22deg, ${
-        theme.colors[theme.primaryColor][4]
-      } 11%, ${theme.colors[theme.primaryColor][7]} 125% )`,
-      transform: "translate3d(0px, -1px, 0) scale(1.02)",
-      filter: "blur(42px)",
-      opacity: "var(0.5)",
-      transition: "opacity 0.3s",
-      borderRadius: "inherit",
-    },
-
-    "&::after": {
-      content: '""',
-      zIndex: -1,
-      position: "absolute",
-      top: "0",
-      right: "0",
-      bottom: "0",
-      left: "0",
-      background: "inherit",
-      borderRadius: "inherit",
-    },
-  },
-
-  root: {
-    background: theme.colorScheme === "dark" ? "#222" : "#fff",
-    borderRadius: theme.radius.md,
-    minHeight: "60rem",
-  },
-
-  gradient: {
-    background: `linear-gradient(-22deg, ${
-      theme.colors[theme.primaryColor][4]
-    } 11%, ${theme.colors[theme.primaryColor][7]} 125% )`,
-
-    backgroundClip: "text",
-    fontWeight: "1000",
-    WebkitTextFillColor: "transparent",
-    fontSize: "3rem",
-    marginTop: "4rem",
-  },
-
-  innerRoot: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    width: "100%",
-  },
-}));
+const validDate = (dateOfJoining) => {
+  const dateParts = dateOfJoining.split("/");
+  const date = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+  return date;
+};
 
 const NoticeBoard = () => {
   const { classes } = useStyles();
-
-  const [notices, setNotices] = useState(data);
+  const [user, loading] = useAuthState(auth);
+  const [students, setStudents] = useState([]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setNotices((prev) => {
-        if (prev.length > 2) {
-          const newData = [...prev];
-          newData.shift();
-          newData.push(data[Math.floor(Math.random() * data.length)]);
-          return newData;
-        } else {
-          const newData = [...prev];
-          newData.push(data[Math.floor(Math.random() * data.length)]);
-          return newData;
-        }
+    const getStudents = async () => {
+      const q = query(
+        collection(db, "students"),
+        where("cdomain", "==", user.email.split("@")[1])
+      );
+
+      onSnapshot(q, (querySnapshot) => {
+        const list = [];
+        querySnapshot.forEach((doc) => {
+          list.push({
+            id: doc.id,
+            student: doc.data(),
+          });
+        });
+
+        list.sort(
+          (s1, s2) =>
+            validDate(s2.student.accountCreatedOn) -
+            validDate(s1.student.accountCreatedOn)
+        );
+
+        setStudents(list);
       });
-    }, 3000);
+    };
 
-    return () => clearInterval(interval);
-  }, []);
+    user && getStudents();
+  }, [user]);
 
+  console.log(students);
   return (
     <>
       <Text
@@ -142,22 +64,25 @@ const NoticeBoard = () => {
         weight={700}
         style={{ fontFamily: "Greycliff CF, sans-serif" }}
       >
-        Timeline
+        Latest Registrations
       </Text>
       <div className={classes.main}>
         <div className={classes.wrapper}>
           <div className={classes.root}>
             <TransitionGroup component="div" className={classes.innerRoot}>
-              {notices.map((notice) => (
-                <CSSTransition
-                  key={notice.ind}
-                  timeout={1000}
-                  classNames="item-transition"
-                  unmountOnExit
-                >
-                  <ArticleCardVertical {...notice}></ArticleCardVertical>
-                </CSSTransition>
-              ))}
+              {students &&
+                students.map((student) => (
+                  <CSSTransition
+                    key={student.id}
+                    timeout={1000}
+                    classNames="item-transition"
+                    unmountOnExit
+                  >
+                    <ArticleCardVertical
+                      {...student.student}
+                    ></ArticleCardVertical>
+                  </CSSTransition>
+                ))}
             </TransitionGroup>
           </div>
         </div>

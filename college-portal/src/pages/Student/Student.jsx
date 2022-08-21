@@ -99,13 +99,12 @@ const Student = () => {
                 />
               </div>
               <div className="bottom">
-                {/* {console.log(data)} */}
                 <p className={`${classes.textLeft} name`}>
                   {data.student.sname}
                 </p>
                 <p className={`${classes.textLeft} other`}>Gender : Male</p>
                 <p className={`${classes.textLeft} other`}>
-                  DOB : {data.student.DOB}
+                  DOB : {dob(data.student.DOB)}
                 </p>
                 <p className={`${classes.textLeft} other`}>
                   {data.student.mobile}

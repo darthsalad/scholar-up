@@ -14,6 +14,7 @@ export const useStyles = createStyles((theme) => ({
     [theme.fn.smallerThan("sm")]: {
       flexDirection: "column",
     },
+    textAlign: "center",
   },
 
   title: {
