@@ -52,12 +52,15 @@ const Student = () => {
     // console.log(college);
   }, [user, id, data, college]);
 
-  const dob = (dataDOB) => {
-    var timeObj = new Timestamp(dataDOB.seconds, dataDOB.nanoseconds);
-    var dateObj = new Date(timeObj.toDate());
-    // console.log(dateObj.toLocaleDateString())
-    return dateObj.toLocaleDateString();
-  }
+    const dob = (dataDOB) => {
+      if (dataDOB) {
+        var timeObj = new Timestamp(dataDOB.seconds, dataDOB.nanoseconds);
+        var dateObj = new Date(timeObj.toDate());
+        // console.log(dateObj.toLocaleDateString())
+        return dateObj.toLocaleDateString();
+      }
+      else return null
+    }
 
   if (loading || !data || !college) return <Load></Load>;
 
@@ -81,7 +84,7 @@ const Student = () => {
                   {data.student.sname}
                 </p>
                 <p className={`${classes.textLeft} other`}>Gender : Male</p>
-                <p className={`${classes.textLeft} other`}>DOB : {dob(data.student.DOB)}</p>
+                {data.student.DOB !== null && <p className={`${classes.textLeft} other`}>DOB : {dob(data.student.DOB)}</p>}
                 <p className={`${classes.textLeft} other`}>
                   {data.student.mobile}
                 </p>
