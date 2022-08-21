@@ -1,82 +1,59 @@
-import React, { useState } from 'react'
-import {
-    UnstyledButton,
-    Group,
-    Avatar,
-    Text,
-} from '@mantine/core'
-import { 
-    IconPhoneCall, 
-    IconAt, 
-    IconChevronRight 
-} from "@tabler/icons"
-import { useStyle } from './verified.styles'
+import React, { useEffect, useState } from "react"
+import { UnstyledButton, Group, Avatar, Text } from "@mantine/core"
+import { IconPhoneCall, IconAt, IconChevronRight } from "@tabler/icons"
+import { useStyle } from "./verified.styles"
 
 const StudentList = (props) => {
-  const opened = false;
-    const { classes } = useStyle({ opened });
-    const [mark,setMark] = useState(true)
+  const opened = false
+  const { classes } = useStyle({ opened })
+  const [mark, setMark] = useState(true)
 
-    const today = Date()
-    const totalDays = (today.getTime() - props.verifiedOn.getTime()) / (1000 * 60 * 60 * 24)p
+  useEffect(() => {
+    const today = new Date()
+    const start = new Date(props.verifiedOn.seconds * 1000)
+    const totalDays = (today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+    if (totalDays == 0) totalDays = 1
     const attPercent = (props.totalAtt / totalDays) * 100
     if (attPercent < 75) setMark(false)
-    console.log(attPercent)
+  }, [])
 
   return (
     <div style={{ padding: "20px" }}>
-    <UnstyledButton
+      <UnstyledButton
         className={classes.user}
         onClick={() => {
-            window.location = `/student/${props.id}`;
+          window.location = `/student/${props.id}`
         }}
-    >
+      >
         <Group noWrap>
-        <Avatar
-            src={props.image}
-            size={94}
-            radius="md"
-        />
-        <div>
-            <Text
-            size="xs"
-            sx={{ textTransform: "uppercase" }}
-            weight={700}
-            color="dimmed"
-            >
-            College Domain: {props.cdomain}
+          <Avatar src={props.image} size={94} radius="md" />
+          <div>
+            <Text size="xs" sx={{ textTransform: "uppercase" }} weight={700} color="dimmed">
+              College Domain: {props.cdomain}
             </Text>
 
-            <Text size="lg" weight={500} className={classes.name}>
-            {props.sname}
+            <Text size="lg" weight={500} className={classes.name} color={mark ? "green" : "red"}>
+              {props.sname}
             </Text>
 
             <Group noWrap spacing={10} mt={3}>
-            <IconAt
-                stroke={1.5}
-                size={16}
-                className={classes.icon}
-            />
-            <Text size="xs" color="dimmed">
+              <IconAt stroke={1.5} size={16} className={classes.icon} />
+              <Text size="xs" color="dimmed">
                 {props.email}
-            </Text>
+              </Text>
             </Group>
 
             <Group noWrap spacing={10} mt={5}>
-            <IconPhoneCall
-                stroke={1.5}
-                size={16}
-                className={classes.icon}
-            />
-            <Text size="xs" color="dimmed">
+              <IconPhoneCall stroke={1.5} size={16} className={classes.icon} />
+              <Text size="xs" color="dimmed">
                 {props.mobile}
-            </Text>
+              </Text>
             </Group>
-        </div>
+          </div>
 
-        {<IconChevronRight size={14} stroke={1.5} />}
+          {<IconChevronRight size={14} stroke={1.5} />}
         </Group>
-    </UnstyledButton>
+      </UnstyledButton>
     </div>
   )
 }
