@@ -9,7 +9,7 @@ import { useStyles } from "./Profile.styles"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth, db } from "../../firebase.config"
 import { useEffect, useState } from "react"
-import { collection, query, where, getDocs, doc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore"
+import { collection, query, where, doc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore"
 
 const Profile = () => {
   const [user, wait] = useAuthState(auth)

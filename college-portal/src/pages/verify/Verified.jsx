@@ -32,14 +32,7 @@ const Verified = () => {
           where("cdomain", "==", user.email.split("@")[1]),
           where("verified", "==", true)
         )
-        // const querySnapshot = await getDocs(q);
-        // setStudents(
-        //   querySnapshot.docs.map((doc) => ({
-        //     id: doc.id,
-        //     student: doc.data(),
-        //   }))
-        // );
-        const getall = onSnapshot(q, (querySnapshot) => {
+        onSnapshot(q, (querySnapshot) => {
           const list = []
           querySnapshot.forEach((doc) => {
             list.push({

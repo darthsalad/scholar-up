@@ -31,6 +31,7 @@ const Login = () => {
       })
       .catch((error) => {
         const errorMessage = error.message;
+        console.log(error);
         setLoading(false);
         Notifications("There was an error", errorMessage);
       });
