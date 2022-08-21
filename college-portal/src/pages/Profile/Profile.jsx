@@ -12,6 +12,7 @@ import React, { forwardRef } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/Error/Error";
 import Load from "../../components/Load/Load";
+import Notifications from "../../components/Notifications/Notifications";
 import { useStyles } from "./Profile.styles";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../../firebase.config";
@@ -90,6 +91,7 @@ const Profile = () => {
         // console.log(scholarships)
       });
     } catch (err) {
+      setError(err);
       console.log(err);
     }
   }
@@ -102,7 +104,7 @@ const Profile = () => {
         class_begin: begin,
         class_end: end,
       });
-      console.log("Details updated");
+
       // throw new Error("Eww");
     } catch (err) {
       setError(err);
@@ -121,7 +123,9 @@ const Profile = () => {
       });
       console.log(newScholarship.name + " added to database.");
     } catch (err) {
-      alert(err);
+      Notifications(
+        `${newScholarship.name} was not added to database. Please try again`
+      );
     }
   }
 
@@ -155,7 +159,7 @@ const Profile = () => {
                 value={cname}
                 placeholder="Update name of the college"
                 className={classes.textInput}
-                onChange={(e) => setCname(e.target.value)}
+                onChange={(e) => setCname(e.currentTarget.value)}
                 required
               ></TextInput>
               <TextInput
@@ -173,7 +177,7 @@ const Profile = () => {
                   required
                   className={classes.timeInput}
                   onChange={(e) => {
-                    setBegin(e.toLocaleTimeString());
+                    e && setBegin(e.toLocaleTimeString());
                   }}
                 ></TimeInput>
                 <TimeInput
@@ -182,12 +186,17 @@ const Profile = () => {
                   required
                   className={classes.timeInput}
                   onChange={(e) => {
-                    setEnd(e.toLocaleTimeString());
+                    e && setEnd(e.toLocaleTimeString());
                   }}
                 ></TimeInput>
               </div>
 
-              <Button type="submit" onClick={(e) => handleSubmit(e)} fullWidth>
+              <Button
+                disabled={!cname || !begin || !end}
+                type="submit"
+                onClick={(e) => handleSubmit(e)}
+                fullWidth
+              >
                 Save changes
               </Button>
             </div>
@@ -233,6 +242,7 @@ const Profile = () => {
 
               <Button
                 type="submit"
+                disabled={!newScholarship}
                 onClick={(e) => handleSubmitScholarship(e)}
                 fullWidth
               >
