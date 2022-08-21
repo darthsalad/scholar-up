@@ -63,15 +63,15 @@ const Error = () => {
         <Title className={classes.title}>Something bad just happened...</Title>
         <Text size="lg" align="center" className={classes.description}>
           Our servers could not handle your request. Don&apos;t worry, our
-          development team was already notified. Try refreshing the page.
+          development team was already notified. Head back to home page.
         </Text>
         <Group position="center">
           <Button
             variant="white"
             size="md"
-            onClick={() => window.location.reload()}
+            onClick={() => (window.location = "/")}
           >
-            Refresh the page
+            Return to home page
           </Button>
         </Group>
       </Container>

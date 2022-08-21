@@ -10,6 +10,7 @@ export const useStyle = createStyles((theme, { opened }) => ({
 
   name: {
     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+    color: theme.primaryColor,
   },
 
   user: {
@@ -19,6 +20,7 @@ export const useStyle = createStyles((theme, { opened }) => ({
     color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
     borderRadius: theme.radius.md,
     border: `solid 2px ${theme.colors[theme.primaryColor][4]}`,
+    cursor: "pointer",
 
     "&:hover": {
       backgroundColor:
