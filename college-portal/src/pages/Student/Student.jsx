@@ -6,7 +6,13 @@ import { auth, db } from "../../firebase.config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useStyles } from "./Student.styles";
 import Navbar from "../../components/Navbar/Navbar";
-import { Accordion, Button, ScrollArea, Text } from "@mantine/core";
+import {
+  Accordion,
+  Button,
+  ScrollArea,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import {
   query,
   where,
@@ -19,6 +25,7 @@ import Load from "../../components/Load/Load";
 import { Viewer, Worker } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import { IconEye, IconEyeOff } from "@tabler/icons";
+import StudentGraph from "./StudentGraph";
 
 const Student = () => {
   const { classes } = useStyles();
@@ -28,6 +35,7 @@ const Student = () => {
   const [college, setCollege] = useState(null);
   const [scholarships, setScholarships] = useState(null);
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
+  const theme = useMantineTheme();
 
   useEffect(() => {
     async function getCollege() {
@@ -231,6 +239,13 @@ const Student = () => {
               ))}
             </Accordion>
           </ScrollArea>
+        </div>{" "}
+        <Text className={classes.text}>Stats</Text>
+        <div className={classes.statsContainer}>
+          <StudentGraph
+            color={theme.primaryColor}
+            attendance={data.student.attendence}
+          ></StudentGraph>
         </div>
       </div>
     </div>

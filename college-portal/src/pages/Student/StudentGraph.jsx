@@ -44,19 +44,19 @@ const labels = [
   "October",
 ];
 
-const data = {
-  labels,
-  datasets: [
-    {
-      label: "Persents",
-      data: labels.map(() => Math.floor(Math.random() * 100)),
-      backgroundColor: "rgba(53, 162, 235, 0.5)",
-    },
-  ],
-};
+const StudentGraph = ({ color, attendance }) => {
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: "Persents",
+        data: labels.map((label) => attendance[label.toLowerCase()].length),
+        backgroundColor: color || "rgba(53, 162, 235, 0.5)",
+      },
+    ],
+  };
 
-const AttendanceByMonthGraph = () => {
   return <Bar id="check" options={options} data={data} />;
 };
 
-export default AttendanceByMonthGraph;
+export default StudentGraph;

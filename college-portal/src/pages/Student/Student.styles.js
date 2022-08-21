@@ -40,6 +40,7 @@ export const useStyles = createStyles((theme) => ({
     backgroundColor: "black",
     borderRadius: "5px",
     border: `solid 5px ${theme.colors[theme.primaryColor][4]}`,
+    marginBottom: "2rem",
   },
   text: {
     background: `linear-gradient(-22deg, ${
@@ -51,7 +52,12 @@ export const useStyles = createStyles((theme) => ({
     fontSize: "3rem",
     fontWeight: "1000",
     textAlign: "center",
-    // marginTop: "-2rem",
+    marginBottom: "2rem",
+  },
+  statsContainer: {
+    backgroundColor: "black",
+    borderRadius: "5px",
+    border: `solid 5px ${theme.colors[theme.primaryColor][4]}`,
     marginBottom: "2rem",
   },
 }));
