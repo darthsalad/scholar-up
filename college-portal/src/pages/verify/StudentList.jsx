@@ -15,10 +15,10 @@ import { useStyle } from './verified.styles'
 const StudentList = (props) => {
   const opened = false;
     const { classes } = useStyle({ opened });
-    const [mark,setMark] = useState(true)
+    const [mark, setMark] = useState(true)
 
     const today = Date()
-    const totalDays = (today.getTime() - props.verifiedOn.getTime()) / (1000 * 60 * 60 * 24)p
+    const totalDays = (today.getTime() - props.verifiedOn.getTime()) / (1000 * 60 * 60 * 24);
     const attPercent = (props.totalAtt / totalDays) * 100
     if (attPercent < 75) setMark(false)
     console.log(attPercent)
@@ -31,6 +31,7 @@ const StudentList = (props) => {
             window.location = `/student/${props.id}`;
         }}
     >
+        {console.log(mark)}
         <Group noWrap>
         <Avatar
             src={props.image}

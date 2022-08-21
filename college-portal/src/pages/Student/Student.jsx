@@ -14,7 +14,6 @@ import {
     getDoc,
     collection,
     getDocs,
-    Timestamp
 } from "firebase/firestore";
 import Load from "../../components/Load/Load";
 
@@ -24,6 +23,7 @@ const Student = () => {
     const [data, setData] = useState(null);
     const [user, loading] = useAuthState(auth);
     const [college, setCollege] = useState(null);
+    const [scholarships, setScholarships] = useState(null)
 
     useEffect(() => {
         async function getCollege() {
@@ -47,20 +47,36 @@ const Student = () => {
             });
         }
 
+        async function getScholarships() {
+            try{
+              const q = query(
+                collection(db, "colleges"),
+                where("domain", "==", user.email.split("@")[1])
+              );
+              const querySnapshot = await getDocs(q);
+              setScholarships(
+                querySnapshot.docs[0].data().scholarships.map((scholarship) => (
+                  // console.log(scholarship);
+                  {
+                    name: scholarship.name,
+                    provider: scholarship.provider,
+                    description: scholarship.description
+                  }  
+                ))
+              );
+            }catch(err){
+              console.log(err)
+            }
+          }
+
         user && !data && getStudents();
         user && !college && getCollege();
-        console.log(data);
+        user && !scholarships && getScholarships();
+        // console.log(data);
         // console.log(college);
-    }, [user, id, data, college]);
+    }, [user, id, data, college, scholarships]);
 
-    // const dob = (dataDOB) => {
-    //     var timeObj = new Timestamp(dataDOB?.seconds, dataDOB?.nanoseconds);
-    //     var dateObj = new Date(timeObj?.toDate());
-    //     // console.log(dateObj.toLocaleDateString())
-    //     return dateObj.toLocaleDateString();
-    // }
-
-    if (loading || !data || !college) return <Load></Load>;
+    if (loading || !data || !college || !scholarships) return <Load></Load>;
 
 
     return (
@@ -123,22 +139,27 @@ const Student = () => {
                             <div className="row mb-2 px-2">
                                 <div className="col-4 col-md-3 leftt">Scholarships</div>
                                 <div className={`${classes.rightt} col-8 col-md-9 rightt`}>
+                                {/* <>No Scholarships</> */}
                                     <Accordion>
-                                        {data.student.scholarships.map((scholarship) => {
-                                            return (
-                                                <Accordion.Item value={scholarship?.scholarshipName}>
+                                    {data.student.scholarships.length === 0
+                                        ? <>No Scholarships</>
+                                        : scholarships.map((scholarship) => {
+                                            if( data.student.scholarships.includes(scholarship.name) ) return (
+                                                <Accordion.Item value={scholarship.name}>
                                                     <Accordion.Control>{
-                                                        scholarship?.scholarshipName?.length < 50 ?
-                                                            scholarship?.scholarshipName :
-                                                            scholarship?.scholarshipName?.substring(0, 50) + "..."}</Accordion.Control>
+                                                        scholarship.name.length < 20 
+                                                        ? scholarship.name
+                                                        : scholarship.name.substring(0, 18) + "..."}
+                                                    </Accordion.Control>
                                                     <Accordion.Panel>
                                                         <p>
-                                                            {scholarship?.scholarshipName}<br />
-                                                            Provider- {scholarship?.scholarshipProvider}
+                                                            Provider- {scholarship.provider}<br />
+                                                            Details: {scholarship.description}
                                                         </p>
                                                     </Accordion.Panel>
                                                 </Accordion.Item>
                                             )
+                                            return(<></>)
                                         })}
                                     </Accordion>
                                 </div>

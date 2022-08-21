@@ -10,7 +10,6 @@ import {
   collection,
   query,
   where,
-  getDocs,
   doc,
   updateDoc,
   onSnapshot

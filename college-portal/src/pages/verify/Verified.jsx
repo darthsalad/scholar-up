@@ -68,7 +68,14 @@ const Verified = () => {
         );
         const querySnapshot = await getDocs(q);
         setScholarships(
-          querySnapshot.docs[0].data().scholarships  
+          querySnapshot.docs[0].data().scholarships.map((scholarship) => (
+            // console.log(scholarship);
+            {
+              name: scholarship.name,
+              provider: scholarship.provider,
+              description: scholarship.description
+            }  
+          ))
         );
       }catch(err){
         console.log(err)
@@ -172,11 +179,11 @@ const Verified = () => {
                   margin: "auto 30px",
                 }}
               >
-                {scholarship}
+                {scholarship.name}
               </Text>
               {students.map((student) => {
                 return(
-                  student.student.scholarships.includes(scholarship)?
+                  student.student.scholarships.includes(scholarship.name)?
                   <StudentList 
                     id={student.id}
                     image={student.student.imgURL} 
