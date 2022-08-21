@@ -183,7 +183,9 @@ const Verified = () => {
                     cdomain={student.student.cdomain}
                     sname={student.student.sname}
                     email={student.student.email}
-                    mobile={student.student.mobile}
+                      mobile={student.student.mobile}
+                      totalAtt={students.student.totalAtt}
+                      verifiedOn = {students.student.verifiedOn}
                   />
                   :<></>
                 )

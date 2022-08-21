@@ -62,6 +62,7 @@ const Student = () => {
 
     if (loading || !data || !college) return <Load></Load>;
 
+
     return (
         <div className={`${classes.studentContainer} studentContainer py-3`}>
             <Navbar></Navbar>
@@ -125,7 +126,7 @@ const Student = () => {
                                     <Accordion>
                                         {data.student.scholarships.map((scholarship) => {
                                             return (
-                                                <Accordion.Item value={"hello"}>
+                                                <Accordion.Item value={scholarship?.scholarshipName}>
                                                     <Accordion.Control>{
                                                         scholarship?.scholarshipName?.length < 50 ?
                                                             scholarship?.scholarshipName :
@@ -137,8 +138,6 @@ const Student = () => {
                                                         </p>
                                                     </Accordion.Panel>
                                                 </Accordion.Item>
-
-
                                             )
                                         })}
                                     </Accordion>
@@ -152,6 +151,8 @@ const Student = () => {
                                 </div>
                             </div>
                         </div>
+
+ 
                     </div>
                 </div>
             </div>
