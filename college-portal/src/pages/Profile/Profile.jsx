@@ -9,7 +9,7 @@ import { useStyles } from "./Profile.styles"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth, db } from "../../firebase.config"
 import { useEffect, useState } from "react"
-import { collection, query, where, getDocs, doc, updateDoc, arrayUnion } from "firebase/firestore"
+import { collection, query, where, getDocs, doc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore"
 
 const Profile = () => {
   const [user, wait] = useAuthState(auth)
@@ -26,28 +26,27 @@ const Profile = () => {
   const [collegeScholarships, setCollegeScholarships] = useState(null)
 
   useEffect(() => {
-    console.log({ user, wait });
-    console.log(collegeScholarships);
+    // console.log({ user, wait });
     user && getDetails() && getScholarships();
-  }, [user])
+  }, [user, collegeScholarships])
 
   async function getDetails() {
     try {
       const l = []
       const q = query(collection(db, "colleges"), where("email", "==", user.email))
-      const querySnapshot = await getDocs(q)
-      querySnapshot.forEach((doc) => {
-        setDocId(doc.id)
-        setCname(doc.data().cname)
-        setDomain(doc.data().domain)
-        doc.data().scholarships.forEach((item) => {
-          l.push(item.name)
+      onSnapshot(q, (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          setDocId(doc.id)
+          setCname(doc.data().cname)
+          setDomain(doc.data().domain)
+          doc.data().scholarships.forEach((item) => {
+            l.push(item.name)
+          })
+          // console.log(l)
+          setCollegeScholarships(l)
         })
-        // console.log(l)
-        setCollegeScholarships(l)
+        setLoading(false)
       })
-      setLoading(false)
-      // throw new Error("Eww");
     } catch (err) {
       setError(err)
     }
@@ -59,18 +58,19 @@ const Profile = () => {
         collection(db, "scholarships"),
         where("scholarshipName", "not-in", collegeScholarships)
       )
-      const querySnapshot = await getDocs(q);
-      setScholarships(
-        querySnapshot.docs.map((scholarship) => (
-        {
-          value: scholarship.data().scholarshipName,
-          label: scholarship.data().scholarshipName,
-          provider: scholarship.data().scholarshipProvider,
-          description: scholarship.data().scholarshipDescription
-        }  
-        ))
-        )
-      // console.log(scholarships)
+      onSnapshot(q, (querySnapshot) => {
+        setScholarships(
+          querySnapshot.docs.map((scholarship) => (
+          {
+            value: scholarship.data().scholarshipName,
+            label: scholarship.data().scholarshipName,
+            provider: scholarship.data().scholarshipProvider,
+            description: scholarship.data().scholarshipDescription
+          }  
+          ))
+          )
+        // console.log(scholarships)
+      })
     } catch(err) {
       console.log(err);
     }
@@ -193,7 +193,6 @@ const Profile = () => {
                       })
                     }
                   })
-                  // console.log(newScholarship)
                 }}
               />
 
