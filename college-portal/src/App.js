@@ -13,7 +13,7 @@ import { NotificationsProvider } from "@mantine/notifications";
 import Protected from "./components/Protected/Protected";
 import Stats from "./pages/Stats/Stats";
 import Contact from "./pages/Contact/Contact";
-import Logout from "./pages/Auth/logout"
+import Logout from "./pages/Auth/logout";
 
 function App() {
   const [colorScheme, setColorScheme] = React.useState(
@@ -46,6 +46,9 @@ function App() {
         <ColorSchemeProvider
           colorScheme={colorScheme}
           toggleColorScheme={toggleColorScheme}
+          other={{
+            primaryColor: colorScheme,
+          }}
         >
           <BrowserRouter>
             <Routes>

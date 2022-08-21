@@ -55,7 +55,6 @@ const NoticeBoard = () => {
     user && getStudents();
   }, [user]);
 
-  console.log(students);
   return (
     <>
       <Text
