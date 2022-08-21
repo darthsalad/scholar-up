@@ -127,8 +127,11 @@ const Video = () => {
       if (!thisMonth[month].includes(dat)) {
         thisMonth[month].push(dat);
       }
-
-      await variable.update({ attendence: thisMonth });
+      console.log(variable.totalAtt)
+      await variable.update({
+        attendence: thisMonth,
+        totalAtt : firebase.firestore.FieldValue.increment(1)
+      });
     }
   }
 
