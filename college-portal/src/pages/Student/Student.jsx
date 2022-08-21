@@ -6,18 +6,19 @@ import { auth, db } from "../../firebase.config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useStyles } from "./Student.styles";
 import Navbar from "../../components/Navbar/Navbar";
-import { Accordion } from '@mantine/core';
+import { Accordion } from "@mantine/core";
 import {
     query,
     where,
     doc,
     getDoc,
     collection,
-    getDocs,
+
 } from "firebase/firestore";
 import Load from "../../components/Load/Load";
 
 const Student = () => {
+
     const { classes } = useStyles();
     let { id } = useParams();
     const [data, setData] = useState(null);
@@ -78,6 +79,12 @@ const Student = () => {
 
     if (loading || !data || !college || !scholarships) return <Load></Load>;
 
+
+  const dob = (dataDOB) => {
+    const dateParts = dataDOB.split("/");
+    const date = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+    return date.toDateString();
+  };
 
     return (
         <div className={`${classes.studentContainer} studentContainer py-3`}>
@@ -172,13 +179,11 @@ const Student = () => {
                                 </div>
                             </div>
                         </div>
-
- 
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default Student;
