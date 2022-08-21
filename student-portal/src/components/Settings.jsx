@@ -52,7 +52,7 @@ const Settings = () => {
           setPrivatekey(snap.data().privatekey);
           setAccid(snap.data().accid);
           setImgURL(snap.data().imgURL[0]);
-          setCreateDate(snap.data().accountCreationDate);
+          setCreateDate(snap.data().accountCreatedOn);
         });
       });
     accid !== "" && fetchBalance();

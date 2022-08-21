@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
     UnstyledButton,
     Group,
@@ -14,7 +14,14 @@ import { useStyle } from './verified.styles'
 
 const StudentList = (props) => {
   const opened = false;
-  const { classes } = useStyle({opened});
+    const { classes } = useStyle({ opened });
+    const [mark,setMark] = useState(true)
+
+    const today = Date()
+    const totalDays = (today.getTime() - props.verifiedOn.getTime()) / (1000 * 60 * 60 * 24)p
+    const attPercent = (props.totalAtt / totalDays) * 100
+    if (attPercent < 75) setMark(false)
+    console.log(attPercent)
 
   return (
     <div style={{ padding: "20px" }}>
