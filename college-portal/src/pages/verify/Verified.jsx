@@ -66,11 +66,23 @@ const Verified = () => {
     }
 
     async function getScholarships() {
-      try {
-        const q = query(collection(db, "colleges"), where("domain", "==", user.email.split("@")[1]))
-        const querySnapshot = await getDocs(q)
-        setScholarships(querySnapshot.docs[0].data().scholarships)
-      } catch (err) {
+      try{
+        const q = query(
+          collection(db, "colleges"),
+          where("domain", "==", user.email.split("@")[1])
+        );
+        const querySnapshot = await getDocs(q);
+        setScholarships(
+          querySnapshot.docs[0].data().scholarships.map((scholarship) => (
+            // console.log(scholarship);
+            {
+              name: scholarship.name,
+              provider: scholarship.provider,
+              description: scholarship.description
+            }  
+          ))
+        );
+      }catch(err){
         console.log(err)
       }
     }
@@ -169,10 +181,10 @@ const Verified = () => {
                         margin: "auto 30px",
                       }}
                     >
-                      {scholarship}
+                      {scholarship.name}
                     </Text>
                     {students.map((item) => {
-                      return item.student.scholarships.includes(scholarship) ? (
+                      return item.student.scholarships.includes(scholarship.name) ? (
                         <StudentList
                           id={item.id}
                           image={item.student.imgURL}
