@@ -24,7 +24,8 @@ const StudentList = (props) => {
         onClick={() => {
           window.location = `/student/${props.id}`
         }}
-      >
+    >
+        {/* {console.log(mark)} */}
         <Group noWrap>
           <Avatar src={props.image} size={94} radius="md" />
           <div>

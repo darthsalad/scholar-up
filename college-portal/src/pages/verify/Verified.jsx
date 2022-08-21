@@ -81,15 +81,27 @@ const Verified = () => {
     }
 
     async function getScholarships() {
-      try {
+
+      try{
         const q = query(
           collection(db, "colleges"),
           where("domain", "==", user.email.split("@")[1])
         );
         const querySnapshot = await getDocs(q);
-        setScholarships(querySnapshot.docs[0].data().scholarships);
-      } catch (err) {
-        console.log(err);
+
+        setScholarships(
+          querySnapshot.docs[0].data().scholarships.map((scholarship) => (
+            // console.log(scholarship);
+            {
+              name: scholarship.name,
+              provider: scholarship.provider,
+              description: scholarship.description
+            }  
+          ))
+        );
+      }catch(err){
+        console.log(err)
+
       }
     }
 
@@ -200,6 +212,7 @@ const Verified = () => {
                     >
                       {scholarship.name}
                     </Text>
+
                     <ScrollArea style={{ height: 250 }}>
                       {students.map((item) => {
                         return item.student.scholarships.includes(
@@ -231,6 +244,7 @@ const Verified = () => {
                         </Alert>
                       )}
                     </ScrollArea>
+
                   </div>
                 );
                 // if(student.scholarships.includes )
