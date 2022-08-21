@@ -23,9 +23,30 @@ const Video = () => {
   const [latestDate, setLatestDate] = useState();
   const [attendence, setAttendence] = useState(false);
   const [dbAttendence, setdbAttendence] = useState(false);
+  const [duration, setDuration] = useState({ start: 0, end: 0 });
   const [thisMonth, setthisMonth] = useState();
+  const [video, setVideo] = useState(false);
+  const [college, setCollege] = useState("");
   const [response, setResponse] = useState("");
   const [userImg, setUserImg] = useState("");
+
+  useEffect(() => {
+    db.collection("colleges").onSnapshot((snapshot) => {
+      snapshot.forEach((snap) => {
+        // console.log(snap.data());
+
+        if (snap.data().domain === college) {
+          setDuration({
+            ...duration,
+            start: parseInt(snap.data().class_begin),
+            end: parseInt(snap.data().class_end),
+          });
+          console.log(duration);
+        }
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [college]);
 
   // assign name to respective image URL of all accounts
   useEffect(() => {
@@ -52,6 +73,8 @@ const Video = () => {
           setAccid(snap.data().accid);
           setPrivatekey(snap.data().privatekey);
           setUserImg(snap.data().imgURL[0]);
+          setCollege(snap.data().cdomain);
+
           // const latestAttendence =
           //   snap.data()[month][snap.data()[month].length - 1];
           const latestAttendence =
@@ -59,12 +82,13 @@ const Video = () => {
               snap.data().attendence[month].length - 1
             ];
           setLatestDate(latestAttendence);
-          console.log(latestAttendence);
+
           let dat = date.getDate();
           dat === latestAttendence && setdbAttendence(true);
           setthisMonth(snap.data().attendence);
         });
       });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
@@ -91,6 +115,7 @@ const Video = () => {
         faceapi.nets.ageGenderNet.loadFromUri(MODEL),
       ]).then(startVideo);
     };
+
     loadModels();
     // eslint-disable-next-line no-use-before-define
   }, []);
@@ -119,18 +144,17 @@ const Video = () => {
     let hours = date.getHours();
     let dat = date.getDate();
 
-    if (attended && hours <= 23 && hours >= 11) {
+    if (attended && hours <= duration.end && hours >= duration.start) {
       const variable = db.collection("students").doc(id);
       const month = getMonth(date.getMonth());
-      const currentPostRef = firebase.firestore.DocumentReference(variable);
 
       if (!thisMonth[month].includes(dat)) {
         thisMonth[month].push(dat);
       }
-      console.log(variable.totalAtt)
+
       await variable.update({
         attendence: thisMonth,
-        totalAtt : firebase.firestore.FieldValue.increment(1)
+        totalAtt: firebase.firestore.FieldValue.increment(1),
       });
     }
   }
