@@ -143,15 +143,7 @@ const Video = () => {
   async function addAttendence(attended) {
     let hours = date.getHours();
     let dat = date.getDate();
-    console.log(
-      attended,
-      " hi",
-      hours,
-      "hi",
-      duration.start,
-      "hi",
-      duration.end
-    );
+
     if (attended && hours <= duration.end && hours >= duration.start) {
       const variable = db.collection("students").doc(id);
       const month = getMonth(date.getMonth());
