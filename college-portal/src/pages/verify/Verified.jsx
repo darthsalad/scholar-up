@@ -1,28 +1,43 @@
-import React, { useState, useEffect } from "react"
-import { auth, db } from "../../firebase.config"
-import { useAuthState } from "react-firebase-hooks/auth"
-import { collection, getDocs, query, where, onSnapshot } from "firebase/firestore"
-import { UnstyledButton, Group, Avatar, Text, Autocomplete, Menu } from "@mantine/core"
-import { IconChevronDown } from "@tabler/icons"
-import Load from "../../components/Load/Load"
-import Navbar from "../../components/Navbar/Navbar"
-import Error from "../../components/Error/Error"
-import { useStyle } from "./verified.styles"
-import StudentList from "./StudentList"
+import React, { useState, useEffect } from "react";
+import { auth, db } from "../../firebase.config";
+import { useAuthState } from "react-firebase-hooks/auth";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
+import {
+  UnstyledButton,
+  Group,
+  Avatar,
+  Text,
+  Autocomplete,
+  Menu,
+  ScrollArea,
+  Alert,
+} from "@mantine/core";
+import { IconChevronDown, IconAlertCircle } from "@tabler/icons";
+import Load from "../../components/Load/Load";
+import Navbar from "../../components/Navbar/Navbar";
+import Error from "../../components/Error/Error";
+import { useStyle } from "./verified.styles";
+import StudentList from "./StudentList";
 
-const sortOptions = [{ label: "Alphabetically" }, { label: "Scholarship" }]
+const sortOptions = [{ label: "Alphabetically" }, { label: "Scholarship" }];
 
 const Verified = () => {
-  const [students, setStudents] = useState([])
-  const [auto, setAuto] = useState([])
-  const [opened, setOpened] = useState(false)
-  const [selected, setSelected] = useState(sortOptions[0])
-  const { classes } = useStyle({ opened })
-  const [user, loading] = useAuthState(auth)
-  const [loadingStudents, setLoadingStudents] = useState(true)
-  const [error, setError] = useState(null)
-  const [sort, setSort] = useState(false)
-  const [scholarships, setScholarships] = useState([])
+  const [students, setStudents] = useState([]);
+  const [auto, setAuto] = useState([]);
+  const [opened, setOpened] = useState(false);
+  const [selected, setSelected] = useState(sortOptions[0]);
+  const { classes } = useStyle({ opened });
+  const [user, loading] = useAuthState(auth);
+  const [loadingStudents, setLoadingStudents] = useState(true);
+  const [error, setError] = useState(null);
+  const [sort, setSort] = useState(false);
+  const [scholarships, setScholarships] = useState([]);
 
   useEffect(() => {
     async function getStudents() {
@@ -31,7 +46,7 @@ const Verified = () => {
           collection(db, "students"),
           where("cdomain", "==", user.email.split("@")[1]),
           where("verified", "==", true)
-        )
+        );
         // const querySnapshot = await getDocs(q);
         // setStudents(
         //   querySnapshot.docs.map((doc) => ({
@@ -40,59 +55,62 @@ const Verified = () => {
         //   }))
         // );
         const getall = onSnapshot(q, (querySnapshot) => {
-          const list = []
+          const list = [];
           querySnapshot.forEach((doc) => {
             list.push({
               id: doc.id,
               student: doc.data(),
-            })
-          })
-          setStudents(list)
-          const autolist = []
+            });
+          });
+          setStudents(list);
+          const autolist = [];
           querySnapshot.forEach((doc) => {
             autolist.push({
               id: doc.id,
               value: doc.data().sname,
               image: doc.data().imgURL,
               email: doc.data().email,
-            })
-          })
-          setAuto(autolist)
-        })
-        setLoadingStudents(false)
+            });
+          });
+          setAuto(autolist);
+        });
+        setLoadingStudents(false);
       } catch (err) {
-        setError(err)
+        setError(err);
       }
     }
 
     async function getScholarships() {
       try {
-        const q = query(collection(db, "colleges"), where("domain", "==", user.email.split("@")[1]))
-        const querySnapshot = await getDocs(q)
-        setScholarships(querySnapshot.docs[0].data().scholarships)
+        const q = query(
+          collection(db, "colleges"),
+          where("domain", "==", user.email.split("@")[1])
+        );
+        const querySnapshot = await getDocs(q);
+        setScholarships(querySnapshot.docs[0].data().scholarships);
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
     }
 
-    user && getStudents()
-    user && getScholarships()
+    user && getStudents();
+    user && getScholarships();
     // console.log(scholarships);
-  }, [user, scholarships])
+  }, [user, scholarships]);
 
   if (error)
     return (
       <>
         <Error></Error>
       </>
-    )
-  if (loading || loadingStudents) return <Load></Load>
+    );
+  if (loading || loadingStudents) return <Load></Load>;
 
   const AutoCompleteItem = ({ value, id, image, email }) => (
     <UnstyledButton
       className={classes.userDropdown}
       onClick={() => {
-        window.location = `/student/${id}`
+        window.location = `/student/${id}`;
       }}
     >
       <Group noWrap>
@@ -105,19 +123,26 @@ const Verified = () => {
         </div>
       </Group>
     </UnstyledButton>
-  )
+  );
 
   const items = sortOptions.map((item) => (
     <Menu.Item
       onClick={() => {
-        setSelected(item)
-        item.label === "Scholarship" ? setSort(true) : setSort(false)
+        setSelected(item);
+        item.label === "Scholarship" ? setSort(true) : setSort(false);
       }}
       key={item.label}
     >
       {item.label}
     </Menu.Item>
-  ))
+  ));
+
+  const noStudent = (scholarshipName, students) => {
+    const s = students.filter((student) =>
+      student.student.scholarships.includes(scholarshipName)
+    );
+    return s.length === 0;
+  };
 
   return (
     <>
@@ -150,7 +175,11 @@ const Verified = () => {
                 <Group spacing="xs">
                   <span className={classes.label}>{selected.label}</span>
                 </Group>
-                <IconChevronDown size={16} className={classes.iconDropdown} stroke={1.5} />
+                <IconChevronDown
+                  size={16}
+                  className={classes.iconDropdown}
+                  stroke={1.5}
+                />
               </UnstyledButton>
             </Menu.Target>
             <Menu.Dropdown>{items}</Menu.Dropdown>
@@ -169,26 +198,41 @@ const Verified = () => {
                         margin: "auto 30px",
                       }}
                     >
-                      {scholarship}
+                      {scholarship.name}
                     </Text>
-                    {students.map((item) => {
-                      return item.student.scholarships.includes(scholarship) ? (
-                        <StudentList
-                          id={item.id}
-                          image={item.student.imgURL}
-                          cdomain={item.student.cdomain}
-                          sname={item.student.sname}
-                          email={item.student.email}
-                          mobile={item.student.mobile}
-                          totalAtt={item.student.totalAtt}
-                          verifiedOn={item.student.verifiedOn}
-                        />
-                      ) : (
-                        <></>
-                      )
-                    })}
+                    <ScrollArea style={{ height: 250 }}>
+                      {students.map((item) => {
+                        return item.student.scholarships.includes(
+                          scholarship.name
+                        ) ? (
+                          <StudentList
+                            id={item.id}
+                            image={item.student.imgURL}
+                            cdomain={item.student.cdomain}
+                            sname={item.student.sname}
+                            email={item.student.email}
+                            mobile={item.student.mobile}
+                            totalAtt={item.student.totalAtt}
+                            verifiedOn={item.student.verifiedOn}
+                          />
+                        ) : (
+                          <></>
+                        );
+                      })}
+
+                      {noStudent(scholarship.name, students) && (
+                        <Alert
+                          className={classes.alert}
+                          icon={<IconAlertCircle size={16} />}
+                          title="Oops!!"
+                          color="red"
+                        >
+                          No students in this category
+                        </Alert>
+                      )}
+                    </ScrollArea>
                   </div>
-                )
+                );
                 // if(student.scholarships.includes )
               })
             : students.map((item) => {
@@ -203,12 +247,12 @@ const Verified = () => {
                     totalAtt={item.student.totalAtt}
                     verifiedOn={item.student.verifiedOn}
                   />
-                )
+                );
               })}
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Verified
+export default Verified;
