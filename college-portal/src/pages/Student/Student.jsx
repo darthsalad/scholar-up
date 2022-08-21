@@ -81,7 +81,7 @@ const Student = () => {
                   {data.student.sname}
                 </p>
                 <p className={`${classes.textLeft} other`}>Gender : Male</p>
-                <p className={`${classes.textLeft} other`}>DOB : {dob(data.student.DOB)}</p>
+                <p className={`${classes.textLeft} other`}>DOB : {data.student.DOB}</p>
                 <p className={`${classes.textLeft} other`}>
                   {data.student.mobile}
                 </p>
