@@ -81,6 +81,7 @@ export default function BasicModal() {
       await variable.update({
         DOB: dob,
         mobile: mobileNo,
+        cdomain: domain
       })
       setImgTaken(false)
     } catch (err) {

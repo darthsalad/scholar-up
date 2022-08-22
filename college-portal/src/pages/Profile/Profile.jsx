@@ -33,7 +33,7 @@ const Profile = () => {
   async function getDetails() {
     try {
       const l = []
-      const q = query(collection(db, "colleges"), where("email", "==", user.email))
+      const q = query(collection(db, "colleges"), where("domain", "==", user.email.split("@")[1]))
       onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((doc) => {
           setDocId(doc.id)
