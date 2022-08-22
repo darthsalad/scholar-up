@@ -19,25 +19,34 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function ArticleCardVertical({ title, date, author }) {
+export default function ArticleCardVertical({
+  imgURL,
+  sname,
+  accountCreatedOn,
+}) {
   const { classes } = useStyles();
   return (
     <Card withBorder radius="md" p={0} className={classes.card}>
       <Group noWrap spacing={0}>
-        <Image src={author.avatar} height={140} width={140} />
+        <Image
+          src={imgURL ? imgURL[0] : null}
+          withPlaceholder
+          height={140}
+          width={140}
+        />
         <div className={classes.body}>
           <Text className={classes.title} mt="xs" mb="md">
-            {title}
+            New registration!!
           </Text>
           <Group noWrap spacing="xs">
             <Group spacing="xs" noWrap>
-              <Text size="xs">{author.name}</Text>
+              <Text size="xs">{sname}</Text>
             </Group>
             <Text size="xs" color="dimmed">
               •
             </Text>
             <Text size="xs" color="dimmed">
-              {date}
+              Account created : {accountCreatedOn}
             </Text>
           </Group>
         </div>

@@ -9,9 +9,16 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { db, auth, storage } from "../firebaseConfig";
 import firebase from "firebase";
 import Webcam from "react-webcam";
-import { TextInput, Button, Select, Group, UnstyledButton, Text } from "@mantine/core"
-import { DatePicker } from '@mantine/dates'
-import { IconAt, IconBuilding } from "@tabler/icons"
+import {
+  TextInput,
+  Button,
+  Select,
+  Group,
+  UnstyledButton,
+  Text,
+} from "@mantine/core";
+import { DatePicker } from "@mantine/dates";
+import { IconAt, IconBuilding } from "@tabler/icons";
 
 const style = {
   position: "absolute",
@@ -58,26 +65,24 @@ export default function BasicModal() {
           else setOpen(false);
         });
       });
-    
-    db.collection("colleges")
-      .onSnapshot((snapshot) => {
-        // console.log(snapshot.docs[0].data());
-        setColleges(
-          snapshot.docs.map((doc) => ({
-            value: doc.id,
-            cname: doc.data().cname,
-            label: doc.data().cname,
-          }))
-        )
-      })
-    // console.log(colleges);
 
+    db.collection("colleges").onSnapshot((snapshot) => {
+      // console.log(snapshot.docs[0].data());
+      setColleges(
+        snapshot.docs.map((doc) => ({
+          value: doc.id,
+          cname: doc.data().cname,
+          label: doc.data().cname,
+        }))
+      );
+    });
+    // console.log(colleges);
   }, [user]);
 
   async function handleSubmit(e) {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const variable = db.collection("students").doc(id)
+      const variable = db.collection("students").doc(id);
       await variable.update({
         DOB: dob,
         mobile: mobileNo,
@@ -86,7 +91,7 @@ export default function BasicModal() {
       setImgTaken(false)
     } catch (err) {
       console.log(err);
-      alert("Invalid data")
+      alert("Invalid data");
     }
   }
 
@@ -99,11 +104,11 @@ export default function BasicModal() {
           </div>
         </Group>
       </div>
-      </UnstyledButton>
-    ));
-  
-  async function setCollegeDomain(cId){
-    const variable = db.collection("colleges").doc(cId)
+    </UnstyledButton>
+  ));
+
+  async function setCollegeDomain(cId) {
+    const variable = db.collection("colleges").doc(cId);
     const c = await variable.get();
     console.log(c.data().domain);
     setDomain(c.data().domain);
@@ -132,9 +137,9 @@ export default function BasicModal() {
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
-            {imgTaken
-            ? <form>
-                <div 
+            {imgTaken ? (
+              <form>
+                <div
                   style={{
                     width: "auto",
                     height: "30rem",
@@ -146,8 +151,10 @@ export default function BasicModal() {
                     label="Mobile"
                     value={mobileNo}
                     placeholder="Enter mobile number"
-                    style={{marginBottom: "2rem",}}
-                    onChange={(e) => {setMobile(e.target.value)}}
+                    style={{ marginBottom: "2rem" }}
+                    onChange={(e) => {
+                      setMobile(e.target.value);
+                    }}
                     required
                   ></TextInput>
                   <Select
@@ -160,9 +167,11 @@ export default function BasicModal() {
                     maxDropdownHeight={400}
                     nothingFound="No Results"
                     filter={(value, item) =>
-                      item.cname.toLowerCase().includes(value.toLowerCase().trim())
+                      item.cname
+                        .toLowerCase()
+                        .includes(value.toLowerCase().trim())
                     }
-                    onChange={(e)=>{
+                    onChange={(e) => {
                       setCollegeDomain(e);
                     }}
                   />
@@ -171,83 +180,95 @@ export default function BasicModal() {
                     icon={<IconAt size={14}></IconAt>}
                     label="Institute domain"
                     placeholder="Update your institute's domain"
-                    style={{marginBottom: "2rem",}}
+                    style={{ marginBottom: "2rem" }}
                     data={colleges}
                     disabled
                   ></TextInput>
-                  <div style={{ minWidth: "40%"}}>
-                    <DatePicker label="Date of Birth" required
-                      onChange={(e)=>{setDob(e.toLocaleDateString())}}
+                  <div style={{ minWidth: "40%" }}>
+                    <DatePicker
+                      label="Date of Birth"
+                      required
+                      onChange={(e) => {
+                        setDob(e.toLocaleDateString());
+                      }}
                     />
                   </div>
 
-                  <Button type="submit" onClick={(e)=>handleSubmit(e)} fullWidth>
+                  <Button
+                    type="submit"
+                    onClick={(e) => handleSubmit(e)}
+                    fullWidth
+                  >
                     Submit
                   </Button>
                 </div>
               </form>
-            : <Webcam
-              audio={false}
-              height={1080}
-              videoConstraints={videoConstraints}
-              screenshotQuality={1}
-              imageSmoothing={true}
-              screenshotFormat="image/jpeg"
-              style={{
-                width: "100%",
-                height: "100%",
-                mobile: { height: "100%" },
-              }}
-            >
-              {({ getScreenshot }) => (
-                <CustomButton
-                  disabled={disable}
-                  onClick={() => {
-                    // gets screens shot
-                    const imgSrc = getScreenshot();
-                    setText("Wait for it");
-                    // upload to firebase storage
-                    const uploadTask = storage
-                      .ref(`images/${user.displayName}/`)
-                      .putString(imgSrc, "data_url");
-                    uploadTask.on(
-                      "state_changed",
-                      (snapshot) => {
-                        const progress = Math.round(
-                          (snapshot.bytesTransferred / snapshot.totalBytes) *
-                            100
-                        );
-                        setProgress(progress);
-                      },
-                      (error) => {
-                        console.error(error);
-                      },
-                      () => {
-                        // saves the generated url from storage in firebase database
-                        storage
-                          .ref("images")
-                          .child(user.displayName)
-                          .getDownloadURL()
-                          .then(async (url) => {
-                            const variable = db.collection("students").doc(id);
-                            await variable.update({
-                              imgURL:
-                                firebase.firestore.FieldValue.arrayUnion(url),
-                            });
-                            setProgress(0);
-                            setDisable(true);
-                            // setOpen(false);
-                            setImgTaken(true);
-                          })
-                          .catch((err) => console.error(err));
-                      }
-                    );
-                  }}
-                >
-                  {text}
-                </CustomButton>
-              )}
-            </Webcam>}
+            ) : (
+              <Webcam
+                audio={false}
+                height={1080}
+                videoConstraints={videoConstraints}
+                screenshotQuality={1}
+                imageSmoothing={true}
+                screenshotFormat="image/jpeg"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  mobile: { height: "100%" },
+                }}
+              >
+                {({ getScreenshot }) => (
+                  <CustomButton
+                    disabled={disable}
+                    onClick={() => {
+                      // gets screens shot
+                      const imgSrc = getScreenshot();
+                      setText("Wait for it");
+                      // upload to firebase storage
+                      const uploadTask = storage
+                        .ref(`images/${user.displayName}/`)
+                        .putString(imgSrc, "data_url");
+                      uploadTask.on(
+                        "state_changed",
+                        (snapshot) => {
+                          const progress = Math.round(
+                            (snapshot.bytesTransferred / snapshot.totalBytes) *
+                              100
+                          );
+                          setProgress(progress);
+                        },
+                        (error) => {
+                          console.error(error);
+                        },
+                        () => {
+                          // saves the generated url from storage in firebase database
+                          storage
+                            .ref("images")
+                            .child(user.displayName)
+                            .getDownloadURL()
+                            .then(async (url) => {
+                              const variable = db
+                                .collection("students")
+                                .doc(id);
+                              await variable.update({
+                                imgURL:
+                                  firebase.firestore.FieldValue.arrayUnion(url),
+                              });
+                              setProgress(0);
+                              setDisable(true);
+                              // setOpen(false);
+                              setImgTaken(true);
+                            })
+                            .catch((err) => console.error(err));
+                        }
+                      );
+                    }}
+                  >
+                    {text}
+                  </CustomButton>
+                )}
+              </Webcam>
+            )}
           </Box>
         </Modal>
       </div>

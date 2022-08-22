@@ -6,7 +6,13 @@ import { auth, db } from "../../firebase.config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useStyles } from "./Student.styles";
 import Navbar from "../../components/Navbar/Navbar";
-import { Accordion } from "@mantine/core";
+import {
+  Accordion,
+  Button,
+  ScrollArea,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import {
   query,
   where,
@@ -16,6 +22,10 @@ import {
   getDocs,
 } from "firebase/firestore";
 import Load from "../../components/Load/Load";
+import { Viewer, Worker } from "@react-pdf-viewer/core";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import { IconEye, IconEyeOff } from "@tabler/icons";
+import StudentGraph from "./StudentGraph";
 
 const Student = () => {
   const { classes } = useStyles();
@@ -24,6 +34,8 @@ const Student = () => {
   const [user, loading] = useAuthState(auth);
   const [college, setCollege] = useState(null);
   const [scholarships, setScholarships] = useState(null);
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
+  const theme = useMantineTheme();
 
   useEffect(() => {
     async function getCollege() {
@@ -70,7 +82,7 @@ const Student = () => {
     }
 
     user && !data && getStudents();
-    user && !college && getCollege();
+    user && !college && data && getCollege();
     user && !scholarships && getScholarships();
     // console.log(data);
     // console.log(college);
@@ -79,6 +91,8 @@ const Student = () => {
   if (loading || !data || !college || !scholarships) return <Load></Load>;
 
   const dob = (dataDOB) => {
+    if (!dataDOB) return "Not provided";
+
     const dateParts = dataDOB.split("/");
     const date = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
     return date.toDateString();
@@ -99,13 +113,12 @@ const Student = () => {
                 />
               </div>
               <div className="bottom">
-                {/* {console.log(data)} */}
                 <p className={`${classes.textLeft} name`}>
                   {data.student.sname}
                 </p>
                 <p className={`${classes.textLeft} other`}>Gender : Male</p>
                 <p className={`${classes.textLeft} other`}>
-                  DOB : {data.student.DOB}
+                  DOB : {dob(data.student.DOB)}
                 </p>
                 <p className={`${classes.textLeft} other`}>
                   {data.student.mobile}
@@ -186,6 +199,53 @@ const Student = () => {
               </div>
             </div>
           </div>
+        </div>
+        <div className={classes.studentContainer}>
+          <Text className={classes.text}>Leave applications</Text>
+          <ScrollArea
+            style={{ height: 800 }}
+            className={classes.leaveApplications}
+          >
+            <Accordion>
+              {new Array(50).fill(0).map((_, i) => (
+                <Accordion.Item value={`leave application ${i + 1}`}>
+                  <Accordion.Control>
+                    Leave Application {i + 1}{" "}
+                    {i % 2 == 0 ? (
+                      <IconEye></IconEye>
+                    ) : (
+                      <IconEyeOff></IconEyeOff>
+                    )}
+                  </Accordion.Control>
+                  <Accordion.Panel>
+                    <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.15.349/build/pdf.worker.js">
+                      <div style={{ height: "750px" }}>
+                        <Viewer
+                          fileUrl={`/pdf-test.pdf`}
+                          plugins={[defaultLayoutPluginInstance]}
+                        />
+                      </div>
+                    </Worker>
+                    <br></br>
+                    <Button variant="primary" fullWidth>
+                      Accept
+                    </Button>
+                    <br></br>
+                    <Button variant="outline" fullWidth>
+                      Reject
+                    </Button>
+                  </Accordion.Panel>
+                </Accordion.Item>
+              ))}
+            </Accordion>
+          </ScrollArea>
+        </div>{" "}
+        <Text className={classes.text}>Stats</Text>
+        <div className={classes.statsContainer}>
+          <StudentGraph
+            color={theme.primaryColor}
+            attendance={data.student.attendence}
+          ></StudentGraph>
         </div>
       </div>
     </div>

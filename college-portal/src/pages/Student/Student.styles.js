@@ -36,4 +36,28 @@ export const useStyles = createStyles((theme) => ({
   borders: {
     border: `solid 5px ${theme.colors[theme.primaryColor][4]}`,
   },
+  leaveApplications: {
+    backgroundColor: "black",
+    borderRadius: "5px",
+    border: `solid 5px ${theme.colors[theme.primaryColor][4]}`,
+    marginBottom: "2rem",
+  },
+  text: {
+    background: `linear-gradient(-22deg, ${
+      theme.colors[theme.primaryColor][4]
+    } 11%, ${theme.colors[theme.primaryColor][7]} 125% )`,
+
+    backgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    fontSize: "3rem",
+    fontWeight: "1000",
+    textAlign: "center",
+    marginBottom: "2rem",
+  },
+  statsContainer: {
+    backgroundColor: "black",
+    borderRadius: "5px",
+    border: `solid 5px ${theme.colors[theme.primaryColor][4]}`,
+    marginBottom: "2rem",
+  },
 }));
