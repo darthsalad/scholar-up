@@ -34,7 +34,12 @@ const Unverified = () => {
 
   async function getList() {
     try {
-      const q = query(
+      const q = user.email === "gov@govindia.in"
+      ? query(
+            collection(db, "students"),
+            where("verified", "==", false)
+          )
+      : query(
         collection(db, "students"),
         where("cdomain", "==", user.email.split("@")[1]),
         where("verified", "==", false)

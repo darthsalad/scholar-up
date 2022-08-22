@@ -1,7 +1,7 @@
 import { createStyles } from "@mantine/core";
 
 export const useStyles = createStyles((theme) => ({
-  root: {
+  main: {
     height: "fit-content",
     width: "100vw",
     display: "flex",
@@ -47,4 +47,7 @@ export const useStyles = createStyles((theme) => ({
     marginBottom: "4rem",
     marginTop: "-2rem",
   },
+  gov: {
+    display: "none",
+  }
 }));
