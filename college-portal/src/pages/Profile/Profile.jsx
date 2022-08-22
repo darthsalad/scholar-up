@@ -12,6 +12,7 @@ import React, { forwardRef } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/Error/Error";
 import Load from "../../components/Load/Load";
+import AddScholarship from "../../components/Scholarship/AddScholarship";
 import Notifications from "../../components/Notifications/Notifications";
 import { useStyles } from "./Profile.styles";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -21,7 +22,6 @@ import {
   collection,
   query,
   where,
-  getDocs,
   doc,
   updateDoc,
   arrayUnion,
@@ -43,58 +43,60 @@ const Profile = () => {
   const [collegeScholarships, setCollegeScholarships] = useState(null);
 
   useEffect(() => {
+    async function getDetails() {
+      try {
+        const l = [];
+        const q = user.email === "gov@govindia.in"
+        ? query(collection(db, "colleges"))
+        : query(
+          collection(db, "colleges"),
+          where("domain", "==", user.email.split("@")[1])
+        );
+        onSnapshot(q, (querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            setDocId(doc.id);
+            setCname(doc.data().cname);
+            setDomain(doc.data().domain);
+            doc.data().scholarships.forEach((item) => {
+              l.push(item.name);
+            });
+            // console.log(l)
+            setCollegeScholarships(l);
+          });
+          setLoading(false);
+        });
+      } catch (err) {
+        setError(err);
+      }
+    }
+  
+    async function getScholarships() {
+      try {
+        const q = query(
+          collection(db, "scholarships"),
+          where("scholarshipName", "not-in", collegeScholarships)
+        );
+        onSnapshot(q, (querySnapshot) => {
+          setScholarships(
+            querySnapshot.docs.map((scholarship) => ({
+              value: scholarship.data().scholarshipName,
+              label: scholarship.data().scholarshipName,
+              provider: scholarship.data().scholarshipProvider,
+              description: scholarship.data().scholarshipDescription,
+            }))
+          );
+          // console.log(scholarships)
+        });
+      } catch (err) {
+        setError(err);
+        console.log(err);
+      }
+    }
     // console.log({ user, wait });
     user && getDetails();
     user && collegeScholarships && getScholarships();
   }, [user, collegeScholarships, wait]);
 
-  async function getDetails() {
-    try {
-      const l = [];
-      const q = query(
-        collection(db, "colleges"),
-        where("domain", "==", user.email.split("@")[1])
-      );
-      onSnapshot(q, (querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          setDocId(doc.id);
-          setCname(doc.data().cname);
-          setDomain(doc.data().domain);
-          doc.data().scholarships.forEach((item) => {
-            l.push(item.name);
-          });
-          // console.log(l)
-          setCollegeScholarships(l);
-        });
-        setLoading(false);
-      });
-    } catch (err) {
-      setError(err);
-    }
-  }
-
-  async function getScholarships() {
-    try {
-      const q = query(
-        collection(db, "scholarships"),
-        where("scholarshipName", "not-in", collegeScholarships)
-      );
-      onSnapshot(q, (querySnapshot) => {
-        setScholarships(
-          querySnapshot.docs.map((scholarship) => ({
-            value: scholarship.data().scholarshipName,
-            label: scholarship.data().scholarshipName,
-            provider: scholarship.data().scholarshipProvider,
-            description: scholarship.data().scholarshipDescription,
-          }))
-        );
-        // console.log(scholarships)
-      });
-    } catch (err) {
-      setError(err);
-      console.log(err);
-    }
-  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -148,7 +150,10 @@ const Profile = () => {
     <div>
       <Navbar></Navbar>
 
-      <div className={classes.root}>
+      {user.email === "gov@govindia.in"
+        ? <AddScholarship />
+        : <>
+      <div className={classes.main}>
         <Text className={classes.text}>Edit Profile</Text>
         <div className={classes.form}>
           <form>
@@ -204,7 +209,7 @@ const Profile = () => {
         </div>
       </div>
 
-      <div className={classes.root}>
+      <div className={classes.main}>
         <Text className={classes.text} style={{ marginTop: "50px" }}>
           Manage Scholarships
         </Text>
@@ -252,6 +257,7 @@ const Profile = () => {
           </form>
         </div>
       </div>
+      </>}
     </div>
   );
 };
