@@ -17,14 +17,15 @@ import {
   query,
   where,
   doc,
-  getDoc,
   collection,
   getDocs,
+  updateDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import Load from "../../components/Load/Load";
 import { Viewer, Worker } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import { IconEye, IconEyeOff } from "@tabler/icons";
+import { IconFileOff, IconFileCheck } from "@tabler/icons";
 import StudentGraph from "./StudentGraph";
 
 const Student = () => {
@@ -51,12 +52,13 @@ const Student = () => {
 
     async function getStudents() {
       const docRef = doc(db, "students", id);
-      const docSnap = await getDoc(docRef);
+      const docSnap = onSnapshot(docRef, (docSnap) => {
+        setData({
+          id: docSnap.id,
+          student: docSnap.data(),
+        });
+      })
       // console.log(docSnap);
-      setData({
-        id: docSnap.id,
-        student: docSnap.data(),
-      });
     }
 
     async function getScholarships() {
@@ -109,6 +111,16 @@ const Student = () => {
     const date = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
     return date.toDateString();
   };
+
+  async function handleAccept(e,i,value) {
+    e.preventDefault()
+    let list = data.student.applications
+    list[i].verify = value
+    const docRef = doc(db, "students", id)
+    await updateDoc(docRef, {
+      applications : list
+    })
+  }
 
   return (
     <div className={`${classes.studentContainer} studentContainer py-3`}>
@@ -222,11 +234,11 @@ const Student = () => {
               { data.student.applications.length !== 0 && data.student.applications.map((file,i) => (
                 <Accordion.Item value={`leave application ${i + 1}`}>
                   <Accordion.Control>
-                    Leave Application {i + 1}{" "}
-                    {i % 2 == 0 ? (   // add field accept in application array
-                      <IconEye></IconEye>
+                    {file.fileName} <p style={{fontSize:"0.8rem"}}>({file.fileDate})</p>
+                    {file.verify ? (   // add field accept in application array
+                      <IconFileCheck color= "green"/>
                     ) : (
-                      <IconEyeOff></IconEyeOff>
+                      <IconFileOff />
                     )}
                   </Accordion.Control>
                   <Accordion.Panel>
@@ -239,11 +251,13 @@ const Student = () => {
                       </div>
                     </Worker>
                     <br></br>
-                    <Button variant="primary" fullWidth>
+                    <Button variant="primary" fullWidth onClick={e => {
+                      handleAccept(e,i,true)
+                    }}>
                       Accept
                     </Button>
                     <br></br>
-                    <Button variant="outline" fullWidth>
+                    <Button variant="outline" fullWidth onClick={e => {handleAccept(e,i, false)}}>
                       Reject
                     </Button>
                   </Accordion.Panel>
