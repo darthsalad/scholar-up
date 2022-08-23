@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "./Student.css";
 import student2 from "./student2.png";
 import { useParams } from "react-router-dom";
 import { auth, db } from "../../firebase.config";
@@ -52,7 +51,6 @@ const Student = () => {
     async function getStudents() {
       const docRef = doc(db, "students", id);
       const docSnap = await getDoc(docRef);
-      // console.log(docSnap);
       setData({
         id: docSnap.id,
         student: docSnap.data(),
@@ -61,33 +59,32 @@ const Student = () => {
 
     async function getScholarships() {
       try {
-        const q = user.email === "gov@govindia.in"
-        ? query(collection(db, "scholarships"))
-        : query(
-          collection(db, "colleges"),
-          where("domain", "==", user.email.split("@")[1])
-        );
+        const q =
+          user.email === "gov@govindia.in"
+            ? query(collection(db, "scholarships"))
+            : query(
+                collection(db, "colleges"),
+                where("domain", "==", user.email.split("@")[1])
+              );
         const querySnapshot = await getDocs(q);
-        user.email === "gov@govindia.in" 
+        user.email === "gov@govindia.in"
           ? setScholarships(
-              querySnapshot.docs.map((scholarship) => (
-                {
-                  name: scholarship.data().scholarshipName,
-                  provider: scholarship.data().scholarshipProvider,
-                  description: scholarship.data().scholarshipDescription
-                }
-              ))  
+              querySnapshot.docs.map((scholarship) => ({
+                name: scholarship.data().scholarshipName,
+                provider: scholarship.data().scholarshipProvider,
+                description: scholarship.data().scholarshipDescription,
+              }))
             )
           : setScholarships(
-          querySnapshot.docs[0].data().scholarships.map((scholarship) =>
-            // console.log(scholarship);
-            ({
-              name: scholarship.name,
-              provider: scholarship.provider,
-              description: scholarship.description,
-            })
-          )
-        );
+              querySnapshot.docs[0].data().scholarships.map((scholarship) =>
+                // console.log(scholarship);
+                ({
+                  name: scholarship.name,
+                  provider: scholarship.provider,
+                  description: scholarship.description,
+                })
+              )
+            );
       } catch (err) {
         console.log(err);
       }
@@ -96,15 +93,12 @@ const Student = () => {
     user && !data && getStudents();
     user && !college && data && getCollege();
     user && !scholarships && getScholarships();
-    // console.log(data);
-    // console.log(college);
   }, [user, id, data, college, scholarships]);
 
   if (loading || !data || !college || !scholarships) return <Load></Load>;
 
   const dob = (dataDOB) => {
     if (!dataDOB) return "Not provided";
-
     const dateParts = dataDOB.split("/");
     const date = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
     return date.toDateString();
@@ -120,7 +114,7 @@ const Student = () => {
               <div className="top">
                 <img
                   alt="profile-pic"
-                  src={data.student.imgURL || student2}
+                  src={data.student.imgURL[0] || student2}
                   className={classes.image}
                 />
               </div>
@@ -128,7 +122,6 @@ const Student = () => {
                 <p className={`${classes.textLeft} name`}>
                   {data.student.sname}
                 </p>
-                <p className={`${classes.textLeft} other`}>Gender : Male</p>
                 <p className={`${classes.textLeft} other`}>
                   DOB : {dob(data.student.DOB)}
                 </p>
@@ -203,12 +196,6 @@ const Student = () => {
                 </div>
               </div>
               <hr />
-              <div className="row mb-2 px-2">
-                <div className="col-4 col-md-3 leftt">Address</div>
-                <div className={`${classes.rightt} col-8 col-md-9 rightt`}>
-                  House no-455 , Gothapatna , Bhubneshwar , Odisha
-                </div>
-              </div>
             </div>
           </div>
         </div>
