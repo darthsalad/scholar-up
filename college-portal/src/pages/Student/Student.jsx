@@ -207,11 +207,11 @@ const Student = () => {
             className={classes.leaveApplications}
           >
             <Accordion>
-              {new Array(50).fill(0).map((_, i) => (
+              { data.student.applications.length !== 0 && data.student.applications.map((file,i) => (
                 <Accordion.Item value={`leave application ${i + 1}`}>
                   <Accordion.Control>
                     Leave Application {i + 1}{" "}
-                    {i % 2 == 0 ? (
+                    {i % 2 == 0 ? (   // add field accept in application array
                       <IconEye></IconEye>
                     ) : (
                       <IconEyeOff></IconEyeOff>
@@ -221,7 +221,7 @@ const Student = () => {
                     <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.15.349/build/pdf.worker.js">
                       <div style={{ height: "750px" }}>
                         <Viewer
-                          fileUrl={`/pdf-test.pdf`}
+                          fileUrl={file.filePDF}
                           plugins={[defaultLayoutPluginInstance]}
                         />
                       </div>
