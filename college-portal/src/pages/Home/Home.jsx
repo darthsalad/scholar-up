@@ -1,11 +1,11 @@
 import React from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import { StatsGroup } from "../../components/Stats/Stats";
-import NoticeBoard from "../../components/NoticeBoard/NoticeBoard";
-import { Button } from "@mantine/core";
-import { IconExternalLink } from "@tabler/icons";
-import { Link } from "react-router-dom";
 import Verified from "../verify/Verified";
+// import NoticeBoard from "../../components/NoticeBoard/NoticeBoard";
+// import { Button } from "@mantine/core";
+// import { IconExternalLink } from "@tabler/icons";
+// import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
