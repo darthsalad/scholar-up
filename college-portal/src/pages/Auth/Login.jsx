@@ -2,18 +2,16 @@ import React from "react";
 import {
   TextInput,
   PasswordInput,
-  Anchor,
   Paper,
   Title,
   Text,
   Container,
   Button,
 } from "@mantine/core";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import { auth } from "../../firebase.config";
 import { Link, useNavigate } from "react-router-dom";
 import Notifications from "../../components/Notifications/Notifications";
+import { handleLogin } from "../../api/auth.api";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -23,17 +21,7 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    signInWithEmailAndPassword(auth, mail, password)
-      .then((userCredential) => {
-        setLoading(false);
-        navigate("/");
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        setLoading(false);
-        Notifications("There was an error", errorMessage);
-      });
+    handleLogin(mail, password, setLoading, navigate, Notifications);
   };
 
   return (
@@ -51,10 +39,13 @@ const Login = () => {
           </Title>
           <Text color="dimmed" size="sm" align="center" mt={5}>
             Do not have an account yet?{" "}
-            <Link to="/register" style={{
+            <Link
+              to="/register"
+              style={{
                 fontWeight: 700,
                 color: "inherit",
-              }}>
+              }}
+            >
               Create account
             </Link>
           </Text>

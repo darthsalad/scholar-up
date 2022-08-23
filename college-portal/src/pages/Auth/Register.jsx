@@ -7,13 +7,9 @@ import {
   PasswordInput,
 } from "@mantine/core";
 import { useStyles } from "./Register.styles";
-
-import React from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import { auth, db } from "../../firebase.config";
 import { Link, useNavigate } from "react-router-dom";
-import { collection, addDoc } from "firebase/firestore";
+import { handleRegister } from "../../api/auth.api";
 import Notifications from "../../components/Notifications/Notifications";
 
 const Register = () => {
@@ -23,39 +19,10 @@ const Register = () => {
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
   const [cname, setCname] = useState("");
-  // const [domain, setDomain] = useState("");
   const [loading, setLoading] = useState(false);
 
   function handleSubmit() {
-    setLoading(true);
-    createUserWithEmailAndPassword(auth, mail, password)
-      .then((userCredential) => {
-        createacc();
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        setLoading(false);
-        Notifications("There was an error", errorMessage);
-      });
-  }
-
-  async function createacc() {
-    const user = auth.currentUser;
-    const date = new Date();
-    try {
-      const docRef = await addDoc(collection(db, "colleges"), {
-        cname: cname,
-        domain: user.email.split("@")[1],
-        email: user.email,
-        createdOn: date,
-      });
-      console.log("Document written with ID: ", docRef.id);
-      setLoading(false);
-      navigate("/");
-    } catch (e) {
-      Notifications("There was an error", e.message);
-    }
-    navigate("/");
+    handleRegister(mail, password, cname, setLoading, Notifications, navigate);
   }
 
   return (
@@ -95,14 +62,6 @@ const Register = () => {
             value={cname}
             onChange={(e) => setCname(e.currentTarget.value)}
           />
-          {/* <br />
-          <TextInput
-            label="College domain"
-            placeholder="domain of the college"
-            size="md"
-            value={domain}
-            onChange={(e) => setDomain(e.currentTarget.value)}
-          /> */}
 
           <Button
             loading={loading}

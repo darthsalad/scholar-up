@@ -86,8 +86,9 @@ export default function BasicModal() {
       await variable.update({
         DOB: dob,
         mobile: mobileNo,
-      });
-      setImgTaken(false);
+        cdomain: domain
+      })
+      setImgTaken(false)
     } catch (err) {
       console.log(err);
       alert("Invalid data");

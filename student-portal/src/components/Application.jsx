@@ -88,6 +88,7 @@ const Application = () => {
               fileName: file.name,
               fileDate: date.toLocaleDateString(),
               filePDF: url,
+              verify: false,
             };
             await variable
               .update({
