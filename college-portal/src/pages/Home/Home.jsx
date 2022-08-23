@@ -5,13 +5,14 @@ import NoticeBoard from "../../components/NoticeBoard/NoticeBoard";
 import { Button } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons";
 import { Link } from "react-router-dom";
+import Verified from "../verify/Verified";
 
 const Home = () => {
   return (
     <div>
       <Navbar></Navbar>
       <StatsGroup></StatsGroup>
-      <div
+      {/* <div
         style={{
           display: "flex",
           justifyContent: "center",
@@ -27,8 +28,13 @@ const Home = () => {
           Verified Students
         </Button>
         </Link>
-      </div>
-      <NoticeBoard></NoticeBoard>
+      </div> */}
+      <div style={{
+          paddingTop: "50px"
+      }}>
+        
+      <Verified></Verified>
+        </div>
     </div>
   );
 };

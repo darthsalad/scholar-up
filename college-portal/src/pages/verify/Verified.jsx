@@ -168,49 +168,49 @@ const Verified = () => {
   };
 
   return (
-    <>
-      <Navbar></Navbar>
-      <Text className={classes.text}>Verified students</Text>
-      <div>
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            // alignItems: "center"
-          }}
-        >
-          <Autocomplete
-            sx={{ maxWidth: "600px", minWidth: "300px" }}
-            placeholder="Search students"
-            itemComponent={AutoCompleteItem}
-            data={auto}
-          />
-          <Menu
-            className={classes.sortMenu}
-            onOpen={() => setOpened(true)}
-            onClose={() => setOpened(false)}
-            radius="md"
-            width="target"
-          >
-            <Menu.Target>
-              <UnstyledButton className={classes.control}>
-                <Group spacing="xs">
-                  <span className={classes.label}>{selected.label}</span>
-                </Group>
-                <IconChevronDown
-                  size={16}
-                  className={classes.iconDropdown}
-                  stroke={1.5}
-                />
-              </UnstyledButton>
-            </Menu.Target>
-            <Menu.Dropdown>{items}</Menu.Dropdown>
-          </Menu>
-        </div>
+      <>
+        {window.location.pathname == "/students/verified" && <Navbar></Navbar>}
+       { !loadingStudents && <Text className={classes.text}>Verified students</Text>}
         <div>
-          {sort
-            ? scholarships.map((scholarship) => {
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              // alignItems: "center"
+            }}
+          >
+            <Autocomplete
+              sx={{ maxWidth: "600px", minWidth: "300px" }}
+              placeholder="Search students"
+              itemComponent={AutoCompleteItem}
+              data={auto}
+            />
+            <Menu
+              className={classes.sortMenu}
+              onOpen={() => setOpened(true)}
+              onClose={() => setOpened(false)}
+              radius="md"
+              width="target"
+            >
+              <Menu.Target>
+                <UnstyledButton className={classes.control}>
+                  <Group spacing="xs">
+                    <span className={classes.label}>{selected.label}</span>
+                  </Group>
+                  <IconChevronDown
+                    size={16}
+                    className={classes.iconDropdown}
+                    stroke={1.5}
+                  />
+                </UnstyledButton>
+              </Menu.Target>
+              <Menu.Dropdown>{items}</Menu.Dropdown>
+            </Menu>
+          </div>
+          <div>
+            {sort
+              ? scholarships.map((scholarship) => {
                 return (
                   <div className={classes.group}>
                     <Text
@@ -260,7 +260,7 @@ const Verified = () => {
                 );
                 // if(student.scholarships.includes )
               })
-            : students.map((item) => {
+              : students.map((item) => {
                 return (
                   <StudentList
                     id={item.id}
@@ -274,9 +274,9 @@ const Verified = () => {
                   />
                 );
               })}
+          </div>
         </div>
-      </div>
-    </>
+      </>
   );
 };
 
