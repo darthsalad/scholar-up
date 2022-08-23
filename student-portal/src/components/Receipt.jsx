@@ -42,7 +42,7 @@ const Application = () => {
       .onSnapshot((snapshot) => {
         snapshot.forEach(async (snap) => {
           setID(snap.id);
-          setReceipts(snap.data().applications);
+          setReceipts(snap.data().receipts);
         });
       });
   }, [user]);
@@ -84,12 +84,11 @@ const Application = () => {
             const fileObj = {
               fileName: file.name,
               fileDate: date.toLocaleDateString(),
-              filePDF: url,
-              verify: false,
+              filePDF: url
             };
             await variable
               .update({
-                applications: firebase.firestore.FieldValue.arrayUnion(fileObj),
+                receipts: firebase.firestore.FieldValue.arrayUnion(fileObj),
               })
               .then(() => setProgress(0));
           });
