@@ -2,7 +2,7 @@ import { createStyles } from "@mantine/core";
 
 export const useStyles = createStyles((theme) => ({
   studentContainer: {
-    minHeight: "98vh",
+    // minHeight: "98vh",
     backgroundColor:
       theme.colorScheme === "dark"
         ? theme.colors.dark[7]

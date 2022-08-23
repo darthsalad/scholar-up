@@ -9,6 +9,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import {
   Accordion,
   Button,
+  Image,
   ScrollArea,
   Text,
   useMantineTheme,
@@ -213,9 +214,14 @@ const Student = () => {
           </div>
         </div>
         <div className={classes.studentContainer}>
-          <Text className={classes.text}>Leave applications</Text>
+          <Text 
+            className={classes.text}
+            style={{marginTop: "50px"}}
+          >
+            Leave applications
+          </Text>
           <ScrollArea
-            style={{ height: 800 }}
+            style={{ height: "auto", maxHeight: 900 }}
             className={classes.leaveApplications}
           >
             <Accordion>
@@ -251,7 +257,54 @@ const Student = () => {
               ))}
             </Accordion>
           </ScrollArea>
-        </div>{" "}
+        </div>
+        {user.email === "gov@govindia.in"
+        && data.student.scholarships.length !== 0 
+        ? <div className={classes.studentContainer}>
+            <Text 
+              className={classes.text}
+              style={{marginTop: "50px"}}
+            >
+              Receipts
+            </Text>
+            <ScrollArea
+              style={{ height: "auto", maxHeight: 900 }}
+              className={classes.leaveApplications}
+            >
+              <Accordion>
+                { data.student.receipts.length !== 0 && data.student.receipts.map((file,i) => (
+                  <Accordion.Item value={`leave application ${i + 1}`}>
+                    <Accordion.Control>
+                      Receipt {i + 1}{" "}
+                      {i % 2 == 0 ? (   
+                        <IconEye></IconEye>
+                      ) : (
+                        <IconEyeOff></IconEyeOff>
+                      )}
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                      <Image 
+                        radius="md"
+                        maxWidth={500}
+                        alt={file.fileName}
+                        src={file.filePDF}
+                      />
+                      {/* <br></br>
+                      <Button variant="primary" fullWidth>
+                        Accept
+                      </Button>
+                      <br></br>
+                      <Button variant="outline" fullWidth>
+                        Reject
+                      </Button> */}
+                    </Accordion.Panel>
+                  </Accordion.Item>
+                ))}
+              </Accordion>
+            </ScrollArea>
+          </div>
+        : <></>
+        }
         <Text className={classes.text}>Stats</Text>
         <div className={classes.statsContainer}>
           <StudentGraph
