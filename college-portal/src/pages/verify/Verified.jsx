@@ -42,20 +42,18 @@ const Verified = () => {
   useEffect(() => {
     async function getStudents() {
       try {
-        const q = query(
-          collection(db, "students"),
-          where("cdomain", "==", user.email.split("@")[1]),
-          where("verified", "==", true)
-        );
-        // const querySnapshot = await getDocs(q);
-        // setStudents(
-        //   querySnapshot.docs.map((doc) => ({
-        //     id: doc.id,
-        //     student: doc.data(),
-        //   }))
-        // );
-        const getall = onSnapshot(q, (querySnapshot) => {
-          const list = [];
+        const q = user.email === "gov@govindia.in"
+        ? query(
+            collection(db, "students"),
+            where("verified", "==", true)
+          )
+        : query(
+            collection(db, "students"),
+            where("cdomain", "==", user.email.split("@")[1]),
+            where("verified", "==", true)
+          )
+        onSnapshot(q, (querySnapshot) => {
+          const list = []
           querySnapshot.forEach((doc) => {
             list.push({
               id: doc.id,
@@ -83,22 +81,35 @@ const Verified = () => {
     async function getScholarships() {
 
       try{
-        const q = query(
-          collection(db, "colleges"),
-          where("domain", "==", user.email.split("@")[1])
-        );
-        const querySnapshot = await getDocs(q);
+        const q = user.email === "gov@govindia.in"
+        ? query(collection(db, "scholarships"))
+        : query(
+            collection(db, "colleges"),
+            where("domain", "==", user.email.split("@")[1])
+          );
+          const querySnapshot = await getDocs(q);
 
-        setScholarships(
-          querySnapshot.docs[0].data().scholarships.map((scholarship) => (
-            // console.log(scholarship);
-            {
-              name: scholarship.name,
-              provider: scholarship.provider,
-              description: scholarship.description
-            }  
-          ))
-        );
+          user.email === "gov@govindia.in" 
+          ? setScholarships(
+              querySnapshot.docs.map((scholarship) => (
+                {
+                  name: scholarship.data().scholarshipName,
+                  provider: scholarship.data().scholarshipProvider,
+                  description: scholarship.data().scholarshipDescription
+                }
+              ))  
+            )
+          : setScholarships(
+            querySnapshot.docs[0].data().scholarships.map((scholarship) => (
+              // console.log(scholarship);
+              {
+                name: scholarship.name,
+                provider: scholarship.provider,
+                description: scholarship.description
+              }  
+            ))
+          );
+          // console.log(scholarships);
       }catch(err){
         console.log(err)
 

@@ -61,12 +61,24 @@ const Student = () => {
 
     async function getScholarships() {
       try {
-        const q = query(
+        const q = user.email === "gov@govindia.in"
+        ? query(collection(db, "scholarships"))
+        : query(
           collection(db, "colleges"),
           where("domain", "==", user.email.split("@")[1])
         );
         const querySnapshot = await getDocs(q);
-        setScholarships(
+        user.email === "gov@govindia.in" 
+          ? setScholarships(
+              querySnapshot.docs.map((scholarship) => (
+                {
+                  name: scholarship.data().scholarshipName,
+                  provider: scholarship.data().scholarshipProvider,
+                  description: scholarship.data().scholarshipDescription
+                }
+              ))  
+            )
+          : setScholarships(
           querySnapshot.docs[0].data().scholarships.map((scholarship) =>
             // console.log(scholarship);
             ({
