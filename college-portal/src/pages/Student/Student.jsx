@@ -62,20 +62,19 @@ const Student = () => {
 
   const dob = (dataDOB) => {
     if (!dataDOB) return "Not provided";
-
     const dateParts = dataDOB.split("/");
     const date = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
     return date.toDateString();
   };
 
-  async function handleAccept(e,i,value) {
-    e.preventDefault()
-    let list = data.student.applications
-    list[i].verify = value
-    const docRef = doc(db, "students", id)
+  async function handleAccept(e, i, value) {
+    e.preventDefault();
+    let list = data.student.applications;
+    list[i].verify = value;
+    const docRef = doc(db, "students", id);
     await updateDoc(docRef, {
-      applications : list
-    })
+      applications: list,
+    });
   }
 
   return (
@@ -84,7 +83,9 @@ const Student = () => {
       <div className={`container`}>
         <div className="row my-4 g-2 gx-3">
           <div className="col-12 col-lg-4">
-            <div className={`${classes.left} left ${classes.borders}`}>
+            <div
+              className={`${classes.left} left ${classes.borders} ${classes.studentInfo}`}
+            >
               <div className="top">
                 <img
                   alt="profile-pic"
@@ -96,7 +97,6 @@ const Student = () => {
                 <p className={`${classes.textLeft} name`}>
                   {data.student.sname}
                 </p>
-                <p className={`${classes.textLeft} other`}>Gender : Male</p>
                 <p className={`${classes.textLeft} other`}>
                   DOB : {dob(data.student.DOB)}
                 </p>
@@ -171,12 +171,6 @@ const Student = () => {
                 </div>
               </div>
               <hr />
-              <div className="row mb-2 px-2">
-                <div className="col-4 col-md-3 leftt">Address</div>
-                <div className={`${classes.rightt} col-8 col-md-9 rightt`}>
-                  House no-455 , Gothapatna , Bhubneshwar , Odisha
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -194,38 +188,50 @@ const Student = () => {
             className={classes.leaveApplications}
           >
             <Accordion>
-              { data.student.applications.length !== 0 && data.student.applications.map((file,i) => (
-                <Accordion.Item value={`leave application ${i + 1}`}>
-                  <Accordion.Control>
-                    {file.fileName} <p style={{fontSize:"0.8rem"}}>({file.fileDate})</p>
-                    {file.verify ? (   // add field accept in application array
-                      <IconFileCheck color= "green"/>
-                    ) : (
-                      <IconFileOff />
-                    )}
-                  </Accordion.Control>
-                  <Accordion.Panel>
-                    <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.15.349/build/pdf.worker.js">
-                      <div style={{ height: "750px" }}>
-                        <Viewer
-                          fileUrl={file.filePDF}
-                          plugins={[defaultLayoutPluginInstance]}
-                        />
-                      </div>
-                    </Worker>
-                    <br></br>
-                    <Button variant="primary" fullWidth onClick={e => {
-                      handleAccept(e,i,true)
-                    }}>
-                      Accept
-                    </Button>
-                    <br></br>
-                    <Button variant="outline" fullWidth onClick={e => {handleAccept(e,i, false)}}>
-                      Reject
-                    </Button>
-                  </Accordion.Panel>
-                </Accordion.Item>
-              ))}
+              {data.student.applications.length !== 0 &&
+                data.student.applications.map((file, i) => (
+                  <Accordion.Item value={`leave application ${i + 1}`}>
+                    <Accordion.Control>
+                      {file.fileName}{" "}
+                      <p style={{ fontSize: "0.8rem" }}>({file.fileDate})</p>
+                      {file.verify ? ( // add field accept in application array
+                        <IconFileCheck color="green" />
+                      ) : (
+                        <IconFileOff />
+                      )}
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                      <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.15.349/build/pdf.worker.js">
+                        <div style={{ height: "750px" }}>
+                          <Viewer
+                            fileUrl={file.filePDF}
+                            plugins={[defaultLayoutPluginInstance]}
+                          />
+                        </div>
+                      </Worker>
+                      <br></br>
+                      <Button
+                        variant="primary"
+                        fullWidth
+                        onClick={(e) => {
+                          handleAccept(e, i, true);
+                        }}
+                      >
+                        Accept
+                      </Button>
+                      <br></br>
+                      <Button
+                        variant="outline"
+                        fullWidth
+                        onClick={(e) => {
+                          handleAccept(e, i, false);
+                        }}
+                      >
+                        Reject
+                      </Button>
+                    </Accordion.Panel>
+                  </Accordion.Item>
+                ))}
             </Accordion>
           </ScrollArea>
         </div>

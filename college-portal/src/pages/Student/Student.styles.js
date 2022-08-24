@@ -2,7 +2,11 @@ import { createStyles } from "@mantine/core";
 
 export const useStyles = createStyles((theme) => ({
   studentContainer: {
+<<<<<<< HEAD
     // minHeight: "98vh",
+=======
+    // minHeight: "10vh",
+>>>>>>> origin
     backgroundColor:
       theme.colorScheme === "dark"
         ? theme.colors.dark[7]
@@ -10,7 +14,16 @@ export const useStyles = createStyles((theme) => ({
     marginTop: "-1rem",
   },
   left: {
+    borderRadius: theme.radius.md,
     backgroundColor: theme.colorScheme === "dark" ? "black" : "white",
+  },
+  studentInfo: {
+    height: "100%",
+    textAlign: "center",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
   textLeft: {
     color: theme.colorScheme === "dark" ? "white" : "rgb(7, 7, 61)",
@@ -26,12 +39,13 @@ export const useStyles = createStyles((theme) => ({
   },
 
   image: {
-    border: `solid 5px ${theme.colors[theme.primaryColor][4]}`,
+    border: `solid 2px ${theme.colors[theme.primaryColor][4]}`,
     height: "10rem",
     width: "10rem",
     borderRadius: "50%",
     minWidth: "2rem",
     minHeight: "2rem",
+    marginBottom: "1rem",
   },
   borders: {
     border: `solid 5px ${theme.colors[theme.primaryColor][4]}`,
@@ -49,7 +63,7 @@ export const useStyles = createStyles((theme) => ({
 
     backgroundClip: "text",
     WebkitTextFillColor: "transparent",
-    fontSize: "3rem",
+    fontSize: "2rem",
     fontWeight: "1000",
     textAlign: "center",
     marginBottom: "2rem",
