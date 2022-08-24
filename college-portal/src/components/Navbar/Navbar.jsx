@@ -31,10 +31,6 @@ const links = [
   //   label: "Stats",
   // },
   {
-    link: "/qr",
-    label: "Generate QR",
-  },
-  {
     link: "#1",
     label: "My students",
     links: [
