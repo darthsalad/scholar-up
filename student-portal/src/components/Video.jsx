@@ -29,6 +29,7 @@ const Video = () => {
   const [verifyQR, setVerifyQR] = useState();
   const [verify, setVerify] = useState(false);
   const [college, setCollege] = useState("");
+  const [att, setAtt] = useState()
 
   const [latestDate, setLatestDate] = useState();
   const [scan, setScan] = useState(false);
@@ -90,6 +91,7 @@ const Video = () => {
           setUserImg(snap.data().imgURL[0]);
           setCollege(snap.data().cdomain);
           setVerify(snap.data().verified);
+          setAtt(snap.data().totalAtt);
 
           const latestAttendence =
             snap.data().attendence[month][
@@ -167,7 +169,7 @@ const Video = () => {
       await variable
         .update({
           attendence: thisMonth,
-          totalAtt: firebase.firestore.FieldValue.increment(1),
+          totalAtt: att + 1
         })
         .then(() => setdbAttendence(true));
     }
