@@ -2,7 +2,7 @@ import { createStyles } from "@mantine/core";
 
 export const useStyles = createStyles((theme) => ({
   studentContainer: {
-    minHeight: "98vh",
+    // minHeight: "10vh",
     backgroundColor:
       theme.colorScheme === "dark"
         ? theme.colors.dark[7]
@@ -49,7 +49,7 @@ export const useStyles = createStyles((theme) => ({
 
     backgroundClip: "text",
     WebkitTextFillColor: "transparent",
-    fontSize: "3rem",
+    fontSize: "2rem",
     fontWeight: "1000",
     textAlign: "center",
     marginBottom: "2rem",

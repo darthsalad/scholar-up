@@ -42,6 +42,8 @@ const labels = [
   "August",
   "September",
   "October",
+  "November",
+  "December"
 ];
 
 const StudentGraph = ({ color, attendance }) => {

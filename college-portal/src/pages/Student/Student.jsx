@@ -216,7 +216,7 @@ const Student = () => {
         <div className={classes.studentContainer}>
           <Text className={classes.text}>Leave applications</Text>
           <ScrollArea
-            style={{ height: 800 }}
+            style={{ height: "auto" }}
             className={classes.leaveApplications}
           >
             <Accordion>
