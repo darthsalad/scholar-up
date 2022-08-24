@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "./Student.css";
 import { useParams } from "react-router-dom";
 import { auth, db } from "../../firebase.config";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -58,7 +57,7 @@ const Student = () => {
     // console.log(college);
   }, [user, id, data, college, scholarships]);
 
-  if (loading || !data || !college || !scholarships) return <Load></Load>;
+  if (loading || !data || !college) return <Load></Load>;
 
   const dob = (dataDOB) => {
     if (!dataDOB) return "Not provided";

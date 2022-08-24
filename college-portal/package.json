@@ -28,11 +28,8 @@
     "react-chartjs-2": "^4.3.1",
     "react-dom": "^18.2.0",
     "react-firebase-hooks": "^5.0.3",
-<<<<<<< HEAD
     "react-qr-scanner": "^1.0.0-alpha.9",
-=======
     "react-qr-code": "^2.0.7",
->>>>>>> 944652df87abdd80ccecb55bd4dac6b1f8902995
     "react-rounded-image": "^2.0.14",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
