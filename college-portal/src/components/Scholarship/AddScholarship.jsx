@@ -12,7 +12,7 @@ import { auth, db } from "../../firebase.config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Error from "../../components/Error/Error";
 import Load from "../../components/Load/Load";
-
+import { DatePicker } from '@mantine/dates';
 
 const AddScholarship = () => {
   const [user, wait] = useAuthState(auth);
@@ -22,6 +22,7 @@ const AddScholarship = () => {
   const [scname, setScname] = useState("");
   const [provider, setProvider] = useState("");
   const [description, setDescription] = useState("");
+  const [endDate, setEndDate] = useState(null);
   const { classes } = useStyles();
 
   useEffect(() => {
@@ -63,12 +64,14 @@ const AddScholarship = () => {
                 scholarshipName: scname,
                 scholarshipDescription: description,
                 scholarshipProvider: provider,
+                scholarshipEndDate: endDate.toLocaleDateString()
             });
         }
         console.log(scname + " added to database.");
         setScname("");
         setDescription("");
         setProvider("");
+        setEndDate(null);
     } catch (err) {
       console.log(err, scname, description, provider);
       Notifications(
@@ -76,19 +79,6 @@ const AddScholarship = () => {
       );
     }
   }
-
-//   const SelectItem = forwardRef(({ value, provider, ...others }, ref) => (
-//     <UnstyledButton>
-//       <div ref={ref} {...others}>
-//         <Group noWrap>
-//           <div>
-//             <Text size="sm">{value}</Text>
-//             <Text size="xs" color="dimmed">{provider}</Text>
-//           </div>
-//         </Group>
-//       </div>
-//     </UnstyledButton>
-//   ));
 
   if (loading || !scholarships) return <Load></Load>;
   if (!loading && error) return <Error></Error>;
@@ -104,33 +94,6 @@ const AddScholarship = () => {
       >
         <form>
           <div className={classes.content}>
-
-            {/* <Select
-              label="Choose scholarship to add"
-              placeholder="Pick one"
-              itemComponent={SelectItem}
-              className={classes.textInput}
-              data={scholarships}
-              searchable
-              required
-              maxDropdownHeight={400}
-              nothingFound="No Results"
-              filter={(value, item) =>
-                item.value.toLowerCase().includes(value.toLowerCase().trim())
-              }
-              onChange={(e) => {
-                scholarships.forEach((scholarship) => {
-                  if (scholarship.value === e) {
-                    setNewScholarship({
-                      name: scholarship.value,
-                      description: scholarship.description,
-                      provider: scholarship.provider,
-                    });
-                  }
-                });
-              }}
-            /> */}
-
             <TextInput
                 // icon={<IconBuilding size={14}></IconBuilding>}
                 label="Scholarship name"
@@ -158,6 +121,15 @@ const AddScholarship = () => {
                 onChange={(e) => setDescription(e.currentTarget.value)}
                 required
             />
+            <DatePicker
+              className={classes.textInput}
+              label="Date of Birth"
+              value={endDate}
+              required
+              onChange={(e) => {
+                setEndDate(e);
+              }}
+            />
 
             <Button
               type="submit"
@@ -181,7 +153,7 @@ const AddScholarship = () => {
             <Accordion>
                 {scholarships.map((scholarship) => {
                     return(
-                        <Accordion.Item value={scholarship.value}>
+                        <Accordion.Item key={scholarship.value} value={scholarship.value}>
                             <Accordion.Control>
                             {scholarship.value.length < 20
                                 ? scholarship.value

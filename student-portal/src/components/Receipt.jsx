@@ -3,15 +3,12 @@ import styled from "styled-components";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { useAuthState } from "react-firebase-hooks/auth";
-
 import firebase from "firebase";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-
 import { db, auth, storage } from "../firebaseConfig";
-
-import { checkImage } from "../Utilities/checker";
+// import { checkImage } from "../Utilities/checker";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 const Application = () => {
@@ -20,7 +17,7 @@ const Application = () => {
   const [id, setID] = useState();
   const [progress, setProgress] = useState(0);
   const [err, setError] = useState("");
-  const [applications, setApplications] = useState([]);
+  const [receipts, setReceipts] = useState([]);
 
   function LinearProgressWithLabel(props) {
     return (
@@ -45,23 +42,23 @@ const Application = () => {
       .onSnapshot((snapshot) => {
         snapshot.forEach(async (snap) => {
           setID(snap.id);
-          setApplications(snap.data().applications);
+          setReceipts(snap.data().receipts);
         });
       });
   }, [user]);
 
   const imageUpload = (e) => {
     const file = e.target.files[0];
-
-    setError(checkImage(file));
-    if (!err) {
-      console.log(file);
-      uploadPDF(file);
-    }
+    uploadPDF(file);
+    // setError(checkImage(file));
+    // if (!err) {
+    //   console.log(file);
+    //   uploadPDF(file);
+    // }
   };
 
   const uploadPDF = (file) => {
-    const uploadTask = storage.ref(`applications/${file.name}`).put(file);
+    const uploadTask = storage.ref(`receipts/${file.name}`).put(file);
     console.log(uploadTask);
 
     uploadTask.on(
@@ -78,7 +75,7 @@ const Application = () => {
       },
       () => {
         storage
-          .ref("applications")
+          .ref("receipts")
           .child(file.name)
           .getDownloadURL()
           .then(async (url) => {
@@ -87,12 +84,11 @@ const Application = () => {
             const fileObj = {
               fileName: file.name,
               fileDate: date.toLocaleDateString(),
-              filePDF: url,
-              verify: false,
+              filePDF: url
             };
             await variable
               .update({
-                applications: firebase.firestore.FieldValue.arrayUnion(fileObj),
+                receipts: firebase.firestore.FieldValue.arrayUnion(fileObj),
               })
               .then(() => setProgress(0));
           });
@@ -115,7 +111,7 @@ const Application = () => {
         <input
           type="file"
           ref={upload}
-          accept="application/pdf"
+          accept="image/*"
           style={{ display: "none" }}
           onChange={imageUpload}
         />
@@ -131,10 +127,10 @@ const Application = () => {
           </Box>
         </Wrapper>
         <ApplicationList>
-          <h3 style={{ color: "#658ec6" }}> Application</h3>
+          <h3 style={{ color: "#658ec6" }}> Receipts</h3>
           <Files>
-            {applications &&
-              applications.map((file, key) => (
+            {receipts &&
+              receipts.map((file, key) => (
                 <a
                   target="_blank"
                   rel="noopener noreferrer"

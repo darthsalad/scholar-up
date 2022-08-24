@@ -13,6 +13,8 @@ import Settings from "../components/Settings";
 import axios from "axios";
 import { requestForToken } from "../firebaseNotifications/firebase";
 import Application from "../components/Application";
+import Receipt from "../components/Receipt"
+
 const Home = () => {
   const [user] = useAuthState(auth);
   const [attendence, setAttendence] = useState(false);
@@ -20,6 +22,7 @@ const Home = () => {
   const [hbar, setHbar] = useState(false);
   const [application,setApplication] = useState(false);
   const [settings, setSettings] = useState(true);
+  const [receipts, setReceipts] = useState(false);
   const [fact, setFact] = useState("Click for random facts");
   useEffect(() => {
     requestForToken(user);
@@ -60,6 +63,7 @@ const Home = () => {
               setSettings(false);
               setApplication(false)
               setAttendence(true);
+              setReceipts(false);
             }}
             style={{
               background:
@@ -75,6 +79,7 @@ const Home = () => {
               setSettings(false);
               setApplication(false)
               setStats(true);
+              setReceipts(false);
             }}
             style={{
               background:
@@ -90,6 +95,7 @@ const Home = () => {
               setSettings(false);
               setApplication(false)
               setHbar(true);
+              setReceipts(false);
             }}
             style={{
               background:
@@ -106,6 +112,7 @@ const Home = () => {
               setSettings(false);
               setApplication(true)
               setAttendence(false);
+              setReceipts(false);
             }}
             style={{
               background:
@@ -117,11 +124,29 @@ const Home = () => {
 
           <Child
             onClick={() => {
+              setStats(false);
+              setHbar(false);
+              setSettings(false);
+              setApplication(false);
+              setAttendence(false);
+              setReceipts(true);
+            }}
+            style={{
+              background:
+                receipts && "linear-gradient(to right top, #65dfc9, #6cdbeb)",
+            }}
+          >
+            <h2>Receipts</h2>
+          </Child>
+
+          <Child
+            onClick={() => {
               setAttendence(false);
               setStats(false);
               setHbar(false);
               setApplication(false)
               setSettings(true);
+              setReceipts(false);
             }}
           >
             <h2>Settings</h2>
@@ -155,6 +180,7 @@ const Home = () => {
         {hbar && <Hbar />}
         {settings && <Settings />}
         {application && <Application/>}
+        {receipts && <Receipt/>}
       </Details>
     </Container>
   );
