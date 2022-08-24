@@ -53,6 +53,9 @@ async function createacc(setLoading, navigate, Notifications, cname) {
       domain: user.email.split("@")[1],
       email: user.email,
       createdOn: date,
+      scholarships: [],
+      class_begin: "",
+      class_end: ""
     });
     console.log("Document written with ID: ", docRef.id);
     setLoading(false);

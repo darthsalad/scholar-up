@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import student2 from "./student2.png";
+import "./Student.css";
 import { useParams } from "react-router-dom";
 import { auth, db } from "../../firebase.config";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -8,6 +8,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import {
   Accordion,
   Button,
+  Image,
   ScrollArea,
   Text,
   useMantineTheme,
@@ -19,13 +20,13 @@ import {
   collection,
   getDocs,
   updateDoc,
-  onSnapshot,
 } from "firebase/firestore";
 import Load from "../../components/Load/Load";
 import { Viewer, Worker } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import { IconFileOff, IconFileCheck } from "@tabler/icons";
+import { IconFileOff, IconFileCheck, IconEye } from "@tabler/icons";
 import StudentGraph from "./StudentGraph";
+import { getScholarships, getStudents } from "../../api/profile.api";
 
 const Student = () => {
   const { classes } = useStyles();
@@ -49,54 +50,12 @@ const Student = () => {
       });
     }
 
-    async function getStudents() {
-      const docRef = doc(db, "students", id);
-
-      const docSnap = onSnapshot(docRef, (docSnap) => {
-        setData({
-          id: docSnap.id,
-          student: docSnap.data(),
-        });
-      });
-      // console.log(docSnap);
-    }
-
-    async function getScholarships() {
-      try {
-        const q =
-          user.email === "gov@govindia.in"
-            ? query(collection(db, "scholarships"))
-            : query(
-                collection(db, "colleges"),
-                where("domain", "==", user.email.split("@")[1])
-              );
-        const querySnapshot = await getDocs(q);
-        user.email === "gov@govindia.in"
-          ? setScholarships(
-              querySnapshot.docs.map((scholarship) => ({
-                name: scholarship.data().scholarshipName,
-                provider: scholarship.data().scholarshipProvider,
-                description: scholarship.data().scholarshipDescription,
-              }))
-            )
-          : setScholarships(
-              querySnapshot.docs[0].data().scholarships.map((scholarship) =>
-                // console.log(scholarship);
-                ({
-                  name: scholarship.name,
-                  provider: scholarship.provider,
-                  description: scholarship.description,
-                })
-              )
-            );
-      } catch (err) {
-        console.log(err);
-      }
-    }
-
-    user && !data && getStudents();
+    user && !data && getStudents(id, setData);
     user && !college && data && getCollege();
-    user && !scholarships && getScholarships();
+    user && getScholarships(user, setScholarships);
+    
+    // console.log(data);
+    // console.log(college);
   }, [user, id, data, college, scholarships]);
 
   if (loading || !data || !college || !scholarships) return <Load></Load>;
@@ -130,7 +89,7 @@ const Student = () => {
               <div className="top">
                 <img
                   alt="profile-pic"
-                  src={data.student.imgURL[0] || student2}
+                  src={data.student.imgURL.length == 0 ? "./student2.png" : data.student.imgURL}
                   className={classes.image}
                 />
               </div>
@@ -215,10 +174,17 @@ const Student = () => {
             </div>
           </div>
         </div>
-        <div className={classes.studentContainer}>
-          <Text className={classes.text}>Leave applications</Text>
+        {/*eslint-disable-next-line*/}
+        {data.student.verified == true
+        ? <div className={classes.studentContainer}>
+          <Text 
+            className={classes.text}
+            style={{marginTop: "50px"}}
+          >
+            Leave applications
+          </Text>
           <ScrollArea
-            style={{ height: "auto" }}
+            style={{ height: "auto", maxHeight: 900 }}
             className={classes.leaveApplications}
           >
             <Accordion>
@@ -268,7 +234,48 @@ const Student = () => {
                 ))}
             </Accordion>
           </ScrollArea>
-        </div>{" "}
+        </div>
+        :<></>}
+        
+        {user.email === "gov@govindia.in"
+        && data.student.scholarships.length !== 0
+        //eslint-disable-next-line
+        && data.student.verified == true
+        ? <div className={classes.studentContainer}>
+            <Text 
+              className={classes.text}
+              style={{marginTop: "50px"}}
+            >
+              Receipts
+            </Text>
+            <ScrollArea
+              style={{ height: "auto", maxHeight: 900 }}
+              className={classes.leaveApplications}
+            >
+              <Accordion>
+                { data.student.receipts.map((file,i) => (
+                  <Accordion.Item value={`leave application ${i + 1}`}>
+                    <Accordion.Control>
+                      Receipt {i + 1} <IconEye />
+                    </Accordion.Control>
+                    <Accordion.Panel style={{display: "flex", justifyContent: "center"}}>
+                      <div style={{width: "100%", maxWidth: "500px"}}>
+                        <Image 
+                          radius="md"
+                          alt={file.fileName}
+                          src={file.filePDF}
+                        />
+                      </div>
+                      
+                    </Accordion.Panel>
+                  </Accordion.Item>
+                ))}
+              </Accordion>
+            </ScrollArea>
+          </div>
+        : <></>
+        } 
+     
         <Text className={classes.text}>Stats</Text>
         <div className={classes.statsContainer}>
           <StudentGraph
