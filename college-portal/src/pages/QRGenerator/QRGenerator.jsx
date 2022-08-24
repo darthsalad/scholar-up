@@ -93,9 +93,9 @@ const QRGenerator = () => {
 
       <div className={classes.main}>
         <div className={classes.wrapper}>
-          <div id="qrcode" className={classes.root}>
+          <div id="qrcode" className={classes.root} visible={loading}>
+            <LoadingOverlay visible={loading} overlayBlur={2} />
             <div style={{ position: "relative" }}>
-              <LoadingOverlay visible={loading} overlayBlur={2} />
               <div className={classes.qr}>
                 {token && (
                   <QRCode
