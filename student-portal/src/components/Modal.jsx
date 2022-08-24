@@ -86,9 +86,9 @@ export default function BasicModal() {
       await variable.update({
         DOB: dob,
         mobile: mobileNo,
-        cdomain: domain
-      })
-      setImgTaken(false)
+        cdomain: domain,
+      });
+      setImgTaken(false);
     } catch (err) {
       console.log(err);
       alert("Invalid data");
@@ -138,7 +138,7 @@ export default function BasicModal() {
         >
           <Box sx={style}>
             {imgTaken ? (
-              <form>
+              <form onSubmit={(e) => handleSubmit(e)}>
                 <div
                   style={{
                     width: "auto",
@@ -194,11 +194,7 @@ export default function BasicModal() {
                     />
                   </div>
 
-                  <Button
-                    type="submit"
-                    onClick={(e) => handleSubmit(e)}
-                    fullWidth
-                  >
+                  <Button type="submit" fullWidth>
                     Submit
                   </Button>
                 </div>

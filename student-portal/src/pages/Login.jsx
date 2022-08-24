@@ -72,6 +72,7 @@ const Home = () => {
             imgURL: [],
             dateOfJoining: [],
             streakTransaction: [],
+            recipts: [],
             applications: [],
             attendence: attendence,
             accountCreatedOn: createAcc.toLocaleDateString(),

@@ -5,6 +5,7 @@ import { mobile } from "../Utilities/responsive";
 import Alert from "@mui/material/Alert";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { db, auth } from "../firebaseConfig";
+import QrReader from "react-qr-scanner";
 import firebase from "firebase";
 import * as faceapi from "face-api.js";
 
@@ -16,18 +17,28 @@ const Video = () => {
   const [initialise, setInitialise] = useState(false);
   const webcamRef = useRef();
   const canvasRef = useRef();
+  const videoElm = useRef();
+
   const [height, setHeight] = useState(480);
   const [width, setWidth] = useState(640);
   const [data, setData] = useState([]);
   const [date, setDate] = useState(new Date());
-  const [latestDate, setLatestDate] = useState();
-  const [attendence, setAttendence] = useState(false);
-  const [dbAttendence, setdbAttendence] = useState(false);
   const [duration, setDuration] = useState({ start: 0, end: 0 });
+
   const [thisMonth, setthisMonth] = useState();
+  const [verifyQR, setVerifyQR] = useState();
   const [video, setVideo] = useState(false);
   const [college, setCollege] = useState("");
+
+  const [latestDate, setLatestDate] = useState();
+  const [scan, setScan] = useState(false);
+  const [alert, setAlert] = useState("");
+
+  const [attendence, setAttendence] = useState(false);
+  const [dbAttendence, setdbAttendence] = useState(false);
   const [response, setResponse] = useState("");
+  const [scanResultWebCam, setScanResultWebCam] = useState("");
+
   const [userImg, setUserImg] = useState("");
 
   useEffect(() => {
@@ -45,10 +56,13 @@ const Video = () => {
         }
       });
     });
+    db.collection("QRTokens")
+      .where("cdomain", "==", college)
+      .onSnapshot((snap) => setVerifyQR(snap.docs[0].data()));
+    console.log(verifyQR);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [college]);
 
-  // assign name to respective image URL of all accounts
   useEffect(() => {
     db.collection("students").onSnapshot((snapshot) => {
       setData(
@@ -60,9 +74,10 @@ const Video = () => {
         }))
       );
     });
+
+    // eslint-disable-next-line
   }, []);
 
-  // gets id, hedera account id,private key, user image url, latest date of attendence
   useEffect(() => {
     db.collection("students")
       .where("email", "==", user.email)
@@ -75,24 +90,19 @@ const Video = () => {
           setUserImg(snap.data().imgURL[0]);
           setCollege(snap.data().cdomain);
 
-          // const latestAttendence =
-          //   snap.data()[month][snap.data()[month].length - 1];
           const latestAttendence =
             snap.data().attendence[month][
               snap.data().attendence[month].length - 1
             ];
           setLatestDate(latestAttendence);
-
           let dat = date.getDate();
           dat === latestAttendence && setdbAttendence(true);
           setthisMonth(snap.data().attendence);
         });
       });
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  // starts the camera and sets the model
   useEffect(() => {
     const loadModels = async () => {
       const startVideo = async () => {
@@ -101,6 +111,12 @@ const Video = () => {
             video: true,
           },
           (stream) => (webcamRef.current.srcObject = stream),
+          (err) => console.log(err)
+        );
+
+        navigator.mediaDevices.getUserMedia(
+          { video: true },
+          (stream) => (videoElm.current.srcObject = stream),
           (err) => console.log(err)
         );
       };
@@ -115,10 +131,8 @@ const Video = () => {
         faceapi.nets.ageGenderNet.loadFromUri(MODEL),
       ]).then(startVideo);
     };
-
     loadModels();
-    // eslint-disable-next-line no-use-before-define
-  }, []);
+  }, [scan]);
 
   function getMonth(monthNum) {
     const monthNames = [
@@ -139,46 +153,27 @@ const Video = () => {
     return monthNames[monthNum];
   }
 
-  // add attendence to database
   async function addAttendence(attended) {
     let hours = date.getHours();
     let dat = date.getDate();
-
-    if (attended && hours <= duration.end && hours >= duration.start) {
+    if (attended && hours <= 16 && hours >= 0) {
       const variable = db.collection("students").doc(id);
       const month = getMonth(date.getMonth());
 
       if (!thisMonth[month].includes(dat)) {
         thisMonth[month].push(dat);
       }
-
-      await variable.update({
-        attendence: thisMonth,
-        totalAtt: firebase.firestore.FieldValue.increment(1),
-      });
+      await variable
+        .update({
+          attendence: thisMonth,
+          totalAtt: firebase.firestore.FieldValue.increment(1),
+        })
+        .then(() => setdbAttendence(true));
     }
   }
 
-  // recognition and emotion detection
   const detect = async () => {
-    let labeledFaceDescriptors;
-    data.map(async ({ name, imgURL }) => {
-      const descriptions = [];
-      const img = await faceapi.fetchImage(`${imgURL || userImg}`);
-      const detections = await faceapi
-        .detectAllFaces(img)
-        .withFaceLandmarks()
-        .withFaceDescriptors();
-
-      detections.length !== 0 &&
-        descriptions.push(new Float32Array(detections[0].descriptor));
-
-      labeledFaceDescriptors = new faceapi.LabeledFaceDescriptors(
-        name || user.displayName,
-        descriptions
-      );
-    });
-    // const labeledFaceDescriptors = await loadImage();
+    const labeledFaceDescriptors = await loadImage();
 
     setInterval(async () => {
       if (initialise) {
@@ -214,6 +209,8 @@ const Video = () => {
         return faceMat.findBestMatch(detect.descriptor);
       });
 
+      console.log(results);
+
       !attendence &&
         results.map((result) => {
           setAttendence(result.label === user.displayName);
@@ -230,28 +227,90 @@ const Video = () => {
     }, 1000);
   };
 
+  async function loadImage() {
+    console.log(data);
+    return Promise.all(
+      data.map(async ({ name, imgURL }) => {
+        const descriptions = [];
+        for (let i = 0; i <= 1; i++) {
+          const img = await faceapi.fetchImage(`${imgURL || userImg}`);
+          const detections = await faceapi
+            .detectAllFaces(img)
+            .withFaceLandmarks()
+            .withFaceDescriptors();
+          detections.length !== 0 &&
+            descriptions.push(detections[0].descriptor);
+        }
+        return new faceapi.LabeledFaceDescriptors(
+          name || user.displayName,
+          descriptions
+        );
+      })
+    );
+  }
+
+  const handleScan = (data) => {
+    if (data) {
+      setScanResultWebCam(data.text);
+      console.log(data.text);
+      if (
+        verifyQR.token === data.text &&
+        verifyQR.validDate.toDate().getDate() === new Date().getDate()
+      ) {
+        setScan(true);
+
+        setAlert("QR verified");
+      } else {
+        setAlert("QR is invalid");
+      }
+    }
+  };
+  const handleError = (err) => {
+    console.error(err);
+  };
+
   return (
     <>
+      {alert && (
+        <Alert style={{ position: "absolute", zIndex: 3, top: 0 }}>
+          {alert}
+        </Alert>
+      )}
       {dbAttendence && (
         <Alert style={{ position: "absolute", zIndex: 3, top: 0 }}>
           Your attendece has been recorded for today
         </Alert>
       )}
       <Camera style={{ position: "relative" }}>
-        <video
-          ref={webcamRef}
-          autoPlay
-          muted
-          style={{ width: "100%" }}
-          onPlay={detect}
-        />
-        <canvas
-          ref={canvasRef}
-          style={{ position: "absolute", width: "100%" }}
-        />
+        {console.log(scan)}
+        {scan ? (
+          <video
+            ref={webcamRef}
+            autoPlay
+            muted
+            style={{ width: "100%" }}
+            onPlay={detect}
+          />
+        ) : (
+          <>
+            {/* <video id="scan" ref={videoElm}></video> */}
+            <QrReader
+              scanDelay={300}
+              style={{ width: "70%" }}
+              onError={handleError}
+              onScan={handleScan}
+            />
+          </>
+        )}
+        {scan && (
+          <canvas
+            ref={canvasRef}
+            style={{ position: "absolute", width: "100%" }}
+          />
+        )}
       </Camera>
       <LatestAttendence style={{ color: "#658ec6" }}>
-        Last attendence was submitted on: {latestDate || "NaN"}th
+        Last attendence was submitted on: {latestDate}th
       </LatestAttendence>
     </>
   );
@@ -276,3 +335,29 @@ const LatestAttendence = styled.h5`
   border-radius: 10px;
   background: linear-gradient(to right top, #65dfc9, #6cdbeb);
 `;
+
+// {!scan ? (
+//   <video
+//     ref={webcamRef}
+//     autoPlay
+//     muted
+//     style={{ width: "100%" }}
+//     onPlay={detect}
+//   />
+// ) : (
+//   <>
+//     {/* <video id="scan" ref={videoElm}></video> */}
+//     <QrReader
+//       scanDelay={300}
+//       style={{ width: "70%" }}
+//       onError={handleError}
+//       onScan={handleScan}
+//     />
+//   </>
+// )}
+// {scan && (
+//   <canvas
+//     ref={canvasRef}
+//     style={{ position: "absolute", width: "100%" }}
+//   />
+// )}
