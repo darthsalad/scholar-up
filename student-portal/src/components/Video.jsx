@@ -27,7 +27,7 @@ const Video = () => {
 
   const [thisMonth, setthisMonth] = useState();
   const [verifyQR, setVerifyQR] = useState();
-  const [video, setVideo] = useState(false);
+  const [verify, setVerify] = useState(false);
   const [college, setCollege] = useState("");
 
   const [latestDate, setLatestDate] = useState();
@@ -36,7 +36,7 @@ const Video = () => {
 
   const [attendence, setAttendence] = useState(false);
   const [dbAttendence, setdbAttendence] = useState(false);
-  const [response, setResponse] = useState("");
+
   const [scanResultWebCam, setScanResultWebCam] = useState("");
 
   const [userImg, setUserImg] = useState("");
@@ -89,6 +89,7 @@ const Video = () => {
           setPrivatekey(snap.data().privatekey);
           setUserImg(snap.data().imgURL[0]);
           setCollege(snap.data().cdomain);
+          setVerify(snap.data().verified);
 
           const latestAttendence =
             snap.data().attendence[month][
@@ -281,34 +282,38 @@ const Video = () => {
           Your attendece has been recorded for today
         </Alert>
       )}
-      <Camera style={{ position: "relative" }}>
-        {console.log(scan)}
-        {scan ? (
-          <video
-            ref={webcamRef}
-            autoPlay
-            muted
-            style={{ width: "100%" }}
-            onPlay={detect}
-          />
-        ) : (
-          <>
-            {/* <video id="scan" ref={videoElm}></video> */}
-            <QrReader
-              scanDelay={300}
-              style={{ width: "70%" }}
-              onError={handleError}
-              onScan={handleScan}
+      {verify ? (
+        <Camera style={{ position: "relative" }}>
+          {console.log(scan)}
+          {scan ? (
+            <video
+              ref={webcamRef}
+              autoPlay
+              muted
+              style={{ width: "100%" }}
+              onPlay={detect}
             />
-          </>
-        )}
-        {scan && (
-          <canvas
-            ref={canvasRef}
-            style={{ position: "absolute", width: "100%" }}
-          />
-        )}
-      </Camera>
+          ) : (
+            <>
+              {/* <video id="scan" ref={videoElm}></video> */}
+              <QrReader
+                scanDelay={300}
+                style={{ width: "70%" }}
+                onError={handleError}
+                onScan={handleScan}
+              />
+            </>
+          )}
+          {scan && (
+            <canvas
+              ref={canvasRef}
+              style={{ position: "absolute", width: "100%" }}
+            />
+          )}
+        </Camera>
+      ) : (
+        "You are not verifies. Please Contact college"
+      )}
       <LatestAttendence style={{ color: "#658ec6" }}>
         Last attendence was submitted on: {latestDate}th
       </LatestAttendence>
