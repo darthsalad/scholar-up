@@ -26,9 +26,13 @@ import { useEffect } from "react";
 
 const links = [
   { link: "/", label: "Home" },
+  // {
+  //   link: "/stats",
+  //   label: "Stats",
+  // },
   {
-    link: "/stats",
-    label: "Stats",
+    link: "/qr",
+    label: "Generate QR",
   },
   {
     link: "#1",
