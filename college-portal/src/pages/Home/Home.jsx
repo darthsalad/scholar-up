@@ -1,10 +1,7 @@
 import React from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import { StatsGroup } from "../../components/Stats/Stats";
-import NoticeBoard from "../../components/NoticeBoard/NoticeBoard";
-import { Button } from "@mantine/core";
-import { IconExternalLink } from "@tabler/icons";
-import { Link } from "react-router-dom";
+import Verified from "../verify/Verified";
 
 const Home = () => {
   return (
@@ -13,22 +10,11 @@ const Home = () => {
       <StatsGroup></StatsGroup>
       <div
         style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          paddingTop: "50px"
+          paddingTop: "50px",
         }}
       >
-        <Link to="/students/verified">
-        <Button 
-          rightIcon={<IconExternalLink />} 
-          size="lg"
-          >
-          Verified Students
-        </Button>
-        </Link>
+        <Verified></Verified>
       </div>
-      <NoticeBoard></NoticeBoard>
     </div>
   );
 };

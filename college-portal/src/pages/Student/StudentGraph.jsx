@@ -42,6 +42,8 @@ const labels = [
   "August",
   "September",
   "October",
+  "November",
+  "December"
 ];
 
 const StudentGraph = ({ color, attendance }) => {
@@ -49,7 +51,7 @@ const StudentGraph = ({ color, attendance }) => {
     labels,
     datasets: [
       {
-        label: "Persents",
+        label: "Presents",
         data: labels.map((label) => attendance[label.toLowerCase()].length),
         backgroundColor: color || "rgba(53, 162, 235, 0.5)",
       },

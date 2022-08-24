@@ -15,7 +15,9 @@ export function StatsGroup() {
   useEffect(() => {
     async function getRegistered() {
       try {
-        const q = query(
+        const q = user.email === "gov@govindia.in" 
+        ? query(collection(db, "students")) 
+        :query(
           collection(db, "students"),
           where("cdomain", "==", user.email.split("@")[1])
         );
@@ -29,7 +31,12 @@ export function StatsGroup() {
 
     async function getUnverified() {
       try {
-        const q = query(
+        const q = user.email === "gov@govindia.in" 
+        ? query(
+          collection(db, "students"),
+          where("verified", "==", false)
+          ) 
+        : query(
           collection(db, "students"),
           where("cdomain", "==", user.email.split("@")[1]),
           where("verified", "==", false)

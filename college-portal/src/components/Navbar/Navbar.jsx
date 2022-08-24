@@ -18,18 +18,18 @@ import {
   IconMoonStars,
   IconCircle,
 } from "@tabler/icons";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useStyles } from "./Navbar.styles";
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '../../firebase.config'
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../firebase.config";
 import { useEffect } from "react";
 
 const links = [
   { link: "/", label: "Home" },
-  {
-    link: "/stats",
-    label: "Stats",
-  },
+  // {
+  //   link: "/stats",
+  //   label: "Stats",
+  // },
   {
     link: "#1",
     label: "My students",
@@ -43,6 +43,10 @@ const links = [
         label: "Unverified students",
       },
     ],
+  },
+  {
+    link: "/qr",
+    label: "QR Generator",
   },
   {
     link: "/profile",
@@ -66,7 +70,7 @@ const colors = [
 ];
 
 export default function Navbar() {
-  const [user,wait] = useAuthState(auth)
+  const [user, wait] = useAuthState(auth);
   const [opened, { toggle }] = useDisclosure(false);
   const { classes } = useStyles();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -76,8 +80,8 @@ export default function Navbar() {
   const dark = colorScheme === "dark";
 
   useEffect(() => {
-    console.log({ user, wait })
-  },[user])
+    console.log({ user, wait });
+  }, [user]);
 
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
@@ -111,27 +115,31 @@ export default function Navbar() {
 
   items.push(
     <>
-    <Link key="Logout" to={!wait && (user ? "/logout" : "/register")} className={classes.link}>
-    {!wait && (user ? "Logout" : "Register")}
+      <Link
+        key="Logout"
+        to={!wait && (user ? "/logout" : "/register")}
+        className={classes.link}
+      >
+        {!wait && (user ? "Logout" : "Register")}
       </Link>
-    <Menu key="Select" trigger="hover" exitTransitionDuration={0}>
-      <Menu.Target>
-        <Button>Toggle Color</Button>
-      </Menu.Target>
+      <Menu key="Select" trigger="hover" exitTransitionDuration={0}>
+        <Menu.Target>
+          <Button>Toggle Color</Button>
+        </Menu.Target>
 
-      <Menu.Dropdown>
-        {colors.map((color) => (
-          <Menu.Item
-            key={color.value}
-            icon={<IconCircle fill={color.value} size={14}></IconCircle>}
-            onClick={() => toggleColorScheme(color.value)}
-          >
-            {color.label}
-          </Menu.Item>
-        ))}
-      </Menu.Dropdown>
+        <Menu.Dropdown>
+          {colors.map((color) => (
+            <Menu.Item
+              key={color.value}
+              icon={<IconCircle fill={color.value} size={14}></IconCircle>}
+              onClick={() => toggleColorScheme(color.value)}
+            >
+              {color.label}
+            </Menu.Item>
+          ))}
+        </Menu.Dropdown>
       </Menu>
-      </>
+    </>
   );
 
   items.push(

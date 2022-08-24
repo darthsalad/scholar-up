@@ -31,6 +31,7 @@ const Profile = () => {
   const { classes } = useStyles();
 
   const [cname, setCname] = useState("");
+  const [newName, setNewName] = useState("");
   const [domain, setDomain] = useState("");
   const [docid, setDocId] = useState("");
   const [loading, setLoading] = useState(true);
@@ -53,7 +54,7 @@ const Profile = () => {
         setError
       );
     }
-
+    // console.log(cname);
     if (user && collegeScholarships)
       getScholarship(collegeScholarships, setScholarships, setError);
   }, [user, collegeScholarships, wait]);
@@ -99,10 +100,10 @@ const Profile = () => {
                   <TextInput
                     icon={<IconBuilding size={14}></IconBuilding>}
                     label="Institute name"
-                    value={cname}
+                    value={newName}
                     placeholder="Update name of the college"
                     className={classes.textInput}
-                    onChange={(e) => setCname(e.currentTarget.value)}
+                    onChange={(e) => setNewName(e.currentTarget.value)}
                     required
                   ></TextInput>
                   <TextInput

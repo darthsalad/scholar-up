@@ -5,6 +5,7 @@ import {
   query,
   where,
   doc,
+  getDocs,
   updateDoc,
   arrayUnion,
   onSnapshot,
@@ -111,3 +112,53 @@ export const submitCollegeDetails = async (
     setError(err);
   }
 };
+
+export const getScholarships = async (
+  user, 
+  setScholarships
+) => {
+  try {
+    const q = user.email === "gov@govindia.in"
+    ? query(collection(db, "scholarships"))
+    : query(
+      collection(db, "colleges"),
+      where("domain", "==", user.email.split("@")[1])
+    );
+    const querySnapshot = await getDocs(q);
+    user.email === "gov@govindia.in" 
+      ? setScholarships(
+          querySnapshot.docs.map((scholarship) => (
+            {
+              name: scholarship.data().scholarshipName,
+              provider: scholarship.data().scholarshipProvider,
+              description: scholarship.data().scholarshipDescription
+            }
+          ))  
+        )
+      : setScholarships(
+      querySnapshot.docs[0].data().scholarships.map((scholarship) =>
+        // console.log(scholarship);
+        ({
+          name: scholarship.name,
+          provider: scholarship.provider,
+          description: scholarship.description,
+        })
+      )
+    );
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export const getStudents = async (
+  id,
+  setData
+) => {
+  const docRef = doc(db, "students", id);
+      onSnapshot(docRef, (docSnap) => {
+        setData({
+          id: docSnap.id,
+          student: docSnap.data(),
+        });
+      })
+}

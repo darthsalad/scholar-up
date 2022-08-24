@@ -15,6 +15,8 @@ export const useStyles = createStyles((theme) => ({
         color: theme.primaryColor,
       }).background,
     },
+    position: "sticky",
+    zIndex: "4000",
   },
 
   inner: {
