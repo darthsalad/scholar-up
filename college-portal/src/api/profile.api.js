@@ -136,7 +136,7 @@ export const getScholarships = async (
           ))  
         )
       : setScholarships(
-      querySnapshot.docs[0].data().scholarships.map((scholarship) =>
+      querySnapshot.docs[0].data().scholarships?.map((scholarship) =>
         // console.log(scholarship);
         ({
           name: scholarship.name,
