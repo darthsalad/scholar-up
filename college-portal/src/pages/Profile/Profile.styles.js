@@ -49,5 +49,5 @@ export const useStyles = createStyles((theme) => ({
   },
   gov: {
     display: "none",
-  }
+  },
 }));

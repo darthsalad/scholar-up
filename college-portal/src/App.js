@@ -1,19 +1,22 @@
-import React from "react";
-import Home from "./pages/Home/Home";
-import Login from "./pages/Auth/Login";
-import Register from "./pages/Auth/Register";
-import Profile from "./pages/Profile/Profile";
-import Student from "./pages/Student/Student";
-import Unverified from "./pages/verify/unverified";
-import Verified from "./pages/verify/Verified";
-import PageNotFound from "./pages/pageNotFound/PageNotFound";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
-import Protected from "./components/Protected/Protected";
-import Stats from "./pages/Stats/Stats";
-import Contact from "./pages/Contact/Contact";
-import Logout from "./pages/Auth/logout";
+
+import Load from "./components/Load/Load";
+const Login = lazy(() => import("./pages/Auth/Login"));
+const Register = lazy(() => import("./pages/Auth/Register"));
+const Profile = lazy(() => import("./pages/Profile/Profile"));
+const Student = lazy(() => import("./pages/Student/Student"));
+const Unverified = lazy(() => import("./pages/verify/unverified"));
+const Verified = lazy(() => import("./pages/verify/Verified"));
+const PageNotFound = lazy(() => import("./pages/pageNotFound/PageNotFound"));
+const Protected = lazy(() => import("./components/Protected/Protected"));
+const Stats = lazy(() => import("./pages/Stats/Stats"));
+const Contact = lazy(() => import("./pages/Contact/Contact"));
+const Logout = lazy(() => import("./pages/Auth/logout"));
+const Home = lazy(() => import("./pages/Home/Home"));
+const QRGenerator = lazy(() => import("./pages/QRGenerator/QRGenerator"));
 
 function App() {
   const [colorScheme, setColorScheme] = React.useState(
@@ -46,40 +49,40 @@ function App() {
         <ColorSchemeProvider
           colorScheme={colorScheme}
           toggleColorScheme={toggleColorScheme}
-          other={{
-            primaryColor: colorScheme,
-          }}
         >
           <BrowserRouter>
-            <Routes>
-              <Route
-                exact
-                path="/"
-                element={
-                  <Protected>
-                    <Home />
-                  </Protected>
-                }
-              />
-              <Route exact path="/login" element={<Login />} />
-              <Route exact path="/Register" element={<Register />} />
-              <Route exact path="/logout" element={<Logout />} />
-              <Route exact path="/profile" element={<Profile />} />
-              <Route exact path="/student/:id" element={<Student />} />
-              <Route
-                exact
-                path="/students/unverified"
-                element={<Unverified />}
-              />
-              <Route exact path="/students/verified" element={<Verified />} />
-              <Route exact path="/stats" element={<Stats></Stats>}></Route>
-              <Route
-                exact
-                path="/contact"
-                element={<Contact></Contact>}
-              ></Route>
-              <Route path="*" element={<PageNotFound />} />
-            </Routes>
+            <Suspense fallback={<Load></Load>}>
+              <Routes>
+                <Route
+                  exact
+                  path="/"
+                  element={
+                    <Protected>
+                      <Home />
+                    </Protected>
+                  }
+                />
+                <Route exact path="/login" element={<Login />} />
+                <Route exact path="/Register" element={<Register />} />
+                <Route exact path="/logout" element={<Logout />} />
+                <Route exact path="/profile" element={<Profile />} />
+                <Route exact path="/student/:id" element={<Student />} />
+                <Route
+                  exact
+                  path="/students/unverified"
+                  element={<Unverified />}
+                />
+                <Route exact path="/students/verified" element={<Verified />} />
+                <Route exact path="/stats" element={<Stats></Stats>}></Route>
+                <Route
+                  exact
+                  path="/contact"
+                  element={<Contact></Contact>}
+                ></Route>
+                <Route exact path="/qr" element={<QRGenerator />}></Route>
+                <Route path="*" element={<PageNotFound />} />
+              </Routes>
+            </Suspense>
           </BrowserRouter>
         </ColorSchemeProvider>
       </NotificationsProvider>
