@@ -44,22 +44,19 @@ const Video = () => {
   useEffect(() => {
     db.collection("colleges").onSnapshot((snapshot) => {
       snapshot.forEach((snap) => {
-        // console.log(snap.data());
-
         if (snap.data().domain === college) {
           setDuration({
             ...duration,
             start: parseInt(snap.data().class_begin),
             end: parseInt(snap.data().class_end),
           });
-          console.log(duration);
         }
       });
     });
     db.collection("QRTokens")
       .where("cdomain", "==", college)
       .onSnapshot((snap) => setVerifyQR(snap.docs[0].data()));
-    console.log(verifyQR);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [college]);
 
@@ -210,8 +207,6 @@ const Video = () => {
         return faceMat.findBestMatch(detect.descriptor);
       });
 
-      console.log(results);
-
       !attendence &&
         results.map((result) => {
           setAttendence(result.label === user.displayName);
@@ -229,7 +224,6 @@ const Video = () => {
   };
 
   async function loadImage() {
-    console.log(data);
     return Promise.all(
       data.map(async ({ name, imgURL }) => {
         const descriptions = [];
@@ -253,7 +247,7 @@ const Video = () => {
   const handleScan = (data) => {
     if (data) {
       setScanResultWebCam(data.text);
-      console.log(data.text);
+
       if (
         verifyQR.token === data.text &&
         verifyQR.validDate.toDate().getDate() === new Date().getDate()
@@ -284,7 +278,6 @@ const Video = () => {
       )}
       {verify ? (
         <Camera style={{ position: "relative" }}>
-          {console.log(scan)}
           {scan ? (
             <video
               ref={webcamRef}
