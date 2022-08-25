@@ -55,14 +55,12 @@ const Application = () => {
 
     setError(checkImage(file));
     if (!err) {
-      console.log(file);
       uploadPDF(file);
     }
   };
 
   const uploadPDF = (file) => {
     const uploadTask = storage.ref(`applications/${file.name}`).put(file);
-    console.log(uploadTask);
 
     uploadTask.on(
       "state_changes",
@@ -73,7 +71,6 @@ const Application = () => {
         setProgress(progress);
       },
       (err) => {
-        console.log(err);
         setError(err);
       },
       () => {

@@ -50,16 +50,10 @@ const Application = () => {
   const imageUpload = (e) => {
     const file = e.target.files[0];
     uploadPDF(file);
-    // setError(checkImage(file));
-    // if (!err) {
-    //   console.log(file);
-    //   uploadPDF(file);
-    // }
   };
 
   const uploadPDF = (file) => {
     const uploadTask = storage.ref(`receipts/${file.name}`).put(file);
-    console.log(uploadTask);
 
     uploadTask.on(
       "state_changes",
@@ -70,7 +64,6 @@ const Application = () => {
         setProgress(progress);
       },
       (err) => {
-        console.log(err);
         setError(err);
       },
       () => {
@@ -84,7 +77,7 @@ const Application = () => {
             const fileObj = {
               fileName: file.name,
               fileDate: date.toLocaleDateString(),
-              filePDF: url
+              filePDF: url,
             };
             await variable
               .update({

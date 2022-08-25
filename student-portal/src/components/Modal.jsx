@@ -67,7 +67,6 @@ export default function BasicModal() {
       });
 
     db.collection("colleges").onSnapshot((snapshot) => {
-      // console.log(snapshot.docs[0].data());
       setColleges(
         snapshot.docs.map((doc) => ({
           value: doc.id,
@@ -76,7 +75,6 @@ export default function BasicModal() {
         }))
       );
     });
-    // console.log(colleges);
   }, [user]);
 
   async function handleSubmit(e) {
