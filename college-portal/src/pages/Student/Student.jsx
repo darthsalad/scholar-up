@@ -4,7 +4,7 @@ import { auth, db } from "../../firebase.config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useStyles } from "./Student.styles";
 import Navbar from "../../components/Navbar/Navbar";
-import { Accordion, Text, useMantineTheme, Tabs, Alert } from "@mantine/core";
+import { Accordion, Text, useMantineTheme, Tabs } from "@mantine/core";
 import { query, where, collection, onSnapshot } from "firebase/firestore";
 import Load from "../../components/Load/Load";
 import { AwardScholarship } from "../../components/Scholarship/AwardScholarship";
@@ -161,7 +161,7 @@ function StudentProfileData({ data, college, scholarships }) {
             <img
               alt="profile-pic"
               src={
-                data.student.imgURL.length == 0
+                data.student.imgURL.length === 0
                   ? "./student2.png"
                   : data.student.imgURL
               }

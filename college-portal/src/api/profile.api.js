@@ -53,14 +53,13 @@ export const getScholarship = (
   setError
 ) => {
   try {
-    const q = collegeScholarships.length == 0 
-    ? query(
-      collection(db, "scholarships")
-    )
-    : query(
-      collection(db, "scholarships"),
-      where("scholarshipName", "not-in", collegeScholarships)
-    );
+    const q =
+      collegeScholarships.length === 0
+        ? query(collection(db, "scholarships"))
+        : query(
+            collection(db, "scholarships"),
+            where("scholarshipName", "not-in", collegeScholarships)
+          );
     onSnapshot(q, (querySnapshot) => {
       setScholarships(
         querySnapshot.docs.map((scholarship) => ({
@@ -116,51 +115,46 @@ export const submitCollegeDetails = async (
   }
 };
 
-export const getScholarships = async (
-  user, 
-  setScholarships
-) => {
+export const getScholarships = async (user, setScholarships) => {
   try {
-    const q = user.email === "gov@govindia.in"
-    ? query(collection(db, "scholarships"))
-    : query(
-      collection(db, "colleges"),
-      where("domain", "==", user.email.split("@")[1])
-    );
-    onSnapshot(q, (querySnapshot) => {user.email === "gov@govindia.in" 
-      ? setScholarships(
-          querySnapshot.docs.map((scholarship) => (
-            {
+    const q =
+      user.email === "gov@govindia.in"
+        ? query(collection(db, "scholarships"))
+        : query(
+            collection(db, "colleges"),
+            where("domain", "==", user.email.split("@")[1])
+          );
+    onSnapshot(q, (querySnapshot) => {
+      user.email === "gov@govindia.in"
+        ? setScholarships(
+            querySnapshot.docs.map((scholarship) => ({
               name: scholarship.data().scholarshipName,
               provider: scholarship.data().scholarshipProvider,
-              description: scholarship.data().scholarshipDescription
-            }
-          ))  
-        )
-      : setScholarships(
-      querySnapshot.docs[0].data().scholarships?.map((scholarship) =>
-        // console.log(scholarship);
-        ({
-          name: scholarship.name,
-          provider: scholarship.provider,
-          description: scholarship.description,
-        })
-      )
-    );})
+              description: scholarship.data().scholarshipDescription,
+            }))
+          )
+        : setScholarships(
+            querySnapshot.docs[0].data().scholarships?.map((scholarship) =>
+              // console.log(scholarship);
+              ({
+                name: scholarship.name,
+                provider: scholarship.provider,
+                description: scholarship.description,
+              })
+            )
+          );
+    });
   } catch (err) {
     console.log(err);
   }
-}
+};
 
-export const getStudents = async (
-  id,
-  setData
-) => {
+export const getStudents = async (id, setData) => {
   const docRef = doc(db, "students", id);
-      onSnapshot(docRef, (docSnap) => {
-        setData({
-          id: docSnap.id,
-          student: docSnap.data(),
-        });
-      })
-}
+  onSnapshot(docRef, (docSnap) => {
+    setData({
+      id: docSnap.id,
+      student: docSnap.data(),
+    });
+  });
+};
