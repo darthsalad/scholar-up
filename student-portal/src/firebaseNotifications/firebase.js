@@ -53,7 +53,7 @@ export const requestForToken = (user) => {
   return messaging
     .getToken({
       vapidKey:
-        "BMnVdpMJQBcTJdH-Ol2vV05r4w-n7YZhoqzaKTcp3rAWxb8cKYvlCenotsKhKjOuArwtYwsO58rsAdLQB7SQqys",
+        "BCP4I5R6XyOz6KOP3qeRpoA_863pUwcAwSf02DebjLvaYp3UpvgyI7uA4cFaXMNs8g5J_T7DscoYVljIJDfsHjU",
     })
     .then((currentToken) => {
       if (currentToken) {

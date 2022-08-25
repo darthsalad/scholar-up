@@ -25,8 +25,9 @@ function onlyUnique(value, index, self) {
   return self.indexOf(value) === index;
 }
 //scheduling notifications at 8:55 am ...monday to friday
+//55 8 * * 1-5
 cron.schedule("55 8 * * 1-5", async function () {
-  console.log("running a task every minute");
+  console.log("running task");
   try {
     var registrationToken = await getUser();
     var unique = registrationToken.filter(onlyUnique);
