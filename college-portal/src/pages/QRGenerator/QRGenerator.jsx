@@ -23,9 +23,19 @@ const QRGenerator = () => {
 
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        setLocation(position.coords);
-      });
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          setLocation(position.coords);
+        },
+        function (error) {
+          setError(error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        }
+      );
     } else {
       setError("Geolocation is not supported by this browser.");
     }
