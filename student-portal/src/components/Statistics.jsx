@@ -102,10 +102,15 @@ const Statistics = () => {
             month.push(lengthEach);
             sum += lengthEach;
           }
-
-          let day = getPresentDay();
+          const today = new Date()
+          const start = new Date(snap.data().verifiedOn.seconds * 1000)
+          console.log(start)
+          let totalDays = (today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+          if (totalDays < 1) totalDays = 1
+          let day = Math.ceil(totalDays)
           setDays(sum);
           setCurrentDays(day);
+          console.log({days,currentDays})
           month.push(day - sum);
           setDougnut({
             labels: monthNames,
@@ -190,7 +195,7 @@ const Statistics = () => {
           Total number of days present: <span>{days}</span>
         </Days>
         <WorkingDays>
-          Total number of working days: <span>{getPresentDay()}</span>
+          Total number of working days: <span>{currentDays}</span>
         </WorkingDays>
         <Percentage>
           Percentage number of days present:{" "}
