@@ -133,7 +133,7 @@ const QRGenerator = () => {
                 disabled
               ></TextInput>
             )}
-            {console.log(location)}
+            {/* {console.log(location)} */}
 
             {!location && (
               <TextInput

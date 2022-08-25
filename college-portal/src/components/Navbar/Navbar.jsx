@@ -44,10 +44,10 @@ const links = [
       },
     ],
   },
-  {
-    link: "/qr",
-    label: "QR Generator",
-  },
+  // {
+  //   link: "/qr",
+  //   label: "QR Generator",
+  // },
   {
     link: "/profile",
     label: "Edit profile",
@@ -112,6 +112,19 @@ export default function Navbar() {
       </Link>
     );
   });
+
+  user.email !== "gov@govindia.in" &&
+    items.push(
+      <>
+        <Link
+          key="QR-generator"
+          to="/qr"
+          className={classes.link}
+        >
+          QR-Generator
+        </Link>
+      </>
+    );
 
   items.push(
     <>
