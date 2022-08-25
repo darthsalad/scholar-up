@@ -3,7 +3,7 @@ import downloadjs from "downloadjs";
 import html2canvas from "html2canvas";
 import { Button, Text, LoadingOverlay, Alert, TextInput } from "@mantine/core";
 import { TimeInput } from "@mantine/dates";
-import { collection, query, where, getDocs, addDoc, updateDoc,increment,doc } from "firebase/firestore";
+import { collection, query, where, getDocs, addDoc, updateDoc,doc } from "firebase/firestore";
 import { auth, db } from "../../firebase.config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import QRCode from "react-qr-code";
@@ -71,6 +71,40 @@ const QRGenerator = () => {
     getQRCode();
   }, [user]);
 
+  let monthList = {
+    january: 0,
+    february: 0,
+    march: 0,
+    april: 0,
+    may: 0,
+    june: 0,
+    july: 0,
+    august: 0,
+    september: 0,
+    october: 0,
+    november: 0,
+    december: 0,
+  }
+
+  function mygetMonth(monthNum) {
+    const monthNames = [
+      "january",
+      "february",
+      "march",
+      "april",
+      "may",
+      "june",
+      "july",
+      "august",
+      "september",
+      "october",
+      "november",
+      "december",
+    ];
+
+    return monthNames[monthNum];
+  }
+
   const handleGenerate = async () => {
     try {
       setLoading(true);
@@ -81,8 +115,9 @@ const QRGenerator = () => {
         where("cdomain", "==", user.email.split("@")[1])
       );
       const querySnapshot = await getDocs(q);
-      console.log(querySnapshot.docs)
       if (querySnapshot.docs.length === 0) {
+        console.log(monthList[mygetMonth(validStartTime.getMonth())]);
+        monthList[mygetMonth(validStartTime.getMonth())] =  monthList[mygetMonth(validStartTime.getMonth())] + 1
         await addDoc(collection(db, "QRTokens"), {
           token: randomString,
           cdomain: user.email.split("@")[1],
@@ -93,11 +128,14 @@ const QRGenerator = () => {
             lng: location.longitude,
             alt: location.altitude,
           },
-          classNo: 1
+          classNo: monthList
         });
       } else {
+        console.log(querySnapshot.docs[0].data().classNo)
+        monthList = querySnapshot.docs[0].data().classNo
+        monthList[mygetMonth(validStartTime.getMonth())] =  monthList[mygetMonth(validStartTime.getMonth())] + 1
             await updateDoc(doc(db, "QRTokens", querySnapshot.docs[0].id), {
-              classNo: increment(1),
+              classNo: monthList,
               token: randomString,
               validStartTime: validStartTime,
               validEndTime: validEndTime,
