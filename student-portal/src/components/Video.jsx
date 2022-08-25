@@ -179,7 +179,7 @@ const Video = () => {
   async function addAttendence(attended) {
     let hours = date.getHours();
     let dat = date.getDate();
-    if (attended && hours <= 16 && hours >= 0) {
+    if (attended && hours <= 19 && hours >= 0) {
       const variable = db.collection("students").doc(id);
       const month = getMonth(date.getMonth());
 

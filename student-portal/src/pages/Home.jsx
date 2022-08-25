@@ -14,7 +14,6 @@ import axios from "axios";
 import { requestForToken } from "../firebaseNotifications/firebase";
 import Application from "../components/Application";
 import Receipt from "../components/Receipt";
-import Fencing from "../components/Fencing";
 
 const Home = () => {
   const [user] = useAuthState(auth);
