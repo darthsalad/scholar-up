@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Avatar from "@mui/material/Avatar";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -13,14 +13,15 @@ import Settings from "../components/Settings";
 import axios from "axios";
 import { requestForToken } from "../firebaseNotifications/firebase";
 import Application from "../components/Application";
-import Receipt from "../components/Receipt"
+import Receipt from "../components/Receipt";
+import Fencing from "../components/Fencing";
 
 const Home = () => {
   const [user] = useAuthState(auth);
   const [attendence, setAttendence] = useState(false);
   const [stats, setStats] = useState(false);
   const [hbar, setHbar] = useState(false);
-  const [application,setApplication] = useState(false);
+  const [application, setApplication] = useState(false);
   const [settings, setSettings] = useState(true);
   const [receipts, setReceipts] = useState(false);
   const [fact, setFact] = useState("Click for random facts");
@@ -61,7 +62,7 @@ const Home = () => {
               setStats(false);
               setHbar(false);
               setSettings(false);
-              setApplication(false)
+              setApplication(false);
               setAttendence(true);
               setReceipts(false);
             }}
@@ -77,7 +78,7 @@ const Home = () => {
               setAttendence(false);
               setHbar(false);
               setSettings(false);
-              setApplication(false)
+              setApplication(false);
               setStats(true);
               setReceipts(false);
             }}
@@ -93,7 +94,7 @@ const Home = () => {
               setAttendence(false);
               setStats(false);
               setSettings(false);
-              setApplication(false)
+              setApplication(false);
               setHbar(true);
               setReceipts(false);
             }}
@@ -110,13 +111,14 @@ const Home = () => {
               setStats(false);
               setHbar(false);
               setSettings(false);
-              setApplication(true)
+              setApplication(true);
               setAttendence(false);
               setReceipts(false);
             }}
             style={{
               background:
-                application && "linear-gradient(to right top, #65dfc9, #6cdbeb)",
+                application &&
+                "linear-gradient(to right top, #65dfc9, #6cdbeb)",
             }}
           >
             <h2>Application</h2>
@@ -144,7 +146,7 @@ const Home = () => {
               setAttendence(false);
               setStats(false);
               setHbar(false);
-              setApplication(false)
+              setApplication(false);
               setSettings(true);
               setReceipts(false);
             }}
@@ -179,8 +181,8 @@ const Home = () => {
         {stats && <Statistics />}
         {hbar && <Hbar />}
         {settings && <Settings />}
-        {application && <Application/>}
-        {receipts && <Receipt/>}
+        {application && <Application />}
+        {receipts && <Receipt />}
       </Details>
     </Container>
   );
