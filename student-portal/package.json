@@ -28,6 +28,7 @@
     "react-chartjs-2": "^4.1.0",
     "react-dom": "^18.1.0",
     "react-firebase-hooks": "^3.0.4",
+    "react-qr-scanner": "^1.0.0-alpha.9",
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1",
     "react-toastify": "^9.0.8",

@@ -19,8 +19,7 @@ const firebaseConfig = {
   projectId: "scholar-up1",
   storageBucket: "scholar-up1.appspot.com",
   messagingSenderId: "1012802440689",
-  appId: "1:1012802440689:web:8de0e7e1bd569171cb4850",
-  // measurementId: "G-0JFG3SHDCK"
+  appId: "1:1012802440689:web:8de0e7e1bd569171cb4850"
 };
 
 // Initialize Firebase

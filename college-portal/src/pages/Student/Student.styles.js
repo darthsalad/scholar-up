@@ -2,7 +2,6 @@ import { createStyles } from "@mantine/core";
 
 export const useStyles = createStyles((theme) => ({
   studentContainer: {
-    // minHeight: "98vh",
     backgroundColor:
       theme.colorScheme === "dark"
         ? theme.colors.dark[7]
@@ -72,5 +71,11 @@ export const useStyles = createStyles((theme) => ({
   },
   textInput: {
     marginBottom: "2rem",
+  },
+  tabs: {
+    display: "flex",
+    flexDirection: "row",
+    width: "98vw",
+    marginTop: "-4rem",
   },
 }));
