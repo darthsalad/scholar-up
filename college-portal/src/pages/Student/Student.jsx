@@ -4,24 +4,23 @@ import { auth, db } from "../../firebase.config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useStyles } from "./Student.styles";
 import Navbar from "../../components/Navbar/Navbar";
-import {
-  Accordion,
-  Text,
-  useMantineTheme,
-  Tabs,
-  Alert,
-} from "@mantine/core";
-import {
-  query,
-  where,
-  collection,
-  onSnapshot,
-} from "firebase/firestore";
+import { Accordion, Text, useMantineTheme, Tabs, Alert } from "@mantine/core";
+import { query, where, collection, onSnapshot } from "firebase/firestore";
 import Load from "../../components/Load/Load";
 import { AwardScholarship } from "../../components/Scholarship/AwardScholarship";
-import { StudentStats, StudentsReceipts, StudentLeaveApplications } from "./StudentUtils";
+import {
+  StudentStats,
+  StudentsReceipts,
+  StudentLeaveApplications,
+} from "./StudentUtils";
 
-import { IconFileCheck, IconEye, IconUser } from "@tabler/icons";
+import {
+  IconFileCheck,
+  IconEye,
+  IconUser,
+  IconReportMoney,
+  IconTrophy,
+} from "@tabler/icons";
 import { getScholarships, getStudents } from "../../api/profile.api";
 
 const Student = () => {
@@ -48,15 +47,12 @@ const Student = () => {
         querySnap.docs.forEach((doc) => {
           setCollege(doc.data().cname);
         });
-      })
+      });
     }
 
     user && !data && getStudents(id, setData);
     user && !college && data && getCollege();
     user && getScholarships(user, setScholarships);
-    
-    // console.log(data);
-    // console.log(scholarships);
   }, [user, id, data, college, scholarships]);
 
   if (loading || !data || !college) return <Load></Load>;
@@ -88,6 +84,24 @@ const Student = () => {
           >
             Stats
           </Tabs.Tab>
+          {user.email === "gov@govindia.in" && (
+            <Tabs.Tab
+              value="receipts"
+              icon={<IconReportMoney></IconReportMoney>}
+              onClick={() => setTab("receipts")}
+            >
+              Receipts
+            </Tabs.Tab>
+          )}
+          {user.email === "gov@govindia.in" && (
+            <Tabs.Tab
+              value="award"
+              icon={<IconTrophy></IconTrophy>}
+              onClick={() => setTab("award")}
+            >
+              Award Scholarships
+            </Tabs.Tab>
+          )}
         </Tabs.List>
       </Tabs>
 
@@ -100,24 +114,26 @@ const Student = () => {
           />
         )}
 
-
         {tab === "leave" && (
           <>
-            <StudentLeaveApplications data={data} theme={theme}></StudentLeaveApplications>
-            <StudentsReceipts data={data} user={user} />
+            <StudentLeaveApplications
+              data={data}
+              theme={theme}
+            ></StudentLeaveApplications>
           </>
         )}
 
+        {tab === "receipts" && (
+          <>
+            <StudentsReceipts data={data} user={user}></StudentsReceipts>
+          </>
+        )}
 
         {tab === "stats" && (
-          <>
-            {user.email === "gov@govindia.in" && data.student.verified == true
-              ? <AwardScholarship id={id} data={data} />
-              : <></>
-            }
-            <StudentStats data={data} theme={theme}></StudentStats>
-          </>
+          <StudentStats data={data} theme={theme}></StudentStats>
         )}
+
+        {tab === "award" && <AwardScholarship data={data}></AwardScholarship>}
       </div>
     </div>
   );
