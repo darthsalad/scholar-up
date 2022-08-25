@@ -3,7 +3,7 @@ import downloadjs from "downloadjs";
 import html2canvas from "html2canvas";
 import { Button, Text, LoadingOverlay, Alert, TextInput } from "@mantine/core";
 import { TimeInput } from "@mantine/dates";
-import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, addDoc, updateDoc,increment,doc } from "firebase/firestore";
 import { auth, db } from "../../firebase.config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import QRCode from "react-qr-code";
@@ -66,17 +66,38 @@ const QRGenerator = () => {
       setLoading(true);
       const randomString = makeid(10);
 
-      await addDoc(collection(db, "QRTokens"), {
-        token: randomString,
-        cdomain: user.email.split("@")[1],
-        validStartTime: validStartTime,
-        validEndTime: validEndTime,
-        location: {
-          lat: location.latitude,
-          lng: location.longitude,
-          alt: location.altitude,
-        },
-      });
+      const q = query(
+        collection(db, "QRTokens"),
+        where("cdomain", "==", user.email.split("@")[1])
+      );
+      const querySnapshot = await getDocs(q);
+      console.log(querySnapshot.docs)
+      if (querySnapshot.docs.length === 0) {
+        await addDoc(collection(db, "QRTokens"), {
+          token: randomString,
+          cdomain: user.email.split("@")[1],
+          validStartTime: validStartTime,
+          validEndTime: validEndTime,
+          location: {
+            lat: location.latitude,
+            lng: location.longitude,
+            alt: location.altitude,
+          },
+          classNo: 1
+        });
+      } else {
+            await updateDoc(doc(db, "QRTokens", querySnapshot.docs[0].id), {
+              classNo: increment(1),
+              token: randomString,
+              validStartTime: validStartTime,
+              validEndTime: validEndTime,
+              location: {
+                lat: location.latitude,
+                lng: location.longitude,
+                alt: location.altitude,
+              },
+            })
+      }
 
       setToken(randomString);
     } catch (err) {
