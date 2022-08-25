@@ -145,6 +145,9 @@ const Application = () => {
                   <File>
                     <Name>{file.fileName}</Name>
                     <UploadDate>{file.fileDate}</UploadDate>
+                    <Viewed
+                      style={{ backgroundColor: file.verify ? "green" : "red" }}
+                    ></Viewed>
                   </File>
                 </a>
               ))}
@@ -197,6 +200,13 @@ const File = styled.div`
   background-color: #658ec673;
   border-radius: 10px;
   position: relative;
+`;
+
+const Viewed = styled.div`
+  padding: 5px;
+  border-radius: 50%;
+  position: absolute;
+  right: 7px;
 `;
 
 const Name = styled.div`
