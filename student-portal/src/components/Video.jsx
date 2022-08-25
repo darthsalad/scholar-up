@@ -29,7 +29,7 @@ const Video = () => {
   const [verifyQR, setVerifyQR] = useState();
   const [verify, setVerify] = useState(false);
   const [college, setCollege] = useState("");
-  const [att, setAtt] = useState()
+  const [att, setAtt] = useState();
 
   const [latestDate, setLatestDate] = useState();
   const [scan, setScan] = useState(false);
@@ -163,12 +163,13 @@ const Video = () => {
       if (!thisMonth[month].includes(dat)) {
         thisMonth[month].push(dat);
       }
-      await variable
-        .update({
-          attendence: thisMonth,
-          totalAtt: att + 1
-        })
-        .then(() => setdbAttendence(true));
+      !dbAttendence &&
+        (await variable
+          .update({
+            attendence: thisMonth,
+            totalAtt: att + 1,
+          })
+          .then(() => setdbAttendence(true)));
     }
   }
 
