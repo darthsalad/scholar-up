@@ -2,11 +2,7 @@ import { createStyles } from "@mantine/core";
 
 export const useStyles = createStyles((theme) => ({
   studentContainer: {
-<<<<<<< HEAD
     // minHeight: "98vh",
-=======
-    // minHeight: "10vh",
->>>>>>> origin
     backgroundColor:
       theme.colorScheme === "dark"
         ? theme.colors.dark[7]
@@ -72,6 +68,9 @@ export const useStyles = createStyles((theme) => ({
     backgroundColor: "black",
     borderRadius: "5px",
     border: `solid 5px ${theme.colors[theme.primaryColor][4]}`,
+    marginBottom: "2rem",
+  },
+  textInput: {
     marginBottom: "2rem",
   },
 }));

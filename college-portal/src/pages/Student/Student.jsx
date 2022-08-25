@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "./Student.css";
 import { useParams } from "react-router-dom";
 import { auth, db } from "../../firebase.config";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -18,8 +17,8 @@ import {
   where,
   doc,
   collection,
-  getDocs,
   updateDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import Load from "../../components/Load/Load";
 import { Viewer, Worker } from "@react-pdf-viewer/core";
@@ -27,6 +26,7 @@ import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import { IconFileOff, IconFileCheck, IconEye } from "@tabler/icons";
 import StudentGraph from "./StudentGraph";
 import { getScholarships, getStudents } from "../../api/profile.api";
+import { AwardScholarship } from "../../components/Scholarship/AwardScholarship";
 
 const Student = () => {
   const { classes } = useStyles();
@@ -44,10 +44,11 @@ const Student = () => {
         collection(db, "colleges"),
         where("domain", "==", data.student.cdomain)
       );
-      const querySnap = await getDocs(q);
-      querySnap.docs.forEach((doc) => {
-        setCollege(doc.data().cname);
-      });
+      onSnapshot(q, (querySnap) => {
+        querySnap.docs.forEach((doc) => {
+          setCollege(doc.data().cname);
+        });
+      })
     }
 
     user && !data && getStudents(id, setData);
@@ -55,7 +56,7 @@ const Student = () => {
     user && getScholarships(user, setScholarships);
     
     // console.log(data);
-    // console.log(college);
+    // console.log(scholarships);
   }, [user, id, data, college, scholarships]);
 
   if (loading || !data || !college || !scholarships) return <Load></Load>;
@@ -200,7 +201,7 @@ const Student = () => {
                         <IconFileOff />
                       )}
                     </Accordion.Control>
-                    <Accordion.Panel>
+                    <Accordion.Panel>div className={classes.main}
                       <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.15.349/build/pdf.worker.js">
                         <div style={{ height: "750px" }}>
                           <Viewer
@@ -275,7 +276,9 @@ const Student = () => {
           </div>
         : <></>
         } 
-     
+        {user.email === "gov@govindia.in" && data.student.verified == true
+        ? <AwardScholarship id={id} data={data} college={college} scholarships={scholarships} />
+        : <></>}
         <Text className={classes.text}>Stats</Text>
         <div className={classes.statsContainer}>
           <StudentGraph

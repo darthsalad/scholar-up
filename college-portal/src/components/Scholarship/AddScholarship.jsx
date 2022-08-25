@@ -22,6 +22,7 @@ const AddScholarship = () => {
   const [scname, setScname] = useState("");
   const [provider, setProvider] = useState("");
   const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState("");
   const [endDate, setEndDate] = useState(null);
   const { classes } = useStyles();
 
@@ -38,6 +39,8 @@ const AddScholarship = () => {
                 label: doc.data().scholarshipName,
                 provider: doc.data().scholarshipProvider,
                 description: doc.data().scholarshipDescription,
+                amount: doc.data().scholarshipAmount,
+                endDate: doc.data().scholarshipEndDate
               }))
             );
             // console.log(scholarships)
@@ -50,8 +53,8 @@ const AddScholarship = () => {
       }
 
       user && getScholarships();
-      console.log({user, wait})
-  }, [user, wait])
+      // console.log({user, wait})
+  }, [user])
 
   async function handleAddScholarship(e) {
     e.preventDefault();
@@ -64,7 +67,8 @@ const AddScholarship = () => {
                 scholarshipName: scname,
                 scholarshipDescription: description,
                 scholarshipProvider: provider,
-                scholarshipEndDate: endDate.toLocaleDateString()
+                scholarshipEndDate: endDate.toLocaleDateString(),
+                scholarshipAmount: amount
             });
         }
         console.log(scname + " added to database.");
@@ -121,6 +125,15 @@ const AddScholarship = () => {
                 onChange={(e) => setDescription(e.currentTarget.value)}
                 required
             />
+            <TextInput
+                // icon={<IconBuilding size={14}></IconBuilding>}
+                label="Scholarship amount"
+                value={amount}
+                placeholder="Amount for the scholarship"
+                className={classes.textInput}
+                onChange={(e) => setAmount(e.currentTarget.value)}
+                required
+            />
             <DatePicker
               className={classes.textInput}
               label="Date of Birth"
@@ -164,6 +177,10 @@ const AddScholarship = () => {
                                 Provider- {scholarship.provider}
                                 <br />
                                 Details: {scholarship.description}
+                                <br />
+                                Amount: {scholarship.amount}
+                                <br />
+                                End Date: {scholarship.endDate}
                             </p>
                             </Accordion.Panel>
                         </Accordion.Item>
