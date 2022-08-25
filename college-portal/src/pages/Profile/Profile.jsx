@@ -18,7 +18,6 @@ import Notifications from "../../components/Notifications/Notifications";
 import { useStyles } from "./Profile.styles";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase.config";
-
 import {
   getDetails,
   getScholarship,
@@ -54,9 +53,10 @@ const Profile = () => {
         setError
       );
     }
-    // console.log(cname);
-    if (user && collegeScholarships)
+    if (user && collegeScholarships){
       getScholarship(collegeScholarships, setScholarships, setError);
+    }
+    // console.log(collegeScholarships, scholarships);
   }, [user, collegeScholarships, wait]);
 
   async function handleSubmit(e) {

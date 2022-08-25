@@ -5,7 +5,6 @@ import {
   query,
   where,
   doc,
-  getDocs,
   updateDoc,
   arrayUnion,
   onSnapshot,
@@ -54,7 +53,11 @@ export const getScholarship = (
   setError
 ) => {
   try {
-    const q = query(
+    const q = collegeScholarships.length == 0 
+    ? query(
+      collection(db, "scholarships")
+    )
+    : query(
       collection(db, "scholarships"),
       where("scholarshipName", "not-in", collegeScholarships)
     );
@@ -124,8 +127,7 @@ export const getScholarships = async (
       collection(db, "colleges"),
       where("domain", "==", user.email.split("@")[1])
     );
-    const querySnapshot = await getDocs(q);
-    user.email === "gov@govindia.in" 
+    onSnapshot(q, (querySnapshot) => {user.email === "gov@govindia.in" 
       ? setScholarships(
           querySnapshot.docs.map((scholarship) => (
             {
@@ -144,7 +146,7 @@ export const getScholarships = async (
           description: scholarship.description,
         })
       )
-    );
+    );})
   } catch (err) {
     console.log(err);
   }
