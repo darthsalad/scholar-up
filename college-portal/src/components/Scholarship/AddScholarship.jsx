@@ -15,7 +15,7 @@ import Load from "../../components/Load/Load";
 import { DatePicker } from '@mantine/dates';
 
 const AddScholarship = () => {
-  const [user, wait] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [scholarships, setScholarships] = useState(null);
