@@ -69,4 +69,11 @@ export const useStyles = createStyles((theme) => ({
     border: `solid 5px ${theme.colors[theme.primaryColor][4]}`,
     marginBottom: "2rem",
   },
+  tabs: {
+    display: "flex",
+    flexDirection: "row",
+    width: "98vw",
+    marginTop: "-4rem",
+    marginBottom: "2rem",
+  },
 }));
