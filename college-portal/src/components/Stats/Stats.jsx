@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
 export function StatsGroup() {
-  const [user, loading] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   const [loadingStats, setLoadingStats] = useState(true);
   const [list, setList] = useState();
   const [unVerified, setUnverified] = useState();
@@ -15,12 +15,13 @@ export function StatsGroup() {
   useEffect(() => {
     async function getRegistered() {
       try {
-        const q = user.email === "gov@govindia.in" 
-        ? query(collection(db, "students")) 
-        :query(
-          collection(db, "students"),
-          where("cdomain", "==", user.email.split("@")[1])
-        );
+        const q =
+          user.email === "gov@govindia.in"
+            ? query(collection(db, "students"))
+            : query(
+                collection(db, "students"),
+                where("cdomain", "==", user.email.split("@")[1])
+              );
         const querySnapshot = await getDocs(q);
         setList(querySnapshot.size);
         setLoadingStats(false);
@@ -31,16 +32,14 @@ export function StatsGroup() {
 
     async function getUnverified() {
       try {
-        const q = user.email === "gov@govindia.in" 
-        ? query(
-          collection(db, "students"),
-          where("verified", "==", false)
-          ) 
-        : query(
-          collection(db, "students"),
-          where("cdomain", "==", user.email.split("@")[1]),
-          where("verified", "==", false)
-        );
+        const q =
+          user.email === "gov@govindia.in"
+            ? query(collection(db, "students"), where("verified", "==", false))
+            : query(
+                collection(db, "students"),
+                where("cdomain", "==", user.email.split("@")[1]),
+                where("verified", "==", false)
+              );
         const querySnapshot = await getDocs(q);
         setUnverified(querySnapshot.size);
         setLoadingStats(false);

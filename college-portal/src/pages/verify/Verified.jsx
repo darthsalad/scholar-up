@@ -42,18 +42,16 @@ const Verified = () => {
   useEffect(() => {
     async function getStudents() {
       try {
-        const q = user.email === "gov@govindia.in"
-        ? query(
-            collection(db, "students"),
-            where("verified", "==", true)
-          )
-        : query(
-            collection(db, "students"),
-            where("cdomain", "==", user.email.split("@")[1]),
-            where("verified", "==", true)
-          )
+        const q =
+          user.email === "gov@govindia.in"
+            ? query(collection(db, "students"), where("verified", "==", true))
+            : query(
+                collection(db, "students"),
+                where("cdomain", "==", user.email.split("@")[1]),
+                where("verified", "==", true)
+              );
         onSnapshot(q, (querySnapshot) => {
-          const list = []
+          const list = [];
           querySnapshot.forEach((doc) => {
             list.push({
               id: doc.id,
@@ -79,40 +77,37 @@ const Verified = () => {
     }
 
     async function getScholarships() {
+      try {
+        const q =
+          user.email === "gov@govindia.in"
+            ? query(collection(db, "scholarships"))
+            : query(
+                collection(db, "colleges"),
+                where("domain", "==", user.email.split("@")[1])
+              );
+        const querySnapshot = await getDocs(q);
 
-      try{
-        const q = user.email === "gov@govindia.in"
-        ? query(collection(db, "scholarships"))
-        : query(
-            collection(db, "colleges"),
-            where("domain", "==", user.email.split("@")[1])
-          );
-          const querySnapshot = await getDocs(q);
-
-          user.email === "gov@govindia.in" 
+        user.email === "gov@govindia.in"
           ? setScholarships(
-              querySnapshot.docs.map((scholarship) => (
-                {
-                  name: scholarship.data().scholarshipName,
-                  provider: scholarship.data().scholarshipProvider,
-                  description: scholarship.data().scholarshipDescription
-                }
-              ))  
+              querySnapshot.docs.map((scholarship) => ({
+                name: scholarship.data().scholarshipName,
+                provider: scholarship.data().scholarshipProvider,
+                description: scholarship.data().scholarshipDescription,
+              }))
             )
           : setScholarships(
-            querySnapshot.docs[0].data().scholarships.map((scholarship) => (
-              // console.log(scholarship);
-              {
-                name: scholarship.name,
-                provider: scholarship.provider,
-                description: scholarship.description
-              }  
-            ))
-          );
-          // console.log(scholarships);
-      }catch(err){
-        console.log(err)
-
+              querySnapshot.docs[0].data().scholarships.map((scholarship) =>
+                // console.log(scholarship);
+                ({
+                  name: scholarship.name,
+                  provider: scholarship.provider,
+                  description: scholarship.description,
+                })
+              )
+            );
+        // console.log(scholarships);
+      } catch (err) {
+        console.log(err);
       }
     }
 
@@ -168,49 +163,51 @@ const Verified = () => {
   };
 
   return (
-      <>
-        {window.location.pathname == "/students/verified" && <Navbar></Navbar>}
-       { !loadingStudents && <Text className={classes.text}>Verified students</Text>}
-        <div>
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              // alignItems: "center"
-            }}
+    <>
+      {window.location.pathname === "/students/verified" && <Navbar></Navbar>}
+      {!loadingStudents && (
+        <Text className={classes.text}>Verified students</Text>
+      )}
+      <div>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            // alignItems: "center"
+          }}
+        >
+          <Autocomplete
+            sx={{ maxWidth: "600px", minWidth: "300px" }}
+            placeholder="Search students"
+            itemComponent={AutoCompleteItem}
+            data={auto}
+          />
+          <Menu
+            className={classes.sortMenu}
+            onOpen={() => setOpened(true)}
+            onClose={() => setOpened(false)}
+            radius="md"
+            width="target"
           >
-            <Autocomplete
-              sx={{ maxWidth: "600px", minWidth: "300px" }}
-              placeholder="Search students"
-              itemComponent={AutoCompleteItem}
-              data={auto}
-            />
-            <Menu
-              className={classes.sortMenu}
-              onOpen={() => setOpened(true)}
-              onClose={() => setOpened(false)}
-              radius="md"
-              width="target"
-            >
-              <Menu.Target>
-                <UnstyledButton className={classes.control}>
-                  <Group spacing="xs">
-                    <span className={classes.label}>{selected.label}</span>
-                  </Group>
-                  <IconChevronDown
-                    size={16}
-                    className={classes.iconDropdown}
-                    stroke={1.5}
-                  />
-                </UnstyledButton>
-              </Menu.Target>
-              <Menu.Dropdown>{items}</Menu.Dropdown>
-            </Menu>
-          </div>
-          <div>
-            {sort
-              ? scholarships.map((scholarship) => {
+            <Menu.Target>
+              <UnstyledButton className={classes.control}>
+                <Group spacing="xs">
+                  <span className={classes.label}>{selected.label}</span>
+                </Group>
+                <IconChevronDown
+                  size={16}
+                  className={classes.iconDropdown}
+                  stroke={1.5}
+                />
+              </UnstyledButton>
+            </Menu.Target>
+            <Menu.Dropdown>{items}</Menu.Dropdown>
+          </Menu>
+        </div>
+        <div>
+          {sort
+            ? scholarships.map((scholarship) => {
                 return (
                   <div className={classes.group}>
                     <Text
@@ -255,12 +252,11 @@ const Verified = () => {
                         </Alert>
                       )}
                     </ScrollArea>
-
                   </div>
                 );
                 // if(student.scholarships.includes )
               })
-              : students.map((item) => {
+            : students.map((item) => {
                 return (
                   <StudentList
                     id={item.id}
@@ -274,9 +270,9 @@ const Verified = () => {
                   />
                 );
               })}
-          </div>
         </div>
-      </>
+      </div>
+    </>
   );
 };
 

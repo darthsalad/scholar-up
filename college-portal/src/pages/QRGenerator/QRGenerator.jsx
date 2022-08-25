@@ -13,7 +13,7 @@ import { IconAlertCircle } from "@tabler/icons";
 
 const QRGenerator = () => {
   const { classes } = useStyles();
-  const [user, wait] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(true);
   const [validStartTime, setValidStartTime] = useState(null);
@@ -170,7 +170,7 @@ const QRGenerator = () => {
                             lng: location.longitude,
                             alt: location.altitude,
                           },
-                        })}  
+                        })}
                       />
                     )}
                     {!loading && !token && (

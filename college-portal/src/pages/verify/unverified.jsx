@@ -3,8 +3,20 @@ import Navbar from "../../components/Navbar/Navbar";
 import Error from "../../components/Error/Error";
 import Load from "../../components/Load/Load";
 import { auth, db } from "../../firebase.config";
-import { IconPhoneCall, IconCheckbox, IconAt, IconChevronRight } from "@tabler/icons";
-import { UnstyledButton, Group, Avatar, Text, Alert, ActionIcon } from "@mantine/core";
+import {
+  IconPhoneCall,
+  IconCheckbox,
+  IconAt,
+  IconChevronRight,
+} from "@tabler/icons";
+import {
+  UnstyledButton,
+  Group,
+  Avatar,
+  Text,
+  Alert,
+  ActionIcon,
+} from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import {
   collection,
@@ -12,7 +24,7 @@ import {
   where,
   doc,
   updateDoc,
-  onSnapshot
+  onSnapshot,
 } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useStyle } from "./unverified.styles";
@@ -27,35 +39,32 @@ const Unverified = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log({ user, wait });
-    // console.log(student);
     user && getList();
-  }, [user]);
+    //eslint-disable-next-line
+  }, [user, wait]);
 
   async function getList() {
     try {
-      const q = user.email === "gov@govindia.in"
-      ? query(
-            collection(db, "students"),
-            where("verified", "==", false)
-          )
-      : query(
-        collection(db, "students"),
-        where("cdomain", "==", user.email.split("@")[1]),
-        where("verified", "==", false)
-      );
-      const getall = onSnapshot(q, (querySnapshot) => {
-        const list = []
+      const q =
+        user.email === "gov@govindia.in"
+          ? query(collection(db, "students"), where("verified", "==", false))
+          : query(
+              collection(db, "students"),
+              where("cdomain", "==", user.email.split("@")[1]),
+              where("verified", "==", false)
+            );
+      onSnapshot(q, (querySnapshot) => {
+        const list = [];
         // setStudent(
         querySnapshot.forEach((doc) => {
           list.push({
             id: doc.id,
             data: doc.data(),
-          })
-          })
-          // );
-          setStudent(list)
-          setLoading(false);
+          });
+        });
+        // );
+        setStudent(list);
+        setLoading(false);
       });
     } catch (err) {
       setError(err);
@@ -66,13 +75,13 @@ const Unverified = () => {
     await updateDoc(doc(db, "students", docId), {
       verified: true,
       verifiedOn: new Date(),
-      totalAtt: 0
+      totalAtt: 0,
     }).then(() => {
       console.log("Verified", docId);
     });
   }
 
-  if (loading || !student ) return <Load></Load>;
+  if (loading || !student) return <Load></Load>;
   if (!loading && error) return <Error></Error>;
 
   return (
@@ -99,11 +108,7 @@ const Unverified = () => {
                     onClick={() => navigate(`/student/${student.id}`)}
                   >
                     <Group noWrap>
-                      <Avatar
-                        src={student.data.imgURL}
-                        size={94}
-                        radius="md"
-                      />
+                      <Avatar src={student.data.imgURL} size={94} radius="md" />
                       <div>
                         <Text
                           size="xs"
@@ -140,19 +145,17 @@ const Unverified = () => {
                           </Text>
                         </Group>
                       </div>
-                      <Group
-                        spacing="md" 
-                        position="right"
-                      >
-                      <ActionIcon 
-                        onClick={(e) => {
-                          e.stopPropagation(); 
-                          // setDocId(student.id);
-                          verifyOnClick(student.id);
-                        }}>
-                        <IconCheckbox size={16} stroke={1.5} />
-                      </ActionIcon>
-                      <IconChevronRight size={14} stroke={1.5} />
+                      <Group spacing="md" position="right">
+                        <ActionIcon
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // setDocId(student.id);
+                            verifyOnClick(student.id);
+                          }}
+                        >
+                          <IconCheckbox size={16} stroke={1.5} />
+                        </ActionIcon>
+                        <IconChevronRight size={14} stroke={1.5} />
                       </Group>
                     </Group>
                   </UnstyledButton>
