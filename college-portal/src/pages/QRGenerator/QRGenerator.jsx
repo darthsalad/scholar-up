@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import downloadjs from "downloadjs";
 import html2canvas from "html2canvas";
-import { Button, Text, LoadingOverlay, Alert } from "@mantine/core";
+import { Button, Text, LoadingOverlay, Alert, TextInput } from "@mantine/core";
+import { TimeInput } from "@mantine/dates";
 import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase.config";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -15,6 +16,20 @@ const QRGenerator = () => {
   const [user, wait] = useAuthState(auth);
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(true);
+  const [validStartTime, setValidStartTime] = useState(null);
+  const [validEndTime, setValidEndTime] = useState(null);
+  const [location, setLocation] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        setLocation(position.coords);
+      });
+    } else {
+      setError("Geolocation is not supported by this browser.");
+    }
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -29,7 +44,9 @@ const QRGenerator = () => {
         const querySnapshot = await getDocs(q);
         querySnapshot.docs.forEach((doc) => {
           if (
-            doc.data().validDate.toDate().getDate() === new Date().getDate()
+            new Date().getTime() >=
+              doc.data().validStartTime.toDate().getTime() &&
+            new Date().getTime() <= doc.data().validEndTime.toDate().getTime()
           ) {
             setToken(doc.data().token);
           }
@@ -52,7 +69,13 @@ const QRGenerator = () => {
       await addDoc(collection(db, "QRTokens"), {
         token: randomString,
         cdomain: user.email.split("@")[1],
-        validDate: new Date(),
+        validStartTime: validStartTime,
+        validEndTime: validEndTime,
+        location: {
+          lat: location.latitude,
+          lng: location.longitude,
+          alt: location.altitude,
+        },
       });
 
       setToken(randomString);
@@ -65,61 +88,99 @@ const QRGenerator = () => {
   const handleCaptureClick = useCallback(async () => {
     const canvas = await html2canvas(document.getElementById("qrcode"));
     const dataURL = canvas.toDataURL("image/png");
-    downloadjs(
-      dataURL,
-      `qr-code-${new Date().toJSON().slice(0, 10).replace(/-/g, "/")}.png`,
-      "image/png"
-    );
+    downloadjs(dataURL, `qr-code-${new Date().toString()}.png`, "image/png");
   }, []);
 
   return (
     <>
       <Navbar />
-      <Text className={classes.text}>
-        Generate QR for {new Date().toJSON().slice(0, 10).replace(/-/g, "/")}
-      </Text>
 
-      {!loading && !token && (
-        <Button className={classes.btn} onClick={handleGenerate}>
-          Generate QR Code
-        </Button>
-      )}
+      {error ? (
+        <Alert icon={<IconAlertCircle size={16} />} title="Bummer!" color="red">
+          {error}
+        </Alert>
+      ) : (
+        <>
+          <Text className={classes.text}>Generate QR for</Text>
 
-      {!loading && token && (
-        <Button className={classes.btn} onClick={handleCaptureClick}>
-          Capture QR Code
-        </Button>
-      )}
+          <div style={{ width: "80%", margin: "auto" }}>
+            <Button
+              className={classes.btn}
+              onClick={handleGenerate}
+              disabled={!validStartTime || !validEndTime || !location}
+            >
+              Generate QR Code
+            </Button>
+            <TimeInput
+              label="Start of the class"
+              required
+              onChange={(e) => {
+                setValidStartTime(e);
+              }}
+            ></TimeInput>
+            <TimeInput
+              label="End of the class"
+              required
+              onChange={(e) => {
+                setValidEndTime(e);
+              }}
+            ></TimeInput>
 
-      <div className={classes.main}>
-        <div className={classes.wrapper}>
-          <div id="qrcode" className={classes.root} visible={loading}>
-            <LoadingOverlay visible={loading} overlayBlur={2} />
-            <div style={{ position: "relative" }}>
-              <div className={classes.qr}>
-                {token && (
-                  <QRCode
-                    style={{ display: "block" }}
-                    title="qr code"
-                    value={token}
-                  />
-                )}
-                {!loading && !token && (
-                  <Alert
-                    icon={<IconAlertCircle size={16} />}
-                    title="Oops!"
-                    color="red"
-                    radius="xs"
-                    variant="filled"
-                  >
-                    No QR code found. Generate a new qr code
-                  </Alert>
-                )}
+            {location && (
+              <TextInput
+                label="Location"
+                value={`Latitude: ${location.latitude}, Longitude: ${location.longitude}`}
+                disabled
+              ></TextInput>
+            )}
+            {console.log(location)}
+
+            {!location && (
+              <TextInput
+                label="Location"
+                value="Loading location"
+                disabled
+              ></TextInput>
+            )}
+          </div>
+
+          {!loading && token && (
+            <Button className={classes.btn} onClick={handleCaptureClick}>
+              Capture QR Code
+            </Button>
+          )}
+
+          <div className={classes.main}>
+            <div className={classes.wrapper}>
+              <div id="qrcode" className={classes.root} visible={loading}>
+                <LoadingOverlay visible={loading} overlayBlur={2} />
+                <div style={{ position: "relative" }}>
+                  <div className={classes.qr}>
+                    {token && (
+                      <QRCode
+                        style={{ display: "block" }}
+                        title="qr code"
+                        value={token}
+                      />
+                    )}
+                    {!loading && !token && (
+                      <Alert
+                        icon={<IconAlertCircle size={16} />}
+                        title="Oops!"
+                        color="red"
+                        radius="xs"
+                        variant="filled"
+                      >
+                        No QR code found. Generate a new qr code
+                      </Alert>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </>
   );
 };
