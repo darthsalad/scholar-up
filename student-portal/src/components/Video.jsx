@@ -7,10 +7,14 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { db, auth } from "../firebaseConfig";
 import QrReader from "react-qr-scanner";
 import firebase from "firebase";
+import Radar from "radar-sdk-js";
 import * as faceapi from "face-api.js";
 
 const Video = () => {
+  Radar.initialize("prj_test_pk_ad25bb14abde206df225e7f696d5427ea5bf752b");
   const [user] = useAuthState(auth);
+  Radar.setUserId(`${user.email}`);
+
   const [id, setID] = useState("");
   const [accid, setAccid] = useState("");
   const [privatekey, setPrivatekey] = useState("");
@@ -22,6 +26,7 @@ const Video = () => {
   const [height, setHeight] = useState(480);
   const [width, setWidth] = useState(640);
   const [data, setData] = useState([]);
+  const [location, setLocation] = useState();
   const [date, setDate] = useState(new Date());
   const [duration, setDuration] = useState({ start: 0, end: 0 });
 
@@ -54,9 +59,11 @@ const Video = () => {
         }
       });
     });
+
     db.collection("QRTokens")
       .where("cdomain", "==", college)
       .onSnapshot((snap) => setVerifyQR(snap.docs[0].data()));
+    console.log(verifyQR);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [college]);
@@ -72,6 +79,22 @@ const Video = () => {
         }))
       );
     });
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          setLocation(position.coords);
+        },
+        function (error) {
+          setAlert(error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        }
+      );
+    }
 
     // eslint-disable-next-line
   }, []);
@@ -156,7 +179,7 @@ const Video = () => {
   async function addAttendence(attended) {
     let hours = date.getHours();
     let dat = date.getDate();
-    if (attended && hours <= 16 && hours >= 0) {
+    if (attended && hours <= 19 && hours >= 0) {
       const variable = db.collection("students").doc(id);
       const month = getMonth(date.getMonth());
 
@@ -249,17 +272,46 @@ const Video = () => {
 
   const handleScan = (data) => {
     if (data) {
-      setScanResultWebCam(data.text);
+      // setScanResultWebCam(data.text);
+      // console.log(data.text);
+      data = JSON.parse(data.text);
+      console.log(data);
+      console.log(location);
 
-      if (
-        verifyQR.token === data.text &&
-        verifyQR.validDate.toDate().getDate() === new Date().getDate()
+      if (verifyQR.token !== data.token) {
+        setAlert("Token is invalid");
+      } else if (
+        verifyQR.validStartTime.toDate().getTime() > new Date().getTime() ||
+        verifyQR.validEndTime.toDate().getTime() < new Date().getTime()
       ) {
-        setScan(true);
-
-        setAlert("QR verified");
+        setAlert("Attendence period over");
       } else {
-        setAlert("QR is invalid");
+        Radar.getDistance(
+          {
+            origin: {
+              latitude: location.latitude,
+              longitude: location.longitude,
+            },
+            destination: {
+              latitude: data.location.lat,
+              longitude: data.location.lng,
+            },
+            modes: ["foot", "car"],
+            units: "metric",
+          },
+          function (err, result) {
+            if (!err) {
+              console.log(result);
+              if (result.routes.geodesic.distance.value < 1100) {
+                setAlert("QR Verified");
+                setScan(true);
+              } else {
+                setAlert("Person is out of bounds");
+              }
+              // do something with result.routes
+            }
+          }
+        );
       }
     }
   };
@@ -293,7 +345,7 @@ const Video = () => {
             <>
               {/* <video id="scan" ref={videoElm}></video> */}
               <QrReader
-                scanDelay={300}
+                scandelay={300}
                 style={{ width: "70%" }}
                 onError={handleError}
                 onScan={handleScan}

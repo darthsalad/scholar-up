@@ -104,7 +104,7 @@ export default function Navbar() {
     );
   });
 
-  user.email !== "gov@govindia.in" &&
+  user?.email !== "gov@govindia.in" &&
     items.push(
       <>
         <Link
