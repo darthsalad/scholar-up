@@ -101,7 +101,7 @@ const QRGenerator = () => {
         </Alert>
       ) : (
         <>
-          <Text className={classes.text}>Generate QR for</Text>
+          <Text className={classes.text}>Generate QR</Text>
 
           <div style={{ width: "80%", margin: "auto" }}>
             <Button
@@ -160,7 +160,17 @@ const QRGenerator = () => {
                       <QRCode
                         style={{ display: "block" }}
                         title="qr code"
-                        value={token}
+                        value={JSON.stringify({
+                          token: token,
+                          cdomain: user.email.split("@")[1],
+                          validStartTime: validStartTime,
+                          validEndTime: validEndTime,
+                          location: {
+                            lat: location.latitude,
+                            lng: location.longitude,
+                            alt: location.altitude,
+                          },
+                        })}  
                       />
                     )}
                     {!loading && !token && (
