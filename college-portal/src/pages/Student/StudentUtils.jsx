@@ -13,11 +13,9 @@ import {
   ScrollArea,
   Text,
 } from "@mantine/core";
-import { auth, db } from "../../firebase.config";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { db } from "../../firebase.config";
 
-export function StudentLeaveApplications({ data, theme }) {
-  const [user, wait] = useAuthState(auth);
+export function StudentLeaveApplications({ data }) {
   const { classes } = useStyles();
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
   let { id } = useParams();
@@ -137,7 +135,7 @@ export function StudentsReceipts({ data, user }) {
     <>
       {user.email === "gov@govindia.in" &&
       data.student.scholarships.length !== 0 &&
-      data.student.verified == true ? (
+      data.student.verified === true ? (
         <div className={classes.studentContainer}>
           <Text className={classes.text} style={{ marginTop: "50px" }}>
             Receipts

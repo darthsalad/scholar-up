@@ -38,6 +38,7 @@ const Stats = () => {
   let graph = getGraph(selected);
 
   useEffect(() => {
+    //eslint-disable-next-line
     graph = getGraph(selected);
   }, [selected]);
 

@@ -22,14 +22,9 @@ import { useNavigate, Link } from "react-router-dom";
 import { useStyles } from "./Navbar.styles";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase.config";
-import { useEffect } from "react";
 
 const links = [
   { link: "/", label: "Home" },
-  // {
-  //   link: "/stats",
-  //   label: "Stats",
-  // },
   {
     link: "#1",
     label: "My students",
@@ -78,10 +73,6 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const dark = colorScheme === "dark";
-
-  useEffect(() => {
-    console.log({ user, wait });
-  }, [user]);
 
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
