@@ -109,9 +109,10 @@ export function StudentStats({ data, theme }) {
       <Text className={classes.text}>Stats</Text>
       <div className={classes.statsContainer}>
         <StudentGraph
+          data={data}
           color={theme.primaryColor}
           attendance={data.student.attendence}
-        ></StudentGraph>
+        />
       </div>
     </>
   );
