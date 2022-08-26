@@ -121,8 +121,8 @@ export function StudentsReceipts({ data, user }) {
   const { classes } = useStyles();
 
   if (
-    data.student.applications.length === 0 ||
-    data.student.receipts.length === 0
+    data?.student?.applications?.length === 0 ||
+    data?.student?.receipts?.length === 0
   ) {
     return (
       <Alert color="green" variant="outline" style={{ marginTop: "2rem" }}>
