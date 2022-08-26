@@ -72,11 +72,12 @@ const Home = () => {
             imgURL: [],
             dateOfJoining: [],
             streakTransaction: [],
-            recipts: [],
+            receipts: [],
             applications: [],
             attendence: attendence,
             accountCreatedOn: createAcc.toLocaleDateString(),
             scholarships: [],
+            latestToken: "",
             DOB: null,
             verified: false,
           })
