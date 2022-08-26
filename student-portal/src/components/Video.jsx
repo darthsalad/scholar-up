@@ -28,7 +28,6 @@ const Video = () => {
   const [data, setData] = useState([]);
   const [location, setLocation] = useState();
   const [date, setDate] = useState(new Date());
-  const [duration, setDuration] = useState({ start: 0, end: 0 });
 
   const [thisMonth, setthisMonth] = useState();
   const [verifyQR, setVerifyQR] = useState();
@@ -39,6 +38,7 @@ const Video = () => {
   const [latestDate, setLatestDate] = useState();
   const [scan, setScan] = useState(false);
   const [alert, setAlert] = useState("");
+  const [latestToken, setLatestToken] = useState("")
 
   const [attendence, setAttendence] = useState(false);
   const [dbAttendence, setdbAttendence] = useState(false);
@@ -48,22 +48,10 @@ const Video = () => {
   const [userImg, setUserImg] = useState("");
 
   useEffect(() => {
-    db.collection("colleges").onSnapshot((snapshot) => {
-      snapshot.forEach((snap) => {
-        if (snap.data().domain === college) {
-          setDuration({
-            ...duration,
-            start: parseInt(snap.data().class_begin),
-            end: parseInt(snap.data().class_end),
-          });
-        }
-      });
-    });
-
     db.collection("QRTokens")
       .where("cdomain", "==", college)
       .onSnapshot((snap) => setVerifyQR(snap.docs[0].data()));
-    console.log(verifyQR);
+    // console.log(verifyQR);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [college]);
@@ -105,21 +93,22 @@ const Video = () => {
       .onSnapshot((snapshot) => {
         snapshot.forEach((snap) => {
           setID(snap.id);
-          const month = getMonth(date.getMonth());
+          const month = mygetMonth(date.getMonth());
           setAccid(snap.data().accid);
           setPrivatekey(snap.data().privatekey);
           setUserImg(snap.data().imgURL[0]);
           setCollege(snap.data().cdomain);
           setVerify(snap.data().verified);
           setAtt(snap.data().totalAtt);
+          setLatestToken(snap.data().latestToken)
 
           const latestAttendence =
             snap.data().attendence[month][
               snap.data().attendence[month].length - 1
             ];
           setLatestDate(latestAttendence);
-          let dat = date.getDate();
-          dat === latestAttendence && setdbAttendence(true);
+          // let dat = date.getDate();
+          // dat === latestAttendence && setdbAttendence(true);
           setthisMonth(snap.data().attendence);
         });
       });
@@ -157,7 +146,7 @@ const Video = () => {
     loadModels();
   }, [scan]);
 
-  function getMonth(monthNum) {
+  function mygetMonth(monthNum) {
     const monthNames = [
       "january",
       "february",
@@ -181,18 +170,23 @@ const Video = () => {
     let dat = date.getDate();
     if (attended && hours <= 19 && hours >= 0) {
       const variable = db.collection("students").doc(id);
-      const month = getMonth(date.getMonth());
+      const month = mygetMonth(date.getMonth());
 
       if (!thisMonth[month].includes(dat)) {
         thisMonth[month].push(dat);
       }
-      !dbAttendence &&
-        (await variable
+
+      if (latestToken !== verifyQR.token || latestToken.length === 0) {
+        setLatestToken(verifyQR.token)
+        
+        await variable
           .update({
             attendence: thisMonth,
             totalAtt: att + 1,
+            latestToken: verifyQR.token
           })
-          .then(() => setdbAttendence(true)));
+          .then(() => setdbAttendence(true))
+      }
     }
   }
 
@@ -236,7 +230,7 @@ const Video = () => {
       !attendence &&
         results.map((result) => {
           setAttendence(result.label === user.displayName);
-          return result.label === user.displayName && addAttendence(true);
+          return result.label === user.displayName && latestToken !== verifyQR.token && !dbAttendence && addAttendence(true);
         });
 
       results.forEach((result, i) => {
@@ -275,10 +269,12 @@ const Video = () => {
       // setScanResultWebCam(data.text);
       // console.log(data.text);
       data = JSON.parse(data.text);
-      console.log(data);
-      console.log(location);
-
-      if (verifyQR.token !== data.token) {
+      // console.log(data);
+      // console.log(location);
+      if (latestToken === data.token) {
+        setAlert("Attendance for the class already given")
+      }
+      else if (verifyQR.token !== data.token) {
         setAlert("Token is invalid");
       } else if (
         verifyQR.validStartTime.toDate().getTime() > new Date().getTime() ||
@@ -301,7 +297,7 @@ const Video = () => {
           },
           function (err, result) {
             if (!err) {
-              console.log(result);
+              // console.log(result);
               if (result.routes.geodesic.distance.value < 1100) {
                 setAlert("QR Verified");
                 setScan(true);
@@ -313,6 +309,7 @@ const Video = () => {
           }
         );
       }
+      
     }
   };
   const handleError = (err) => {
@@ -327,9 +324,11 @@ const Video = () => {
         </Alert>
       )}
       {dbAttendence && (
-        <Alert style={{ position: "absolute", zIndex: 3, top: 0 }}>
-          Your attendece has been recorded for today
-        </Alert>
+        <>
+          <Alert style={{ position: "absolute", zIndex: 3, top: 0 }}>
+            Your attendece has been recorded for today
+          </Alert>
+        </>
       )}
       {verify ? (
         <Camera style={{ position: "relative" }}>
@@ -360,7 +359,7 @@ const Video = () => {
           )}
         </Camera>
       ) : (
-        "You are not verifies. Please Contact college"
+        "You are not verified. Please Contact college"
       )}
       <LatestAttendence style={{ color: "#658ec6" }}>
         Last attendence was submitted on: {latestDate}th
