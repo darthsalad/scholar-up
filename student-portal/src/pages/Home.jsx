@@ -42,6 +42,13 @@ const Home = () => {
     setFact(result.data[0].fact);
   }
 
+  const style = {
+    // Adding media query..
+    "@media (max-width: 656px)": {
+      fontSize: "15px",
+    },
+  };
+
   return (
     <Container>
       <Modal />
@@ -70,7 +77,7 @@ const Home = () => {
                 attendence && "linear-gradient(to right top, #65dfc9, #6cdbeb)",
             }}
           >
-            <h2>Attendence</h2>
+            <h2 style={style}>Attendence</h2>
           </Child>
           <Child
             onClick={() => {
@@ -86,7 +93,7 @@ const Home = () => {
                 stats && "linear-gradient(to right top, #65dfc9, #6cdbeb)",
             }}
           >
-            <h2>Statistics</h2>
+            <h2 style={style}>Statistics</h2>
           </Child>
           <Child
             onClick={() => {
@@ -102,7 +109,7 @@ const Home = () => {
                 hbar && "linear-gradient(to right top, #65dfc9, #6cdbeb)",
             }}
           >
-            <h2>Hbar</h2>
+            <h2 style={style}>Hbar</h2>
           </Child>
 
           <Child
@@ -120,7 +127,7 @@ const Home = () => {
                 "linear-gradient(to right top, #65dfc9, #6cdbeb)",
             }}
           >
-            <h2>Application</h2>
+            <h2 style={style}>Application</h2>
           </Child>
 
           <Child
@@ -137,7 +144,7 @@ const Home = () => {
                 receipts && "linear-gradient(to right top, #65dfc9, #6cdbeb)",
             }}
           >
-            <h2>Receipts</h2>
+            <h2 style={style}>Receipts</h2>
           </Child>
 
           <Child
@@ -150,7 +157,7 @@ const Home = () => {
               setReceipts(false);
             }}
           >
-            <h2>Settings</h2>
+            <h2 style={style}>Settings</h2>
           </Child>
         </Links>
         <Pro onClick={factGenerator}>
@@ -234,7 +241,7 @@ const Links = styled.div`
   height: 100%;
   ${mobile({
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     width: "100%",
   })}
 `;
@@ -251,12 +258,13 @@ const Child = styled.div`
     color: #658ec6;
     font-weight: 500;
     opacity: 0.8;
+    ${mobile({ padding: "1px", fontSize: "1px" })}
   }
 
   &:hover {
     background: linear-gradient(to right top, #65dfc9, #6cdbeb);
   }
-  ${mobile({ padding: "10px" })}
+  ${mobile({ padding: "5px", fontSize: "10px" })}
 `;
 
 const Pro = styled.div`
