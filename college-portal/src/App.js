@@ -4,6 +4,7 @@ import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 
 import Load from "./components/Load/Load";
+import StudentsTable from "./components/Table/StudentsTable";
 const Login = lazy(() => import("./pages/Auth/Login"));
 const Register = lazy(() => import("./pages/Auth/Register"));
 const Profile = lazy(() => import("./pages/Profile/Profile"));
@@ -80,6 +81,7 @@ function App() {
                   element={<Contact></Contact>}
                 ></Route>
                 <Route exact path="/qr" element={<QRGenerator />}></Route>
+                <Route exact path="/table" element={<StudentsTable />}></Route>
                 <Route path="*" element={<PageNotFound />} />
               </Routes>
             </Suspense>

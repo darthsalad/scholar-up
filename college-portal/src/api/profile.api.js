@@ -149,7 +149,7 @@ export const getScholarships = async (user, setScholarships) => {
   }
 };
 
-export const getStudents = async (id, setData) => {
+export const getStudent = async (id, setData) => {
   const docRef = doc(db, "students", id);
   onSnapshot(docRef, (docSnap) => {
     setData({
@@ -158,3 +158,43 @@ export const getStudents = async (id, setData) => {
     });
   });
 };
+
+export const getStudents = async(setStudents) => {
+  const q = query(collection(db, "students"), where("verified", "==", true));
+  onSnapshot(q, (snap) => {
+    setStudents(
+      snap.docs.map((doc) => (
+        {
+          id: doc.id,
+          student: doc.data()
+        }
+      ))
+    )
+  })
+}
+
+export const getColleges = async (setColleges) => {
+  const q = query(collection(db, "colleges"));
+  onSnapshot(q, (snap) => {
+    setColleges(snap.docs.map((college) => (
+      {
+        cname: college.data().cname,
+        domain: college.data().domain,
+      }
+    )))
+  })
+}
+
+export const getTotalClasses = async(setTotalClasses) => {
+  const q = query(collection(db, "QRTokens"));
+  onSnapshot(q, (snap) => {
+    setTotalClasses(
+      snap.docs.map((doc) => (
+        {
+          cdomain: doc.data().cdomain,
+          totalClasses: doc.data().totalClasses
+        }
+      ))
+    )
+  })
+}
