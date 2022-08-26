@@ -3,7 +3,7 @@ import downloadjs from "downloadjs";
 import html2canvas from "html2canvas";
 import { Button, Text, LoadingOverlay, Alert, TextInput } from "@mantine/core";
 import { TimeInput } from "@mantine/dates";
-import { collection, query, where, getDocs, addDoc, updateDoc,doc } from "firebase/firestore";
+import { collection, query, where, getDocs, addDoc, updateDoc,doc, increment } from "firebase/firestore";
 import { auth, db } from "../../firebase.config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import QRCode from "react-qr-code";
@@ -128,7 +128,8 @@ const QRGenerator = () => {
             lng: location.longitude,
             alt: location.altitude,
           },
-          classNo: monthList
+          classNo: monthList,
+          totalClasses: 1
         });
       } else {
         console.log(querySnapshot.docs[0].data().classNo)
@@ -136,6 +137,7 @@ const QRGenerator = () => {
         monthList[mygetMonth(validStartTime.getMonth())] =  monthList[mygetMonth(validStartTime.getMonth())] + 1
             await updateDoc(doc(db, "QRTokens", querySnapshot.docs[0].id), {
               classNo: monthList,
+              totalClasses: increment(1),
               token: randomString,
               validStartTime: validStartTime,
               validEndTime: validEndTime,
