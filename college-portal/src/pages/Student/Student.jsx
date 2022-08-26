@@ -21,7 +21,7 @@ import {
   IconReportMoney,
   IconTrophy,
 } from "@tabler/icons";
-import { getScholarships, getStudents } from "../../api/profile.api";
+import { getScholarships, getStudent } from "../../api/profile.api";
 
 const Student = () => {
   const { classes } = useStyles();
@@ -50,7 +50,7 @@ const Student = () => {
       });
     }
 
-    user && !data && getStudents(id, setData);
+    user && !data && getStudent(id, setData);
     user && !college && data && getCollege();
     user && getScholarships(user, setScholarships);
   }, [user, id, data, college, scholarships]);
