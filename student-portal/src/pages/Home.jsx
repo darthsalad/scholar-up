@@ -144,7 +144,7 @@ const Home = () => {
                 receipts && "linear-gradient(to right top, #65dfc9, #6cdbeb)",
             }}
           >
-            <h2 style={style}>Receipts</h2>
+            <h2 style={style}>Achievements</h2>
           </Child>
 
           <Child
@@ -258,7 +258,7 @@ const Child = styled.div`
     color: #658ec6;
     font-weight: 500;
     opacity: 0.8;
-    ${mobile({ padding: "1px", fontSize: "1px" })}
+    ${mobile({ padding: "1px", fontSize: "12px" })}
   }
 
   &:hover {

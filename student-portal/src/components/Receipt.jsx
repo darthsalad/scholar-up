@@ -120,7 +120,7 @@ const Application = () => {
           </Box>
         </Wrapper>
         <ApplicationList>
-          <h3 style={{ color: "#658ec6" }}> Receipts</h3>
+          <h3 style={{ color: "#658ec6" }}> Achievements</h3>
           <Files>
             {receipts &&
               receipts.map((file, key) => (

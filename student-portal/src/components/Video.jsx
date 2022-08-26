@@ -6,8 +6,8 @@ import Alert from "@mui/material/Alert";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { db, auth } from "../firebaseConfig";
 import QrReader from "react-qr-scanner";
-import firebase from "firebase";
 import Radar from "radar-sdk-js";
+import { isMobile } from "react-device-detect";
 import * as faceapi from "face-api.js";
 
 const Video = () => {
@@ -38,10 +38,11 @@ const Video = () => {
   const [latestDate, setLatestDate] = useState();
   const [scan, setScan] = useState(false);
   const [alert, setAlert] = useState("");
-  const [latestToken, setLatestToken] = useState("")
+  const [latestToken, setLatestToken] = useState("");
 
   const [attendence, setAttendence] = useState(false);
   const [dbAttendence, setdbAttendence] = useState(false);
+  const [deviceType, setDeviceType] = useState("");
 
   const [scanResultWebCam, setScanResultWebCam] = useState("");
 
@@ -57,6 +58,15 @@ const Video = () => {
   }, [college]);
 
   useEffect(() => {
+    if (isMobile) {
+      setDeviceType("rear");
+    } else {
+      setDeviceType("front");
+    }
+
+    console.log(isMobile);
+
+    console.log(deviceType);
     db.collection("students").onSnapshot((snapshot) => {
       setData(
         snapshot.docs.map((doc) => ({
@@ -100,7 +110,7 @@ const Video = () => {
           setCollege(snap.data().cdomain);
           setVerify(snap.data().verified);
           setAtt(snap.data().totalAtt);
-          setLatestToken(snap.data().latestToken)
+          setLatestToken(snap.data().latestToken);
 
           const latestAttendence =
             snap.data().attendence[month][
@@ -123,12 +133,6 @@ const Video = () => {
             video: true,
           },
           (stream) => (webcamRef.current.srcObject = stream),
-          (err) => console.log(err)
-        );
-
-        navigator.mediaDevices.getUserMedia(
-          { video: true },
-          (stream) => (videoElm.current.srcObject = stream),
           (err) => console.log(err)
         );
       };
@@ -177,15 +181,15 @@ const Video = () => {
       }
 
       if (latestToken !== verifyQR.token || latestToken.length === 0) {
-        setLatestToken(verifyQR.token)
-        
+        setLatestToken(verifyQR.token);
+
         await variable
           .update({
             attendence: thisMonth,
             totalAtt: att + 1,
-            latestToken: verifyQR.token
+            latestToken: verifyQR.token,
           })
-          .then(() => setdbAttendence(true))
+          .then(() => setdbAttendence(true));
       }
     }
   }
@@ -230,7 +234,12 @@ const Video = () => {
       !attendence &&
         results.map((result) => {
           setAttendence(result.label === user.displayName);
-          return result.label === user.displayName && latestToken !== verifyQR.token && !dbAttendence && addAttendence(true);
+          return (
+            result.label === user.displayName &&
+            latestToken !== verifyQR.token &&
+            !dbAttendence &&
+            addAttendence(true)
+          );
         });
 
       results.forEach((result, i) => {
@@ -272,9 +281,8 @@ const Video = () => {
       // console.log(data);
       // console.log(location);
       if (latestToken === data.token) {
-        setAlert("Attendance for the class already given")
-      }
-      else if (verifyQR.token !== data.token) {
+        setAlert("Attendance for the class already given");
+      } else if (verifyQR.token !== data.token) {
         setAlert("Token is invalid");
       } else if (
         verifyQR.validStartTime.toDate().getTime() > new Date().getTime() ||
@@ -309,7 +317,6 @@ const Video = () => {
           }
         );
       }
-      
     }
   };
   const handleError = (err) => {
@@ -342,10 +349,10 @@ const Video = () => {
             />
           ) : (
             <>
-              {/* <video id="scan" ref={videoElm}></video> */}
               <QrReader
-                scandelay={300}
+                delay={300}
                 style={{ width: "70%" }}
+                facingMode="environment"
                 onError={handleError}
                 onScan={handleScan}
               />
@@ -398,7 +405,7 @@ const LatestAttendence = styled.h5`
 //   />
 // ) : (
 //   <>
-//     {/* <video id="scan" ref={videoElm}></video> */}
+
 //     <QrReader
 //       scanDelay={300}
 //       style={{ width: "70%" }}
